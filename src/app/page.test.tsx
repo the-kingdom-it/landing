@@ -71,11 +71,12 @@ describe("landing page", () => {
   });
 
   it("links the CTA button to Telegram in a new tab and shows the handle", () => {
-    render(<Home />);
-    const link = screen.getByRole("link", { name: content.cta.button.label });
+    const { container } = render(<Home />);
+    const cta = within(container.querySelector<HTMLElement>(`#${content.cta.id}`)!);
+    const link = cta.getByRole("link", { name: content.cta.button.label });
     expect(link).toHaveAttribute("href", content.cta.button.href);
     expect(link).toHaveAttribute("target", "_blank");
-    expect(screen.getByText(content.cta.handle)).toBeInTheDocument();
+    expect(cta.getByText(content.cta.handle)).toBeInTheDocument();
   });
 
   it("renders the postpayment card and the referral offer", () => {
@@ -83,6 +84,9 @@ describe("landing page", () => {
     const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
     expect(within(pricing).getByText(content.pricing.postpayment.label)).toBeInTheDocument();
     expect(within(pricing).getByText(content.pricing.postpayment.amount)).toBeInTheDocument();
+    const telegram = within(pricing).getByRole("link", { name: content.pricing.postpayment.link!.label });
+    expect(telegram).toHaveAttribute("href", content.pricing.postpayment.link!.href);
+    expect(telegram).toHaveAttribute("target", "_blank");
     expect(screen.getByRole("heading", { name: content.referral.title })).toBeInTheDocument();
   });
 

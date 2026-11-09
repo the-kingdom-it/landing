@@ -34,6 +34,8 @@ export type PriceCard = {
   label: string;
   amount: string;
   text: string;
+  /** Ссылка после текста, например на Telegram. null — без ссылки. */
+  link: LinkItem | null;
 };
 
 export type SiteContent = {
@@ -126,6 +128,12 @@ export type SiteContent = {
     /** Текст справа: ФИО, реквизиты или статус самозанятого. */
     legal: string;
   };
+};
+
+/** Telegram: ник меняется здесь, ссылка и подпись обновятся во всех блоках. */
+const telegram = {
+  url: "https://t.me/SadLiter",
+  handle: "@SadLiter",
 };
 
 export const content: SiteContent = {
@@ -251,8 +259,9 @@ export const content: SiteContent = {
     lead: "Основная оплата – после оффера. Нам так же важно, чтобы ты дошёл до результата, как и тебе.",
     postpayment: {
       label: "Постоплата",
-      amount: "[УСЛОВИЯ]",
-      text: "Платишь, только когда получишь оффер. [Подробности: процент или сумма, сроки оплаты]",
+      amount: "После оффера",
+      text: "За актуальными условиями – в Telegram:",
+      link: { label: telegram.handle, href: telegram.url },
     },
   },
 
@@ -314,8 +323,8 @@ export const content: SiteContent = {
     id: "cta",
     title: "Начнём с бесплатного созвона",
     text: "Расскажи, где ты сейчас и куда хочешь прийти. Разберём твой уровень и предложим план – это ни к чему не обязывает.",
-    button: { label: "Написать в Telegram", href: "https://t.me/SadLiter" },
-    handle: "@SadLiter",
+    button: { label: "Написать в Telegram", href: telegram.url },
+    handle: telegram.handle,
   },
 
   footer: {

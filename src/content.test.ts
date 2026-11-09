@@ -62,6 +62,11 @@ describe("content", () => {
     expect(content.cta.handle).toBe(`@${nick}`);
   });
 
+  it("postpayment card links to the same Telegram as the CTA button", () => {
+    expect(content.pricing.postpayment.link?.href).toBe(content.cta.button.href);
+    expect(content.pricing.postpayment.link?.label).toBe(content.cta.handle);
+  });
+
   it("site texts use the short dash instead of the em dash", () => {
     expect(JSON.stringify(content)).not.toContain("\u2014");
   });

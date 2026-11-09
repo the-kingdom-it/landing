@@ -15,7 +15,22 @@ export function Pricing() {
           <p className="mt-4 break-words font-display text-[32px] leading-tight text-accent md:text-[44px]">
             {card.amount}
           </p>
-          <p className="mt-4 leading-relaxed text-muted">{card.text}</p>
+          <p className="mt-4 leading-relaxed text-muted">
+            {card.text}
+            {card.link ? (
+              <>
+                {" "}
+                <a
+                  href={card.link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-accent underline decoration-accent/40 underline-offset-4 transition-colors hover:decoration-accent"
+                >
+                  {card.link.label}
+                </a>
+              </>
+            ) : null}
+          </p>
         </div>
       </Container>
     </section>
