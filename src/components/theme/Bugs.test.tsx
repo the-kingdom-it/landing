@@ -37,6 +37,17 @@ describe("Bugs", () => {
     expect(screen.getByRole("status")).toHaveTextContent("поймано багов: 1");
   });
 
+  it("keeps a caught bug where it was caught while the catch animation plays", () => {
+    const { container } = render(<Bugs counterLabel="поймано багов" />);
+    act(() => vi.advanceTimersByTime(100));
+    const bug = container.querySelector<HTMLElement>("[data-bug]")!;
+    const before = bug.style.transform;
+    expect(before).not.toBe("");
+    fireEvent.pointerDown(bug);
+    expect(bug).toHaveClass("bug--caught");
+    expect(bug.style.transform).toBe(before);
+  });
+
   it("stays away when the user prefers reduced motion", () => {
     mockMedia({ reduce: true });
     const { container } = render(<Bugs counterLabel="поймано багов" />);

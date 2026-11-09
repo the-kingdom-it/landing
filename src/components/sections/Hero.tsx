@@ -32,7 +32,7 @@ export function Hero() {
             </ButtonLink>
           </div>
           {bugs ? (
-            <p style={motionDelay(300)} className="motion-rise mt-6 font-mono text-[13px] leading-relaxed text-muted">
+            <p style={motionDelay(300)} className="bug-hint motion-rise mt-6 font-mono text-[13px] leading-relaxed text-muted">
               {bugs.hint}
             </p>
           ) : null}

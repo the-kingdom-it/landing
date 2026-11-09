@@ -6,8 +6,7 @@ import { BugDefs, BugSprite } from "./BugSprite";
 
 const CATCH_ANIMATION_MS = 450;
 
-const toTransform = (bug: Bug | undefined) =>
-  bug ? `translate3d(${bug.x}px, ${bug.y}px, 0) rotate(${bug.angle + Math.PI / 2}rad)` : undefined;
+const toTransform = (bug: Bug) => `translate3d(${bug.x}px, ${bug.y}px, 0) rotate(${bug.angle + Math.PI / 2}rad)`;
 
 /*
  * Жуки ползают по экрану, их ловят лупой: навести кольцо и задержать или кликнуть (на телефоне — тап).
@@ -17,7 +16,10 @@ const toTransform = (bug: Bug | undefined) =>
 export function Bugs({ counterLabel }: { counterLabel: string }) {
   const [ids, setIds] = useState<number[]>([]);
   const [caught, setCaught] = useState(0);
+  const [caughtIds, setCaughtIds] = useState<ReadonlySet<number>>(() => new Set());
   const bugs = useRef(new Map<number, Bug>());
+  /* последняя позиция каждого жука: пойманный остаётся на месте, пока играет анимация */
+  const transforms = useRef(new Map<number, string>());
   const nodes = useRef(new Map<number, HTMLDivElement>());
   const catchBug = useRef<(id: number) => void>(() => {});
 
@@ -45,15 +47,25 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
     const spawn = () => {
       if (!active || bugs.current.size >= max) return;
       const id = nextId++;
-      bugs.current.set(id, spawnBug(id, view()));
+      const bug = spawnBug(id, view());
+      bugs.current.set(id, bug);
+      transforms.current.set(id, toTransform(bug));
       setIds((list) => [...list, id]);
     };
 
-    const drop = (id: number) => setIds((list) => list.filter((other) => other !== id));
+    const drop = (id: number) => {
+      transforms.current.delete(id);
+      setIds((list) => list.filter((other) => other !== id));
+      setCaughtIds((set) => {
+        const next = new Set(set);
+        next.delete(id);
+        return next;
+      });
+    };
 
     catchBug.current = (id) => {
       if (!bugs.current.delete(id)) return;
-      nodes.current.get(id)?.classList.add("bug--caught");
+      setCaughtIds((set) => new Set(set).add(id));
       setCaught((count) => count + 1);
       later(() => {
         drop(id);
@@ -83,8 +95,10 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
           continue;
         }
         bugs.current.set(id, next);
+        const transform = toTransform(next);
+        transforms.current.set(id, transform);
         const node = nodes.current.get(id);
-        if (node) node.style.transform = toTransform(next) ?? "";
+        if (node) node.style.transform = transform;
       }
       raf = requestAnimationFrame(frame);
     };
@@ -108,6 +122,7 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
     start();
 
     const tracked = bugs.current;
+    const trackedTransforms = transforms.current;
     return () => {
       active = false;
       cancelAnimationFrame(raf);
@@ -116,6 +131,7 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
       root.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("visibilitychange", onVisibility);
       tracked.clear();
+      trackedTransforms.clear();
       delete root.dataset.bugs;
     };
   }, []);
@@ -128,8 +144,8 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
           <div
             key={id}
             data-bug=""
-            className="bug"
-            style={{ transform: toTransform(bugs.current.get(id)) }}
+            className={caughtIds.has(id) ? "bug bug--caught" : "bug"}
+            style={{ transform: transforms.current.get(id) }}
             ref={(node) => {
               if (node) nodes.current.set(id, node);
               else nodes.current.delete(id);
@@ -137,6 +153,11 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
             onPointerDown={(event) => {
               event.preventDefault();
               catchBug.current(id);
+            }}
+            // тап по жуку не должен «проваливаться» на кнопку или ссылку под ним
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
             }}
           >
             <BugSprite />

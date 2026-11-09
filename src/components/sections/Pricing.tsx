@@ -13,7 +13,7 @@ export function Pricing() {
       <Container>
         <Panel strong className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <SectionHeading title={pricing.title} lead={pricing.lead} />
-          <div {...revealProps(1)} className="rounded-2xl bg-paper p-6 text-paper-ink md:p-10">
+          <div {...revealProps(1)} className="rounded-2xl bg-paper p-6 text-paper-ink md:p-10 [&_:focus-visible]:outline-accent">
             <p className="font-mono text-sm text-paper-muted">{card.label}</p>
             <p className="mt-4 break-words font-display text-[32px] leading-tight text-accent md:text-[44px]">
               {card.amount}

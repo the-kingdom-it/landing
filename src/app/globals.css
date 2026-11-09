@@ -184,6 +184,17 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
     opacity: 0.85;
   }
 
+  /* листья и лепестки спереди — мельче и прозрачнее, чтобы не закрывать текст */
+  .particles--autumn.particles--front,
+  .particles--spring.particles--front {
+    --depth-scale: 1.1;
+  }
+
+  .particles--autumn.particles--front .particle > i,
+  .particles--spring.particles--front .particle > i {
+    opacity: 0.5;
+  }
+
   /* светлячки: не падают, а кружат и мерцают */
   .particles--summer .particle {
     top: var(--y);
@@ -287,10 +298,6 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
     animation-direction: alternate-reverse;
   }
 
-  .bug--caught {
-    pointer-events: none;
-  }
-
   .bug--caught .bug-sprite {
     animation: bug-caught 0.45s var(--ease-out-soft) forwards;
   }
@@ -306,6 +313,11 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
     border: 2px solid var(--gold);
     border-radius: 50%;
     animation: bug-burst 0.45s ease-out forwards;
+  }
+
+  /* подсказку про жуков показываем, только когда они действительно ползают */
+  html:not([data-bugs]) .bug-hint {
+    visibility: hidden;
   }
 
   .bug-counter {
