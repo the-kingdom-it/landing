@@ -38,6 +38,15 @@ describe("landing page", () => {
     expect(screen.getByRole("link", { name: content.header.cta.label })).toHaveAttribute("href", content.header.cta.href);
   });
 
+  it("header logo is the initials square with an accessible home label, without the brand name", () => {
+    render(<Home />);
+    const banner = screen.getByRole("banner");
+    const home = within(banner).getByRole("link", { name: content.ui.homeLabel });
+    expect(home).toHaveAttribute("href", `#${content.hero.id}`);
+    expect(home).toHaveTextContent(content.brand.initials);
+    expect(within(banner).queryByText("Волков · менторство")).toBeNull();
+  });
+
   it("renders the hero report with computed progress", () => {
     render(<Home />);
     const passed = content.hero.report.steps.filter((step) => step.passed).length;

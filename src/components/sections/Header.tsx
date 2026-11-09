@@ -14,14 +14,18 @@ export function Header() {
         {ui.skipToContent}
       </a>
       <Container className="flex flex-wrap items-center gap-x-3 gap-y-1 py-3 sm:gap-x-4 lg:gap-x-8">
-        <a href={`#${hero.id}`} className="flex min-h-11 items-center gap-2.5">
+        <a
+          href={`#${hero.id}`}
+          aria-label={brand.name ? undefined : ui.homeLabel}
+          className="flex min-h-11 items-center gap-2.5"
+        >
           <span
             aria-hidden="true"
             className="flex size-9 items-center justify-center rounded-[10px] bg-accent font-display text-sm text-on-accent lg:size-10 lg:text-[15px]"
           >
             {brand.initials}
           </span>
-          <span className="text-sm font-semibold sm:text-[15px]">{brand.name}</span>
+          {brand.name ? <span className="text-sm font-semibold sm:text-[15px]">{brand.name}</span> : null}
         </a>
 
         <nav aria-label={ui.navLabel} className="order-last w-full lg:order-none lg:ml-auto lg:w-auto">
