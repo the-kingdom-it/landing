@@ -12,7 +12,7 @@ const variants: Record<Variant, string> = {
 
 const sizes: Record<Size, string> = {
   md: "min-h-12 px-6 py-3 text-[15px]",
-  sm: "min-h-11 px-4 py-2 text-sm",
+  sm: "min-h-11 px-3 py-2 text-sm sm:px-4",
 };
 
 type ButtonLinkProps = {

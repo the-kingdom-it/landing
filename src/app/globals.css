@@ -58,8 +58,8 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* На десктопе шапка липкая — якоря не должны прятаться под неё */
-@media (min-width: 768px) {
+/* На десктопе (от 1024px) шапка липкая — якоря не должны прятаться под неё */
+@media (min-width: 1024px) {
   html {
     scroll-padding-top: 88px;
   }

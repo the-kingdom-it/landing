@@ -14,7 +14,7 @@ export function Hero() {
             <span aria-hidden="true" className="size-2 rounded-[2px] bg-accent" />
             {hero.eyebrow}
           </p>
-          <h1 className="mt-5 font-display text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[46px] lg:text-[56px]">
+          <h1 className="mt-5 text-balance font-display text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[46px] lg:text-[56px]">
             {hero.title}
           </h1>
           <p className="mt-6 max-w-[580px] text-lg leading-relaxed text-muted">{hero.subtitle}</p>
