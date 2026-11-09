@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/*
+ * ДИЗАЙН-ТОКЕНЫ
+ * Все цвета сайта задаются здесь. Поменяй значение — изменится везде:
+ * в утилитах Tailwind (bg-accent, text-muted, border-line…) и в favicon.
+ */
+:root {
+  --canvas: #f3f4f1; /* фон страницы */
+  --surface: #ffffff; /* фон карточек */
+  --ink: #0f1115; /* основной текст и тёмная секция */
+  --muted: #3d424a; /* вторичный текст */
+  --line: #dcded9; /* бордеры */
+  --accent: #2b50ff; /* акцентный цвет — меняется только здесь */
+  --on-accent: #ffffff; /* текст на акцентном фоне */
+  --passed: #1b7a43; /* «passed»-зелёный */
+  --placeholder: #e3e5e0; /* фон плейсхолдера вместо фото */
+
+  /* тёмная секция «Оплата» */
+  --on-dark: #ffffff;
+  --on-dark-muted: #a9aeb6;
+  --line-dark: #2a2e36;
+
+  /* производные — пересчитываются от акцента сами */
+  --accent-strong: color-mix(in srgb, var(--accent), black 14%);
+  --accent-soft: color-mix(in srgb, var(--accent), white 90%);
+  --passed-soft: color-mix(in srgb, var(--passed), white 88%);
+
+  /* плавность анимаций */
+  --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out-back: cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+/*
+ * Проброс токенов в Tailwind (в Tailwind v4 это и есть «tailwind config»).
+ * Шрифты подключаются в src/app/fonts.ts, здесь — только их роли.
+ */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-passed: var(--passed);
+  --color-passed-soft: var(--passed-soft);
+  --color-placeholder: var(--placeholder);
+  --color-on-dark: var(--on-dark);
+  --color-on-dark-muted: var(--on-dark-muted);
+  --color-line-dark: var(--line-dark);
+
+  --font-display: var(--font-unbounded), "Arial Black", sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/*
+ * АНИМАЦИИ
+ * 1. Появление при прокрутке: блоки с атрибутом data-reveal (src/lib/reveal.ts)
+ *    проявляются, когда доезжают до экрана. Включает их компонент ScrollReveal.
+ * 2. Первый экран: классы motion-rise / motion-pop / motion-grow-x срабатывают при загрузке.
+ * Без JS или при «уменьшить движение» в настройках системы всё видно сразу, без анимации.
+ */
+@layer components {
+  html[data-reveal-ready] [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(28px) scale(0.975);
+  }
+
+  html[data-reveal-ready] [data-reveal][data-revealed] {
+    transition:
+      opacity 0.8s var(--ease-out-soft),
+      transform 0.8s var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-rise {
+      animation: rise 0.8s var(--ease-out-soft) both;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    .motion-pop {
+      animation: pop 0.5s var(--ease-out-back) both;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    .motion-grow-x {
+      transform-origin: left center;
+      animation: grow-x 1.4s var(--ease-out-soft) both;
+      animation-delay: var(--delay, 0ms);
+    }
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Базовые стили — в слое base, чтобы утилиты Tailwind могли их переопределять */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* На десктопе (от 1024px) шапка липкая — якоря не должны прятаться под неё */
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 88px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
