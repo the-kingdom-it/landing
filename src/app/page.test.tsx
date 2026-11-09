@@ -105,6 +105,12 @@ describe("landing page", () => {
     expect(footer).not.toHaveTextContent("ИНН");
   });
 
+  it("hints about the bugs under the hero buttons", () => {
+    render(<Home />);
+    const hero = screen.getByRole("heading", { level: 1 }).closest("section")!;
+    expect(within(hero).getByText(content.bugs!.hint)).toBeInTheDocument();
+  });
+
   it("renders the hero without the eyebrow label", () => {
     render(<Home />);
     expect(screen.queryByText("Менторство в QA и автоматизации")).toBeNull();

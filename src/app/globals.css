@@ -241,6 +241,122 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
 }
 
 /*
+ * ЖУКИ И ЛУПА
+ * Жуки ползают поверх контента (под шапкой), компонент Bugs, «физика» — src/lib/bugs.ts.
+ * Курсор-лупа — только для мыши и только пока жуки на странице (html[data-bugs]).
+ */
+@layer components {
+  .bugs {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bug {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 52px;
+    height: 57px;
+    margin: -28px 0 0 -26px;
+    pointer-events: auto;
+    touch-action: manipulation;
+    will-change: transform;
+    /* лёгкое свечение, чтобы чёрный жук читался на тёмном стекле */
+    filter: drop-shadow(0 0 6px rgba(255, 236, 200, 0.32));
+  }
+
+  .bug-sprite {
+    display: block;
+    overflow: visible;
+  }
+
+  .bug-shadow {
+    fill: rgba(0, 0, 0, 0.45);
+  }
+
+  .bug-legs {
+    transform-box: view-box;
+    transform-origin: 20px 26px;
+    animation: bug-legs 0.24s ease-in-out infinite alternate;
+  }
+
+  .bug-legs--b {
+    animation-direction: alternate-reverse;
+  }
+
+  .bug--caught {
+    pointer-events: none;
+  }
+
+  .bug--caught .bug-sprite {
+    animation: bug-caught 0.45s var(--ease-out-soft) forwards;
+  }
+
+  .bug--caught .bug-legs {
+    animation-play-state: paused;
+  }
+
+  .bug--caught::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    animation: bug-burst 0.45s ease-out forwards;
+  }
+
+  .bug-counter {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 30;
+    padding: 10px 14px;
+    border-radius: 12px;
+    pointer-events: none;
+  }
+
+  @media (pointer: fine) {
+    html[data-bugs] body {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M27 27l14 14' stroke='%230b0d14' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M27 27l14 14' stroke='%23e8be6e' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='18' r='12' fill='rgba%28255%2C255%2C255%2C0.12%29' stroke='%230b0d14' stroke-width='5'/%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%23f5efe4' stroke-width='2.5'/%3E%3C/svg%3E") 18 18, zoom-in;
+    }
+  }
+}
+
+@keyframes bug-legs {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes bug-caught {
+  35% {
+    transform: translateY(-8px) scale(1.35);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-8px) scale(0.2) rotate(220deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bug-burst {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/*
  * АНИМАЦИИ
  * 1. Появление при прокрутке: блоки с атрибутом data-reveal (src/lib/reveal.ts)
  *    проявляются, когда доезжают до экрана. Включает их компонент ScrollReveal.

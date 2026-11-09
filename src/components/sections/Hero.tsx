@@ -5,7 +5,7 @@ import { Container } from "../ui/Container";
 import { ReportCard } from "../ui/ReportCard";
 
 export function Hero() {
-  const { hero } = content;
+  const { hero, bugs } = content;
 
   return (
     <section id={hero.id} className="pb-6 pt-10 md:pb-10 md:pt-16">
@@ -31,6 +31,11 @@ export function Hero() {
               {hero.secondaryCta.label}
             </ButtonLink>
           </div>
+          {bugs ? (
+            <p style={motionDelay(300)} className="motion-rise mt-6 font-mono text-[13px] leading-relaxed text-muted">
+              {bugs.hint}
+            </p>
+          ) : null}
         </div>
         <ReportCard report={hero.report} />
       </Container>

@@ -130,6 +130,11 @@ export type SiteContent = {
     button: LinkItem;
     handle: string;
   };
+  /** Жуки, которых ловят лупой. null — жуков нет. */
+  bugs: {
+    hint: string;
+    counterLabel: string;
+  } | null;
   footer: {
     /** Текст после «© год» слева. null — только «© год». */
     owner: string | null;
@@ -336,6 +341,11 @@ export const content: SiteContent = {
     text: "Расскажи, где ты сейчас и куда хочешь прийти. Разберём твой уровень и предложим план – это ни к чему не обязывает.",
     button: { label: "Написать в Telegram", href: telegram.url },
     handle: telegram.handle,
+  },
+
+  bugs: {
+    hint: "По королевству ползают баги – поймай их лупой.",
+    counterLabel: "поймано багов",
   },
 
   footer: {
