@@ -59,15 +59,14 @@ export type SiteContent = {
     season: SeasonSetting;
   };
   brand: {
+    /** Буквы в favicon. */
     initials: string;
-    /** Текст рядом с квадратом-логотипом в шапке. null — только квадрат с инициалами. */
-    name: string | null;
+    /** Название в шапке, ведёт наверх страницы. */
+    name: string;
   };
   ui: {
     skipToContent: string;
     navLabel: string;
-    /** Подпись логотипа для скринридеров, когда brand.name = null. */
-    homeLabel: string;
   };
   header: {
     nav: LinkItem[];
@@ -161,14 +160,13 @@ export const content: SiteContent = {
   },
 
   brand: {
-    initials: "ВВ",
-    name: null,
+    initials: "KI",
+    name: "Kingdom IT",
   },
 
   ui: {
     skipToContent: "Перейти к содержанию",
     navLabel: "Навигация по странице",
-    homeLabel: "В начало страницы",
   },
 
   header: {

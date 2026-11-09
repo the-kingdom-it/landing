@@ -8,11 +8,12 @@ export function Cta() {
   const { cta } = content;
 
   return (
-    <section id={cta.id} className="border-t border-line py-20 md:py-24">
+    <section id={cta.id} className="py-6 md:py-10">
       <Container>
         <div
           {...revealProps()}
-          className="flex flex-col items-center rounded-2xl border border-line bg-surface px-6 py-12 text-center md:px-12 md:py-16">
+          className="glass flex flex-col items-center rounded-[28px] border border-line px-6 py-12 text-center shadow-panel md:px-12 md:py-16"
+        >
           <SectionHeading title={cta.title} lead={cta.text} />
           <ButtonLink href={cta.button.href} icon="send" className="mt-8 w-full sm:w-auto">
             {cta.button.label}

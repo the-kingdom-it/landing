@@ -1,30 +1,37 @@
 @import "tailwindcss";
 
 /*
- * ДИЗАЙН-ТОКЕНЫ
+ * ДИЗАЙН-ТОКЕНЫ — тема «тёмное стекло» поверх сцены королевства.
  * Все цвета сайта задаются здесь. Поменяй значение — изменится везде:
  * в утилитах Tailwind (bg-accent, text-muted, border-line…) и в favicon.
  */
 :root {
-  --canvas: #f3f4f1; /* фон страницы */
-  --surface: #ffffff; /* фон карточек */
-  --ink: #0f1115; /* основной текст и тёмная секция */
-  --muted: #3d424a; /* вторичный текст */
-  --line: #dcded9; /* бордеры */
-  --accent: #2b50ff; /* акцентный цвет — меняется только здесь */
+  --canvas: #0b0d14; /* фон под сценой, пока картинка грузится */
+  --glass: rgba(12, 14, 22, 0.64); /* стеклянные панели секций */
+  --glass-strong: rgba(9, 10, 16, 0.82); /* шапка, футер, секция «Оплата» */
+  --surface: rgba(255, 255, 255, 0.05); /* карточки внутри стекла */
+  --ink: #f5efe4; /* основной текст */
+  --muted: #d4ccbd; /* вторичный текст */
+  --line: rgba(232, 190, 110, 0.3); /* рамки — полупрозрачное золото */
+  --gold: #e8be6e; /* акцентный текст на тёмном */
+  --accent: #2b50ff; /* кнопки — меняется только здесь */
   --on-accent: #ffffff; /* текст на акцентном фоне */
-  --passed: #1b7a43; /* «passed»-зелёный */
-  --placeholder: #e3e5e0; /* фон плейсхолдера вместо фото */
+  --passed: #2f9a5a; /* «passed»: кружки и полоса прогресса */
+  --passed-fg: #8fe0aa; /* «passed»: текст на тёмном */
+  --placeholder: rgba(255, 255, 255, 0.08); /* фон плейсхолдера вместо фото */
 
-  /* тёмная секция «Оплата» */
-  --on-dark: #ffffff;
-  --on-dark-muted: #a9aeb6;
-  --line-dark: #2a2e36;
+  /* светлая карточка постоплаты и светлые кнопки */
+  --paper: #f7f1e6;
+  --paper-ink: #1a1510;
+  --paper-muted: #4a4237;
 
-  /* производные — пересчитываются от акцента сами */
+  /* затемнение сцены, чтобы текст на стекле читался даже на светлых местах картинки */
+  --scene-overlay: linear-gradient(180deg, rgba(8, 10, 18, 0.42) 0%, rgba(8, 10, 18, 0.55) 55%, rgba(8, 10, 18, 0.7) 100%);
+
+  /* производные — пересчитываются сами */
   --accent-strong: color-mix(in srgb, var(--accent), black 14%);
-  --accent-soft: color-mix(in srgb, var(--accent), white 90%);
-  --passed-soft: color-mix(in srgb, var(--passed), white 88%);
+  --passed-soft: color-mix(in srgb, var(--passed-fg), transparent 84%);
+  --gold-soft: color-mix(in srgb, var(--gold), transparent 85%);
 
   /* плавность анимаций */
   --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -41,20 +48,37 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
-  --color-accent-soft: var(--accent-soft);
   --color-on-accent: var(--on-accent);
   --color-passed: var(--passed);
+  --color-passed-fg: var(--passed-fg);
   --color-passed-soft: var(--passed-soft);
   --color-placeholder: var(--placeholder);
-  --color-on-dark: var(--on-dark);
-  --color-on-dark-muted: var(--on-dark-muted);
-  --color-line-dark: var(--line-dark);
+  --color-paper: var(--paper);
+  --color-paper-ink: var(--paper-ink);
+  --color-paper-muted: var(--paper-muted);
+
+  --shadow-panel: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
 
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* Стекло: полупрозрачный фон с размытием того, что за ним */
+@utility glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+
+@utility glass-strong {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
 }
 
 /*
@@ -181,7 +205,7 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--gold);
     outline-offset: 3px;
   }
 }

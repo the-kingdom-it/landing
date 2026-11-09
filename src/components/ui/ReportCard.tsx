@@ -13,13 +13,13 @@ export function ReportCard({ report }: ReportCardProps) {
   const percent = total === 0 ? 0 : Math.round((passed / total) * 100);
 
   return (
-    <div style={motionDelay(150)} className="motion-rise w-full rounded-2xl border border-line bg-surface">
+    <div style={motionDelay(150)} className="glass motion-rise w-full rounded-[28px] border border-line shadow-panel">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
         <span className="flex min-w-0 items-center gap-2 font-mono text-sm text-ink">
           <Icon name="file" className="size-4 shrink-0 text-muted" />
           <span className="truncate">{report.fileName}</span>
         </span>
-        <span className="rounded-full bg-passed-soft px-2.5 py-1 font-mono text-xs font-medium text-passed">
+        <span className="rounded-full bg-passed-soft px-2.5 py-1 font-mono text-xs font-medium text-passed-fg">
           {`${passed} / ${total} ${report.passedLabel}`}
         </span>
       </div>
@@ -31,7 +31,7 @@ export function ReportCard({ report }: ReportCardProps) {
           aria-valuemin={0}
           aria-valuemax={total}
           aria-valuenow={passed}
-          className="h-2 overflow-hidden rounded-full bg-canvas"
+          className="h-2 overflow-hidden rounded-full bg-white/10"
         >
           <div
             className="motion-grow-x h-full rounded-full bg-passed"
@@ -57,11 +57,11 @@ export function ReportCard({ report }: ReportCardProps) {
             ) : (
               <span
                 style={motionDelay(550 + index * 110)}
-                className="motion-pop size-6 shrink-0 rounded-full border-2 border-accent"
+                className="motion-pop size-6 shrink-0 rounded-full border-2 border-gold"
                 aria-hidden="true"
               />
             )}
-            <span className={`text-[15px] ${step.passed ? "text-ink" : "font-semibold text-accent"}`}>
+            <span className={`text-[15px] ${step.passed ? "text-ink" : "font-semibold text-gold"}`}>
               {step.label}
             </span>
             <span className="sr-only">{step.passed ? report.statusPassed : report.statusPending}</span>

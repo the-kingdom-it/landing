@@ -6,26 +6,16 @@ export function Header() {
   const { brand, header, ui, hero } = content;
 
   return (
-    <header className="border-b border-line bg-canvas lg:sticky lg:top-0 lg:z-20">
+    <header className="glass-strong relative z-40 border-b border-line lg:sticky lg:top-0">
       <a
         href="#main"
-        className="sr-only rounded-lg bg-ink px-4 py-3 text-on-dark focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-30"
+        className="sr-only rounded-lg bg-paper px-4 py-3 text-paper-ink focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
       >
         {ui.skipToContent}
       </a>
       <Container className="flex flex-wrap items-center gap-x-3 gap-y-1 py-3 sm:gap-x-4 lg:gap-x-8">
-        <a
-          href={`#${hero.id}`}
-          aria-label={brand.name ? undefined : ui.homeLabel}
-          className="flex min-h-11 items-center gap-2.5"
-        >
-          <span
-            aria-hidden="true"
-            className="flex size-9 items-center justify-center rounded-[10px] bg-accent font-display text-sm text-on-accent lg:size-10 lg:text-[15px]"
-          >
-            {brand.initials}
-          </span>
-          {brand.name ? <span className="text-sm font-semibold sm:text-[15px]">{brand.name}</span> : null}
+        <a href={`#${hero.id}`} className="flex min-h-11 items-center font-display text-[15px] text-ink sm:text-base">
+          {brand.name}
         </a>
 
         <nav aria-label={ui.navLabel} className="order-last w-full lg:order-none lg:ml-auto lg:w-auto">
