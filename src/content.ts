@@ -64,7 +64,8 @@ export type SiteContent = {
   };
   hero: {
     id: string;
-    eyebrow: string;
+    /** Моноширинная надпись над заголовком. null — без надписи. */
+    eyebrow: string | null;
     title: string;
     subtitle: string;
     primaryCta: LinkItem;
@@ -120,7 +121,9 @@ export type SiteContent = {
     handle: string;
   };
   footer: {
-    owner: string;
+    /** Текст после «© год» слева. null — только «© год». */
+    owner: string | null;
+    /** Текст справа: ФИО, реквизиты или статус самозанятого. */
     legal: string;
   };
 };
@@ -159,7 +162,7 @@ export const content: SiteContent = {
 
   hero: {
     id: "top",
-    eyebrow: "Менторство в QA и автоматизации",
+    eyebrow: null,
     title: "Доведём до оффера в QA и AQA",
     subtitle:
       "Составим личный план, будем ревьюить твой код и проводить мок-собеседования, пока не получишь оффер. Основная оплата – только после оффера.",
@@ -259,12 +262,12 @@ export const content: SiteContent = {
     members: [
       {
         name: "Валентин Волков",
-        role: "Основатель, AQA Engineer",
+        role: "AQA Engineer",
         description:
-          "За 7 месяцев вырос от стажёра до ведущего инженера по автоматизации. Проведу тебе бесплатный созвон-знакомство.",
-        stack: ["Go", "Python", "TypeScript", "Playwright", "pytest"],
+          "За 7 месяцев вырос от стажёра до ведущего инженера по автоматизации, поэтому знаю, где застреваешь на первых этапах. Проведу тебе бесплатный созвон-знакомство.",
+        stack: [],
         photo: "/team/valentin.jpg",
-        photoAlt: "Валентин Волков, основатель менторства и AQA Engineer",
+        photoAlt: "Валентин Волков, AQA Engineer",
       },
       {
         name: "[ИМЯ ФАМИЛИЯ]",
@@ -281,7 +284,7 @@ export const content: SiteContent = {
   referral: {
     id: "referral",
     title: "Приведи друга – получи 10%",
-    text: "Порекомендуй менторство другу и получи 10% от постоплаты. [Условия начисления]",
+    text: "Порекомендуй менторство другу и получи 10% от постоплаты.",
     cta: { label: "Узнать условия", href: "#cta" },
   },
 
@@ -316,7 +319,7 @@ export const content: SiteContent = {
   },
 
   footer: {
-    owner: "Валентин Волков",
-    legal: "[Реквизиты / статус самозанятого, ИНН]",
+    owner: null,
+    legal: "Волков Валентин Александрович",
   },
 };

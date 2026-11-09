@@ -86,10 +86,16 @@ describe("landing page", () => {
     expect(screen.getByRole("heading", { name: content.referral.title })).toBeInTheDocument();
   });
 
-  it("renders the footer with the current year and legal placeholder", () => {
+  it("renders the footer with the copyright year and the full name only", () => {
     render(<Home />);
     const footer = screen.getByRole("contentinfo");
-    expect(footer).toHaveTextContent(String(new Date().getFullYear()));
-    expect(footer).toHaveTextContent(content.footer.legal);
+    expect(footer.textContent).toBe(`\u00A9 ${new Date().getFullYear()}${content.footer.legal}`);
+    expect(footer).toHaveTextContent("Волков Валентин Александрович");
+    expect(footer).not.toHaveTextContent("ИНН");
+  });
+
+  it("renders the hero without the eyebrow label", () => {
+    render(<Home />);
+    expect(screen.queryByText("Менторство в QA и автоматизации")).toBeNull();
   });
 });
