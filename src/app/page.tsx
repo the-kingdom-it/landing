@@ -9,6 +9,7 @@ import { Process } from "@/components/sections/Process";
 import { Referral } from "@/components/sections/Referral";
 import { Team } from "@/components/sections/Team";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Scene } from "@/components/theme/Scene";
 
 /*
  * Порядок секций на странице.
@@ -30,6 +31,7 @@ const sections = [
 export default function Home() {
   return (
     <>
+      <Scene />
       <Header />
       <main id="main">
         {sections.map((Section, index) => (

@@ -58,6 +58,39 @@
 }
 
 /*
+ * СЦЕНА
+ * Картинка сезона за всей страницей. Сезон ставит <html data-season> (content.scene.season).
+ * Файлы: public/scene/<сезон>.webp и <сезон>-m.webp (портретный кроп для телефонов).
+ */
+html[data-season="winter"] { --scene-image: url("/scene/winter.webp"); }
+html[data-season="spring"] { --scene-image: url("/scene/spring.webp"); }
+html[data-season="summer"] { --scene-image: url("/scene/summer.webp"); }
+html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
+
+@media (max-width: 767px) {
+  html[data-season="winter"] { --scene-image: url("/scene/winter-m.webp"); }
+  html[data-season="spring"] { --scene-image: url("/scene/spring-m.webp"); }
+  html[data-season="summer"] { --scene-image: url("/scene/summer-m.webp"); }
+  html[data-season="autumn"] { --scene-image: url("/scene/autumn-m.webp"); }
+}
+
+@layer components {
+  .scene {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background: var(--scene-image) center 30% / cover no-repeat, var(--canvas);
+  }
+
+  .scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--scene-overlay);
+  }
+}
+
+/*
  * АНИМАЦИИ
  * 1. Появление при прокрутке: блоки с атрибутом data-reveal (src/lib/reveal.ts)
  *    проявляются, когда доезжают до экрана. Включает их компонент ScrollReveal.

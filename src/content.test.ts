@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { content } from "./content";
+import { SEASONS } from "./lib/season";
 
 /*
  * Тесты проверяют структуру контента, а не количество пунктов:
@@ -65,6 +66,10 @@ describe("content", () => {
   it("postpayment card links to the same Telegram as the CTA button", () => {
     expect(content.pricing.postpayment.link?.href).toBe(content.cta.button.href);
     expect(content.pricing.postpayment.link?.label).toBe(content.cta.handle);
+  });
+
+  it("scene season is a known season or auto", () => {
+    expect([...SEASONS, "auto"]).toContain(content.scene.season);
   });
 
   it("site texts use the short dash instead of the em dash", () => {

@@ -6,6 +6,8 @@
  * Поле `id` у секции – это якорь в адресе (#process). Если меняешь id, поправь ссылки в header.nav.
  */
 
+import type { SeasonSetting } from "@/lib/season";
+
 export type LinkItem = {
   label: string;
   href: string;
@@ -48,6 +50,13 @@ export type SiteContent = {
     locale: string;
     /** Картинка для соцсетей 1200×630 из public/, например "/og.png". null – без картинки. */
     ogImage: string | null;
+  };
+  scene: {
+    /**
+     * Сезон фона: "winter" | "spring" | "summer" | "autumn" или "auto" — по текущему месяцу.
+     * Для проверки любой сезон можно открыть по адресу ?season=summer.
+     */
+    season: SeasonSetting;
   };
   brand: {
     initials: string;
@@ -145,6 +154,10 @@ export const content: SiteContent = {
     siteUrl: "[https://ваш-домен.ru]",
     locale: "ru_RU",
     ogImage: null,
+  },
+
+  scene: {
+    season: "winter",
   },
 
   brand: {
