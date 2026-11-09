@@ -115,6 +115,132 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
 }
 
 /*
+ * ЧАСТИЦЫ
+ * Летят между сценой и стеклом (компонент Particles, параметры — src/lib/particles.ts).
+ * Сдвиг вниз — свойство translate, покачивание — transform, вращение — rotate: они не мешают друг другу.
+ */
+@layer components {
+  .particles {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* передний слой: поверх контента (под жуками и шапкой), крупнее и быстрее — ближе к зрителю */
+  .particles--front {
+    z-index: 20;
+    --depth-scale: 1.8;
+    --depth-speed: 0.7;
+  }
+
+  .particle {
+    position: absolute;
+    top: -6vh;
+    left: var(--x);
+    animation: particle-fall calc(var(--fall) * var(--depth-speed, 1)) linear var(--delay) infinite;
+    will-change: translate;
+  }
+
+  .particle > i {
+    display: block;
+    width: calc(var(--size) * var(--depth-scale, 1));
+    height: calc(var(--size) * var(--depth-scale, 1));
+    animation: particle-sway var(--sway) ease-in-out var(--delay) infinite alternate;
+  }
+
+  /* снег */
+  .particles--winter .particle > i {
+    border-radius: 50%;
+    background: #fff;
+    opacity: var(--alpha);
+    filter: blur(var(--blur));
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.55);
+  }
+
+  /* крупные хлопья спереди — мягкие и полупрозрачные, чтобы не мешать читать */
+  .particles--winter.particles--front .particle > i {
+    opacity: calc(var(--alpha) * 0.75);
+    filter: blur(calc(var(--blur) + 0.8px));
+  }
+
+  /* листья и лепестки */
+  .particles--autumn .particle > i,
+  .particles--spring .particle > i {
+    background: var(--color);
+    animation:
+      particle-sway var(--sway) ease-in-out var(--delay) infinite alternate,
+      particle-spin var(--spin) linear var(--delay) infinite;
+  }
+
+  .particles--autumn .particle > i {
+    border-radius: 0 80% 0 80%;
+    opacity: 0.9;
+  }
+
+  .particles--spring .particle > i {
+    border-radius: 70% 10% 70% 10%;
+    opacity: 0.85;
+  }
+
+  /* светлячки: не падают, а кружат и мерцают */
+  .particles--summer .particle {
+    top: var(--y);
+    animation: particle-wander var(--fall) ease-in-out var(--delay) infinite alternate;
+  }
+
+  .particles--summer .particle > i {
+    border-radius: 50%;
+    background: #ffe58a;
+    box-shadow: 0 0 10px 3px rgba(255, 214, 102, 0.75);
+    animation: particle-pulse var(--sway) ease-in-out var(--delay) infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .particles {
+      display: none;
+    }
+  }
+}
+
+@keyframes particle-fall {
+  to {
+    translate: 0 112vh;
+  }
+}
+
+@keyframes particle-sway {
+  from {
+    transform: translateX(calc(var(--drift, 0px) * -1));
+  }
+  to {
+    transform: translateX(var(--drift, 0px));
+  }
+}
+
+@keyframes particle-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes particle-wander {
+  to {
+    translate: var(--dx) var(--dy);
+  }
+}
+
+@keyframes particle-pulse {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/*
  * АНИМАЦИИ
  * 1. Появление при прокрутке: блоки с атрибутом data-reveal (src/lib/reveal.ts)
  *    проявляются, когда доезжают до экрана. Включает их компонент ScrollReveal.

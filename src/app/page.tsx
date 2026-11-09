@@ -9,6 +9,7 @@ import { Process } from "@/components/sections/Process";
 import { Referral } from "@/components/sections/Referral";
 import { Team } from "@/components/sections/Team";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Particles } from "@/components/theme/Particles";
 import { Scene } from "@/components/theme/Scene";
 
 /*
@@ -32,6 +33,7 @@ export default function Home() {
   return (
     <>
       <Scene />
+      <Particles />
       <Header />
       <main id="main">
         {sections.map((Section, index) => (
