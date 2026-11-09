@@ -270,13 +270,13 @@ export const content: SiteContent = {
         photoAlt: "Валентин Волков, AQA Engineer",
       },
       {
-        name: "[ИМЯ ФАМИЛИЯ]",
+        name: "Александр",
         role: "QA Lead",
         description:
           "Опыт в тестировании более 8 лет. Вырос от ручного тестировщика до автоматизатора.",
         stack: [],
         photo: "/team/qa-lead.jpg",
-        photoAlt: "[ИМЯ ФАМИЛИЯ], QA Lead",
+        photoAlt: "Александр, QA Lead",
       },
     ],
   },
