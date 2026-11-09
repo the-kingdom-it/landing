@@ -1,4 +1,5 @@
 import { content } from "@/content";
+import { revealProps } from "@/lib/reveal";
 import { Container } from "../ui/Container";
 import { Icon } from "../ui/Icon";
 import { SectionHeading } from "../ui/SectionHeading";
@@ -11,8 +12,8 @@ export function Audience() {
       <Container>
         <SectionHeading title={audience.title} />
         <ul className="mt-10 grid gap-4 md:mt-12 md:grid-cols-3 md:gap-6">
-          {audience.items.map((item) => (
-            <li key={item.title} className="rounded-2xl border border-line bg-surface p-6 md:p-8">
+          {audience.items.map((item, index) => (
+            <li key={item.title} {...revealProps(index + 1)} className="rounded-2xl border border-line bg-surface p-6 md:p-8">
               <span className="flex size-11 items-center justify-center rounded-[10px] bg-accent-soft text-accent">
                 <Icon name={item.icon} className="size-[22px]" />
               </span>

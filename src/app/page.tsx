@@ -8,6 +8,7 @@ import { Pricing } from "@/components/sections/Pricing";
 import { Process } from "@/components/sections/Process";
 import { Referral } from "@/components/sections/Referral";
 import { Team } from "@/components/sections/Team";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 /*
  * Порядок секций на странице.
@@ -36,6 +37,7 @@ export default function Home() {
         ))}
       </main>
       <Footer />
+      <ScrollReveal />
     </>
   );
 }

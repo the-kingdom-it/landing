@@ -22,6 +22,14 @@ describe("landing page", () => {
     expect(dead).toEqual([]);
   });
 
+  it("every section after the hero has elements that appear on scroll", () => {
+    const { container } = render(<Home />);
+    const sections = Array.from(container.querySelectorAll("main > section")).slice(1);
+    for (const section of sections) {
+      expect(section.querySelectorAll("[data-reveal]").length, section.id).toBeGreaterThan(0);
+    }
+  });
+
   it("gives every section an anchor id", () => {
     const { container } = render(<Home />);
     for (const section of container.querySelectorAll("main > section")) {

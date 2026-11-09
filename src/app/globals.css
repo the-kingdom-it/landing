@@ -25,6 +25,10 @@
   --accent-strong: color-mix(in srgb, var(--accent), black 14%);
   --accent-soft: color-mix(in srgb, var(--accent), white 90%);
   --passed-soft: color-mix(in srgb, var(--passed), white 88%);
+
+  /* плавность анимаций */
+  --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out-back: cubic-bezier(0.3, 1.5, 0.5, 1);
 }
 
 /*
@@ -51,6 +55,65 @@
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/*
+ * АНИМАЦИИ
+ * 1. Появление при прокрутке: блоки с атрибутом data-reveal (src/lib/reveal.ts)
+ *    проявляются, когда доезжают до экрана. Включает их компонент ScrollReveal.
+ * 2. Первый экран: классы motion-rise / motion-pop / motion-grow-x срабатывают при загрузке.
+ * Без JS или при «уменьшить движение» в настройках системы всё видно сразу, без анимации.
+ */
+@layer components {
+  html[data-reveal-ready] [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(28px) scale(0.975);
+  }
+
+  html[data-reveal-ready] [data-reveal][data-revealed] {
+    transition:
+      opacity 0.8s var(--ease-out-soft),
+      transform 0.8s var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-rise {
+      animation: rise 0.8s var(--ease-out-soft) both;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    .motion-pop {
+      animation: pop 0.5s var(--ease-out-back) both;
+      animation-delay: var(--delay, 0ms);
+    }
+
+    .motion-grow-x {
+      transform-origin: left center;
+      animation: grow-x 1.4s var(--ease-out-soft) both;
+      animation-delay: var(--delay, 0ms);
+    }
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
 }
 
 /* Базовые стили — в слое base, чтобы утилиты Tailwind могли их переопределять */

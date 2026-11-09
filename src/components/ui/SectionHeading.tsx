@@ -1,3 +1,5 @@
+import { revealProps } from "@/lib/reveal";
+
 type SectionHeadingProps = {
   title: string;
   lead?: string;
@@ -8,7 +10,7 @@ type SectionHeadingProps = {
 export function SectionHeading({ title, lead, tone = "light", className = "" }: SectionHeadingProps) {
   const leadColor = tone === "dark" ? "text-on-dark-muted" : "text-muted";
   return (
-    <div className={`max-w-[760px] ${className}`}>
+    <div {...revealProps()} className={`max-w-[760px] ${className}`}>
       <h2 className="text-balance font-display text-[28px] leading-[1.15] tracking-[-0.01em] sm:text-[34px] lg:text-[40px]">
         {title}
       </h2>

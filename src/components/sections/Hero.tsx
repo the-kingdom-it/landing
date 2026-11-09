@@ -1,4 +1,5 @@
 import { content } from "@/content";
+import { motionDelay } from "@/lib/reveal";
 import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
 import { ReportCard } from "../ui/ReportCard";
@@ -16,11 +17,13 @@ export function Hero() {
               {hero.eyebrow}
             </p>
           ) : null}
-          <h1 className="text-balance font-display text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[46px] lg:text-[56px]">
+          <h1 style={motionDelay(0)} className="motion-rise text-balance font-display text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[46px] lg:text-[56px]">
             {hero.title}
           </h1>
-          <p className="mt-6 max-w-[580px] text-lg leading-relaxed text-muted">{hero.subtitle}</p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <p style={motionDelay(100)} className="motion-rise mt-6 max-w-[580px] text-lg leading-relaxed text-muted">
+            {hero.subtitle}
+          </p>
+          <div style={motionDelay(200)} className="motion-rise mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <ButtonLink href={hero.primaryCta.href} icon="arrow-right">
               {hero.primaryCta.label}
             </ButtonLink>
