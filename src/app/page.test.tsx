@@ -69,10 +69,11 @@ describe("landing page", () => {
     expect(screen.getByText(content.cta.handle)).toBeInTheDocument();
   });
 
-  it("renders pricing amounts and the referral offer", () => {
+  it("renders the postpayment card and the referral offer", () => {
     render(<Home />);
-    expect(screen.getByText(content.pricing.start.amount)).toBeInTheDocument();
-    expect(screen.getByText(content.pricing.afterOffer.amount)).toBeInTheDocument();
+    const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
+    expect(within(pricing).getByText(content.pricing.postpayment.label)).toBeInTheDocument();
+    expect(within(pricing).getByText(content.pricing.postpayment.amount)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: content.referral.title })).toBeInTheDocument();
   });
 

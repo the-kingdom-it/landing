@@ -56,4 +56,13 @@ describe("content", () => {
   it("telegram button links to t.me", () => {
     expect(content.cta.button.href.startsWith("https://t.me/")).toBe(true);
   });
+
+  it("telegram handle under the button matches the link", () => {
+    const nick = content.cta.button.href.replace("https://t.me/", "");
+    expect(content.cta.handle).toBe(`@${nick}`);
+  });
+
+  it("site texts use the short dash instead of the em dash", () => {
+    expect(JSON.stringify(content)).not.toContain("\u2014");
+  });
 });
