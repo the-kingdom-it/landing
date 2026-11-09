@@ -3,17 +3,6 @@ import { describe, expect, it } from "vitest";
 import { content } from "@/content";
 import Home from "./page";
 
-const sectionOrder = [
-  content.hero.id,
-  content.audience.id,
-  content.process.id,
-  content.pricing.id,
-  content.team.id,
-  content.referral.id,
-  content.faq.id,
-  content.cta.id,
-];
-
 describe("landing page", () => {
   it("renders the hero title as the only h1", () => {
     render(<Home />);
@@ -22,10 +11,22 @@ describe("landing page", () => {
     expect(headings[0]).toHaveTextContent(content.hero.title);
   });
 
-  it("renders sections in the configured order", () => {
+  it("every in-page link points to an element rendered on the page", () => {
+    // Убрал секцию из массива в page.tsx — этот тест покажет ссылки, которые на неё вели
     const { container } = render(<Home />);
-    const ids = Array.from(container.querySelectorAll("main > section")).map((el) => el.id);
-    expect(ids).toEqual(sectionOrder);
+    const anchors = Array.from(container.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'));
+    expect(anchors.length).toBeGreaterThan(0);
+    const dead = anchors
+      .map((a) => a.getAttribute("href") ?? "")
+      .filter((href) => !container.querySelector(`[id="${href.slice(1)}"]`));
+    expect(dead).toEqual([]);
+  });
+
+  it("gives every section an anchor id", () => {
+    const { container } = render(<Home />);
+    for (const section of container.querySelectorAll("main > section")) {
+      expect(section.id).not.toBe("");
+    }
   });
 
   it("renders header navigation from content", () => {

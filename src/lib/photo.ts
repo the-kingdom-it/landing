@@ -1,9 +1,11 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
 
 /**
  * Проверяет фото при сборке.
  * null или файла нет в public/ → null (компонент покажет плейсхолдер вместо битой картинки).
+ * Имя сверяется с учётом регистра: macOS считает valentin.JPG и valentin.jpg одним файлом,
+ * а nginx на Linux — нет, и на проде была бы битая картинка.
  * Внешний URL (https://…) возвращается как есть.
  */
 export function resolvePhoto(
@@ -12,5 +14,8 @@ export function resolvePhoto(
 ): string | null {
   if (!photo) return null;
   if (/^https?:\/\//.test(photo)) return photo;
-  return existsSync(join(publicDir, photo)) ? photo : null;
+  const file = join(publicDir, photo);
+  const dir = dirname(file);
+  if (!existsSync(dir)) return null;
+  return readdirSync(dir).includes(basename(file)) ? photo : null;
 }

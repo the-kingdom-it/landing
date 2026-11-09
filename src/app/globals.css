@@ -53,36 +53,39 @@
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-}
-
-/* На десктопе (от 1024px) шапка липкая — якоря не должны прятаться под неё */
-@media (min-width: 1024px) {
+/* Базовые стили — в слое base, чтобы утилиты Tailwind могли их переопределять */
+@layer base {
   html {
-    scroll-padding-top: 88px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  /* На десктопе (от 1024px) шапка липкая — якоря не должны прятаться под неё */
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 88px;
+    }
   }
-}
 
-body {
-  background: var(--canvas);
-  color: var(--ink);
-  overflow-x: clip;
-}
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 
-::selection {
-  background: var(--accent);
-  color: var(--on-accent);
-}
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    overflow-x: clip;
+  }
 
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
 }

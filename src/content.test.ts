@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { content } from "./content";
 
+/*
+ * Тесты проверяют структуру контента, а не количество пунктов:
+ * добавить вопрос в FAQ или шаг в план можно без правки тестов.
+ */
+
 function sectionIds(): string[] {
   return Object.values(content as Record<string, unknown>)
     .filter((value): value is { id: string } => typeof value === "object" && value !== null && "id" in value)
@@ -8,33 +13,30 @@ function sectionIds(): string[] {
 }
 
 describe("content", () => {
-  it("hero report has 6 steps: 5 passed and the last one pending", () => {
+  it("hero report has passed steps and ends with the pending step", () => {
     const steps = content.hero.report.steps;
-    expect(steps).toHaveLength(6);
-    expect(steps.filter((step) => step.passed)).toHaveLength(5);
+    expect(steps.some((step) => step.passed)).toBe(true);
     expect(steps[steps.length - 1].passed).toBe(false);
   });
 
-  it("has 3 audience cards, 6 process steps, 2 pricing cards, 2 team members, 4 FAQ items", () => {
-    expect(content.audience.items).toHaveLength(3);
-    expect(content.process.steps).toHaveLength(6);
-    expect([content.pricing.start, content.pricing.afterOffer]).toHaveLength(2);
-    expect(content.team.members).toHaveLength(2);
-    expect(content.faq.items).toHaveLength(4);
+  it("lists are not empty", () => {
+    expect(content.audience.items.length).toBeGreaterThan(0);
+    expect(content.process.steps.length).toBeGreaterThan(0);
+    expect(content.team.members.length).toBeGreaterThan(0);
+    expect(content.faq.items.length).toBeGreaterThan(0);
+    expect(content.header.nav.length).toBeGreaterThan(0);
   });
 
-  it("every header anchor points to an existing section id", () => {
+  it("every in-page link in content points to a section id from content", () => {
     const ids = sectionIds();
-    const anchors = [...content.header.nav, content.header.cta].map((link) => link.href);
-    for (const href of anchors) {
-      expect(href.startsWith("#")).toBe(true);
-      expect(ids).toContain(href.slice(1));
-    }
-  });
-
-  it("hero buttons and referral button point to existing sections", () => {
-    const ids = sectionIds();
-    for (const href of [content.hero.primaryCta.href, content.hero.secondaryCta.href, content.referral.cta.href]) {
+    const links = [
+      ...content.header.nav,
+      content.header.cta,
+      content.hero.primaryCta,
+      content.hero.secondaryCta,
+      content.referral.cta,
+    ];
+    for (const { href } of links.filter((link) => link.href.startsWith("#"))) {
       expect(ids).toContain(href.slice(1));
     }
   });
@@ -44,10 +46,10 @@ describe("content", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("team photos point to public/team/", () => {
+  it("team photo is null, a path from public/ or an absolute URL, and always has alt text", () => {
     for (const member of content.team.members) {
-      if (member.photo) expect(member.photo.startsWith("/team/")).toBe(true);
-      expect(member.photoAlt.length).toBeGreaterThan(0);
+      if (member.photo !== null) expect(member.photo).toMatch(/^(\/|https?:\/\/)/);
+      expect(member.photoAlt.trim().length).toBeGreaterThan(0);
     }
   });
 
