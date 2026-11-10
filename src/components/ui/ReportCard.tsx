@@ -57,7 +57,7 @@ export function ReportCard({ report }: ReportCardProps) {
           aria-valuemin={0}
           aria-valuemax={total}
           aria-valuenow={passed}
-          className="h-2 overflow-hidden rounded-full bg-white/10"
+          className="h-2 overflow-hidden rounded-full bg-track"
         >
           <div className="run-bar h-full rounded-full bg-passed" style={{ width: `${percent}%`, animationDuration: runTime }} />
         </div>
@@ -74,7 +74,7 @@ export function ReportCard({ report }: ReportCardProps) {
             >
               {step.passed ? (
                 <span aria-hidden="true" className="run-stack size-6 shrink-0">
-                  <span className="run-layer run-pending size-6 rounded-full border-2 border-white/25" />
+                  <span className="run-layer run-pending size-6 rounded-full border-2 border-ring-muted" />
                   <span className="run-layer run-running run-spinner size-6 rounded-full border-2 border-gold border-t-transparent" />
                   <span className="run-layer run-passed run-check flex size-6 items-center justify-center rounded-full bg-passed text-on-accent">
                     <Icon name="check" className="size-3.5" strokeWidth={2.5} />

@@ -60,8 +60,11 @@ npm run build    # сборка в папку out/
   `cwebp -q 72 -m 6 autumn.png -o public/scene/autumn.webp` и
   `cwebp -q 72 -m 6 -crop 480 0 620 1033 autumn.png -o public/scene/autumn-m.webp`.
 - **Фон (временный выбор).** `content.scene.background`: `"kingdom"` — картинки королевства по сезонам,
-  `"1"`…`"7"` — минималистичные фоны из `public/backgrounds/`. Посмотреть любой без правок: `?bg=3` в адресе
-  (например, `http://localhost:3000/?bg=3`) или `BG=3 npm run dev`.
+  `"1"`…`"17"` — минималистичные фоны из `public/backgrounds/` (список с названиями — `src/lib/backgrounds.ts`).
+  Посмотреть любой без правок: `?bg=3` в адресе (например, `http://localhost:3000/?bg=3`) или `BG=3 npm run dev`.
+- **Стиль.** `content.scene.theme`: `"auto"` — по фону (на светлых фонах белый стиль, на тёмных — тёмное стекло),
+  `"light"` или `"dark"` — всегда. Без правок: `?theme=light` в адресе или `THEME=light npm run dev`.
+  Цвета белого стиля — блок `html[data-theme="light"]` в `globals.css`.
 - **Частицы.** Снег, листья, лепестки или светлячки по сезону: часть летит за стеклом, часть — поверх.
   Количество — `src/lib/particles.ts`, внешний вид — блок «ЧАСТИЦЫ» в `globals.css`.
 - **Жуки.** Ползают по экрану, курсор становится лупой. Поймать — навести лупу и задержать или кликнуть,

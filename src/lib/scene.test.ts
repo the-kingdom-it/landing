@@ -22,5 +22,14 @@ describe("sceneStyles", () => {
     expect(css).toContain(rule);
     expect(css.indexOf(rule)).toBeGreaterThan(css.lastIndexOf("@media"));
     expect(css).not.toContain('data-bg="kingdom"');
+    expect(css).toContain('html[data-bg="17"]{--scene-image:url("/landing/backgrounds/17.webp")}');
+  });
+
+  it("softens the overlay for minimalist backgrounds in their own theme only", () => {
+    const css = sceneStyles("");
+    expect(css).toMatch(/html\[data-bg="2"\]\[data-theme="dark"\]\{--scene-overlay:[^}]+\}/);
+    expect(css).toMatch(/html\[data-bg="1"\]\[data-theme="light"\]\{--scene-overlay:[^}]+\}/);
+    expect(css).not.toContain('html[data-bg="1"][data-theme="dark"]');
+    expect(css).not.toContain('html[data-bg="kingdom"]');
   });
 });

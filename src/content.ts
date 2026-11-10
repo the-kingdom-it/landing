@@ -6,7 +6,7 @@
  * Поле `id` у секции – это якорь в адресе (#roadmap). Если меняешь id, поправь ссылки в header.nav.
  */
 
-import type { BackgroundId } from "@/lib/backgrounds";
+import type { BackgroundId, ThemeSetting } from "@/lib/backgrounds";
 import type { SeasonSetting } from "@/lib/season";
 
 export type LinkItem = {
@@ -96,10 +96,12 @@ export type SiteContent = {
      */
     season: SeasonSetting;
     /**
-     * Фон: "kingdom" — картинки королевства по сезонам, "1"…"7" — минималистичные фоны
+     * Фон: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
      * из public/backgrounds. Посмотреть любой: ?bg=3 в адресе или BG=3 npm run dev.
      */
     background: BackgroundId;
+    /** Стиль: "auto" — по фону (светлый фон — белый стиль), "light" или "dark" — всегда. ?theme=light в адресе. */
+    theme: ThemeSetting;
   };
   brand: {
     /** Буквы в favicon. */
@@ -216,6 +218,7 @@ export const content: SiteContent = {
   scene: {
     season: "winter",
     background: "kingdom",
+    theme: "auto",
   },
 
   brand: {
