@@ -508,7 +508,7 @@ export const content: SiteContent = {
 
   team: {
     id: "team",
-    title: "Кто с тобой работает",
+    title: "Кто с тобой будет работать",
     members: [
       {
         name: "Валентин Волков",
