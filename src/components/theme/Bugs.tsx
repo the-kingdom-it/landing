@@ -2,11 +2,44 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { BugReward } from "@/content";
-import { BUG, type Bug, isInLens, isOffscreen, makePromoCode, type Point, scatterBug, spawnBug, stepBug } from "@/lib/bugs";
+import {
+  BUG,
+  type Bug,
+  isInLens,
+  isOffscreen,
+  makePromoCode,
+  type Point,
+  type Rect,
+  scatterBug,
+  spawnBug,
+  stepBug,
+} from "@/lib/bugs";
 import { Icon } from "../ui/Icon";
 import { BugDefs, BugSprite } from "./BugSprite";
 
 const CATCH_ANIMATION_MS = 450;
+
+/**
+ * Жук ползает под блоками интерфейса. Поймать наведением можно, только если в этой точке виден сам жук,
+ * а не панель над ним.
+ */
+export function isBugUncovered(node: HTMLElement | undefined, point: Point): boolean {
+  if (!node || typeof document.elementFromPoint !== "function") return true;
+  const hit = document.elementFromPoint(point.x, point.y);
+  return hit !== null && node.contains(hit);
+}
+
+/** Блоки интерфейса, которые жуки обходят: панели секций, шапка и футер, видимые на экране. */
+const OBSTACLE_SELECTOR = "main > section > div > *, header, footer";
+
+function visibleObstacles(height: number): Rect[] {
+  const rects: Rect[] = [];
+  for (const element of document.querySelectorAll(OBSTACLE_SELECTOR)) {
+    const r = element.getBoundingClientRect();
+    if (r.bottom > 0 && r.top < height && r.width > 0) rects.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom });
+  }
+  return rects;
+}
 
 const toTransform = (bug: Bug) => `translate3d(${bug.x}px, ${bug.y}px, 0) rotate(${bug.angle + Math.PI / 2}rad)`;
 
@@ -105,15 +138,16 @@ export function Bugs({ counterLabel, reward }: { counterLabel: string; reward: B
       const dt = last ? time - last : 16;
       last = time;
       const size = view();
+      const obstacles = done ? [] : visibleObstacles(size.height);
       for (const [id, bug] of bugs.current) {
-        const moved = done ? stepBug(bug, dt, size, null, steady) : stepBug(bug, dt, size, cursor);
+        const moved = done ? stepBug(bug, dt, size, null, steady) : stepBug(bug, dt, size, cursor, Math.random, obstacles);
         if (isOffscreen(moved, size)) {
           bugs.current.delete(id);
           drop(id);
           later(spawn, 800 + Math.random() * 1500);
           continue;
         }
-        const inLens = !done && isInLens(moved, cursor);
+        const inLens = !done && cursor !== null && isInLens(moved, cursor) && isBugUncovered(nodes.current.get(id), cursor);
         const next = { ...moved, dwell: inLens ? moved.dwell + Math.min(dt, BUG.maxFrameMs) : 0 };
         if (next.dwell >= BUG.dwellMs) {
           catchBug.current(id);

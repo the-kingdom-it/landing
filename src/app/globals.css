@@ -289,12 +289,28 @@ html[data-theme="light"] {
  * Жуки ползают поверх контента (под шапкой), компонент Bugs, «физика» — src/lib/bugs.ts.
  */
 @layer components {
+  /* жуки ползают по фону — под блоками интерфейса (z-index ниже контента, но выше сцены) */
   .bugs {
     position: fixed;
     inset: 0;
-    z-index: 30;
+    z-index: -5;
     overflow: hidden;
     pointer-events: none;
+  }
+
+  /*
+   * Чтобы жука на фоне можно было поймать, сама страница пропускает клики насквозь,
+   * а принимают их только блоки интерфейса: шапка, футер, панели секций и плашка награды.
+   */
+  body {
+    pointer-events: none;
+  }
+
+  header,
+  footer,
+  main > section > div > *,
+  .bug-counter.bug-reward {
+    pointer-events: auto;
   }
 
   .bug {
@@ -307,8 +323,8 @@ html[data-theme="light"] {
     pointer-events: auto;
     touch-action: manipulation;
     will-change: transform;
-    /* лёгкое свечение, чтобы чёрный жук читался на тёмном стекле */
-    filter: drop-shadow(0 0 6px rgba(255, 236, 200, 0.32));
+    /* полупрозрачные, чтобы не отвлекали от текста */
+    opacity: 0.6;
   }
 
   .bug-sprite {
