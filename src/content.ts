@@ -6,7 +6,7 @@
  * Поле `id` у секции – это якорь в адресе (#roadmap). Если меняешь id, поправь ссылки в header.nav.
  */
 
-import type { BackgroundId, Theme } from "@/lib/backgrounds";
+import type { BackgroundId, ThemeSetting } from "@/lib/backgrounds";
 import type { SeasonSetting } from "@/lib/season";
 
 export type LinkItem = {
@@ -95,8 +95,11 @@ export type SiteContent = {
      * Для проверки любой сезон можно открыть по адресу ?season=summer.
      */
     season: SeasonSetting;
-    /** Тема по умолчанию: "light" — белый стиль, "dark" — тёмное стекло. Посетитель может переключить в шапке. */
-    theme: Theme;
+    /**
+     * Тема по умолчанию: "system" — как в системе посетителя, "light" — белый стиль, "dark" — тёмное стекло.
+     * Посетитель может переключить в шапке, выбор запоминается.
+     */
+    theme: ThemeSetting;
     /**
      * Основной фон: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
      * из public/backgrounds (названия — src/lib/backgrounds.ts). Тёмная тема берёт его тёмную версию
@@ -220,7 +223,7 @@ export const content: SiteContent = {
 
   scene: {
     season: "winter",
-    theme: "light",
+    theme: "system",
     background: "12",
   },
 

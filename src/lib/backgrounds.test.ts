@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   BACKGROUNDS,
   backgroundTheme,
@@ -63,6 +63,24 @@ describe("resolveScene", () => {
   });
 });
 
+describe("system theme", () => {
+  const system: SceneConfig = { ...config, theme: "system" };
+
+  it("follows the visitor's OS theme by default", () => {
+    expect(resolveScene(system, { system: "dark" })).toEqual({ theme: "dark", bg: "12", preview: false });
+    expect(resolveScene(system, { system: "light" })).toEqual({ theme: "light", bg: "12", preview: false });
+  });
+
+  it("falls back to light when the OS theme is unknown", () => {
+    expect(resolveScene(system, {})).toEqual({ theme: "light", bg: "12", preview: false });
+  });
+
+  it("a remembered choice and ?theme= still win over the OS theme", () => {
+    expect(resolveScene(system, { system: "dark", stored: "light" }).theme).toBe("light");
+    expect(resolveScene(system, { system: "light", theme: "dark" }).theme).toBe("dark");
+  });
+});
+
 describe("dark variants", () => {
   it("only the main paper background has a dark variant", () => {
     expect(BACKGROUNDS.filter((bg) => "darkVariant" in bg && bg.darkVariant).map((bg) => bg.id)).toEqual(["12"]);
@@ -94,6 +112,13 @@ describe("buildBackgroundScript", () => {
   it("applies the remembered style on the main background", () => {
     window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
     expect(run()).toEqual({ theme: "dark", bg: "12", preview: false });
+  });
+
+  it("uses the OS theme when the default is system", () => {
+    vi.stubGlobal("matchMedia", (query: string) => ({ matches: query.includes("dark"), media: query }));
+    new Function(buildBackgroundScript({ ...config, theme: "system" }))();
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    vi.unstubAllGlobals();
   });
 
   it("marks a ?bg= preview and applies ?theme=", () => {

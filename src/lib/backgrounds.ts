@@ -4,6 +4,8 @@
  * (светлое стекло, тёмный текст), на тёмных — тёмное стекло.
  */
 export type Theme = "light" | "dark";
+/** "system" — как в системе посетителя (светлая или тёмная тема ОС). */
+export type ThemeSetting = Theme | "system";
 
 export const BACKGROUNDS = [
   { id: "kingdom", name: "Королевство (по сезонам)", theme: "dark" },
@@ -55,8 +57,8 @@ export function backgroundTheme(id: BackgroundId): Theme {
 export const THEME_STORAGE_KEY = "kingdom-theme";
 
 export type SceneConfig = {
-  /** Тема по умолчанию. */
-  theme: Theme;
+  /** Тема по умолчанию: "system" — как в системе посетителя. */
+  theme: ThemeSetting;
   /** Основной фон. Переключатель темы работает только на нём. */
   background: BackgroundId;
   /** Фон, заданный при запуске (BG=3 npm run dev), — работает как ?bg=. */
@@ -72,18 +74,19 @@ export type SceneState = { theme: Theme; bg: BackgroundId; preview: boolean };
  */
 export function resolveScene(
   config: SceneConfig,
-  input: { bg?: string | null; theme?: string | null; stored?: string | null },
+  input: { bg?: string | null; theme?: string | null; stored?: string | null; system?: Theme | null },
 ): SceneState {
   const requested = isBackground(input.bg) ? input.bg : config.forcedBg;
   if (requested && requested !== config.background) {
     return { theme: isTheme(input.theme) ? input.theme : backgroundTheme(requested), bg: requested, preview: true };
   }
-  const theme = isTheme(input.theme) ? input.theme : isTheme(input.stored) ? input.stored : config.theme;
+  const fallback: Theme = config.theme === "system" ? (input.system ?? "light") : config.theme;
+  const theme = isTheme(input.theme) ? input.theme : isTheme(input.stored) ? input.stored : fallback;
   return { theme, bg: config.background, preview: false };
 }
 
 /** Скрипт для <head>: до первой отрисовки ставит <html data-bg data-theme data-preview> по правилам resolveScene. */
 export function buildBackgroundScript(config: SceneConfig): string {
   const themes = JSON.stringify(Object.fromEntries(BACKGROUNDS.map((bg) => [bg.id, bg.theme])));
-  return `(function(){try{var t=${themes},c=${JSON.stringify(config)},p=new URLSearchParams(location.search),ok=function(v){return v==="light"||v==="dark"},q=p.get("bg"),qt=p.get("theme"),st=null;try{st=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})}catch(e){}var r=Object.prototype.hasOwnProperty.call(t,q)?q:c.forcedBg,d=document.documentElement.dataset;if(r&&r!==c.background){d.theme=ok(qt)?qt:t[r];d.bg=r;d.preview=""}else{d.theme=ok(qt)?qt:ok(st)?st:c.theme;d.bg=c.background;delete d.preview}}catch(e){}})()`;
+  return `(function(){try{var t=${themes},c=${JSON.stringify(config)},p=new URLSearchParams(location.search),ok=function(v){return v==="light"||v==="dark"},q=p.get("bg"),qt=p.get("theme"),st=null;try{st=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})}catch(e){}var r=Object.prototype.hasOwnProperty.call(t,q)?q:c.forcedBg,d=document.documentElement.dataset;if(r&&r!==c.background){d.theme=ok(qt)?qt:t[r];d.bg=r;d.preview=""}else{var sys="light";try{if(matchMedia("(prefers-color-scheme: dark)").matches)sys="dark"}catch(e){}d.theme=ok(qt)?qt:ok(st)?st:c.theme==="system"?sys:c.theme;d.bg=c.background;delete d.preview}}catch(e){}})()`;
 }

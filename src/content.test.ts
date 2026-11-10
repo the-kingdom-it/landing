@@ -84,6 +84,10 @@ describe("content", () => {
     expect([...SEASONS, "auto"]).toContain(content.scene.season);
   });
 
+  it("default theme follows the visitor's system", () => {
+    expect(content.scene.theme).toBe("system");
+  });
+
   it("site texts use the short dash instead of the em dash", () => {
     expect(JSON.stringify(content)).not.toContain("\u2014");
   });
