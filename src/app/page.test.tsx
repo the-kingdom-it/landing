@@ -103,6 +103,10 @@ describe("landing page", () => {
       delete document.documentElement.dataset.season;
     });
 
+    it("roadmap pictures are on by default, in the mesh style", () => {
+      expect(features.roadmapArt).toBe("mesh");
+    });
+
     it("is off by default and no particles are rendered", () => {
       expect(features.snow).toBe(false);
       document.documentElement.dataset.season = "winter";
@@ -151,6 +155,16 @@ describe("landing page", () => {
     for (const member of content.team.members) {
       expect(screen.getByRole("img", { name: member.photoAlt })).toBeInTheDocument();
     }
+  });
+
+  it("types each team member's role", () => {
+    const { container } = render(<Home />);
+    const cards = Array.from(container.querySelector(`#${content.team.id} ul`)!.children);
+    content.team.members.forEach((member, index) => {
+      const typed = cards[index].querySelector(".typed");
+      expect(typed).not.toBeNull();
+      expect(typed!.querySelector(".sr-only")).toHaveTextContent(member.role);
+    });
   });
 
   it("links each team member to their Telegram in a new tab", () => {

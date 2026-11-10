@@ -2,15 +2,19 @@
 
 import { type KeyboardEvent, useId, useRef, useState } from "react";
 import type { RoadmapLabels, RoadmapTrack } from "@/content";
+import type { ArtStyle } from "@/lib/art";
+import { WireArt } from "../ui/WireArt";
 
 type RoadmapTabsProps = {
   tracks: RoadmapTrack[];
   labels: RoadmapLabels;
   final: { title: string; text: string };
+  /** Картинки справа в карточках этапов (фича-тогл roadmapArt). */
+  art?: ArtStyle;
 };
 
 /* Вкладки треков роадмапа и этапы выбранного трека. */
-export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
+export function RoadmapTabs({ tracks, labels, final, art = "off" }: RoadmapTabsProps) {
   const baseId = useId();
   const [active, setActive] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -57,7 +61,9 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
               onClick={() => setActive(index)}
               onKeyDown={onKeyDown}
               className={`flex min-h-14 items-center rounded-xl border px-4 py-3 text-left font-display text-[15px] transition-colors ${
-                selected ? "border-highlight bg-highlight-soft text-ink" : "border-line bg-surface text-muted hover:text-ink"
+                selected
+                  ? "border-highlight bg-highlight-soft text-ink"
+                  : "border-line bg-surface text-muted hover:text-ink"
               }`}
             >
               {item.title}
@@ -66,7 +72,13 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
         })}
       </div>
 
-      <div role="tabpanel" id={`${baseId}-panel`} aria-labelledby={`${baseId}-tab-${track.id}`} className="mt-8">
+      <div
+        role="tabpanel"
+        id={`${baseId}-panel`}
+        aria-labelledby={`${baseId}-tab-${track.id}`}
+        data-art-style={art === "off" ? undefined : art}
+        className="mt-8"
+      >
         <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <span className="font-mono text-sm text-muted">{labels.goal}</span>
           <span className="text-lg font-semibold text-ink">{track.goal}</span>
@@ -82,24 +94,30 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
               >
                 {index}
               </span>
-              <div className="rounded-2xl border border-line bg-surface p-5 md:p-7">
-                <span className="font-mono text-xs tracking-wide text-muted">{`${labels.stage} ${index}`}</span>
-                <h3 className="mt-3 flex flex-wrap items-center gap-2 font-display text-[19px] leading-snug">
-                  {stage.title}
-                  {stage.ai ? (
-                    <span className="rounded-md bg-highlight px-1.5 py-0.5 font-mono text-[11px] font-semibold text-on-highlight">
-                      {labels.ai}
-                    </span>
-                  ) : null}
-                </h3>
-                <p className="mt-1 text-sm text-muted">{stage.subtitle}</p>
-                <p className="mt-5 font-mono text-xs text-muted">{labels.learn}</p>
-                <p className="mt-1.5 max-w-[72ch] leading-relaxed text-ink">{stage.learn}</p>
+              <div className="flex items-center gap-6 rounded-2xl border border-line bg-surface p-5 md:p-7">
+                <div className="min-w-0 flex-1">
+                  <span className="font-mono text-xs tracking-wide text-muted">{`${labels.stage} ${index}`}</span>
+                  <h3 className="mt-3 flex flex-wrap items-center gap-2 font-display text-[19px] leading-snug">
+                    {stage.title}
+                    {stage.ai ? (
+                      <span className="rounded-md bg-highlight px-1.5 py-0.5 font-mono text-[11px] font-semibold text-on-highlight">
+                        {labels.ai}
+                      </span>
+                    ) : null}
+                  </h3>
+                  <p className="mt-1 text-sm text-muted">{stage.subtitle}</p>
+                  <p className="mt-5 font-mono text-xs text-muted">{labels.learn}</p>
+                  <p className="mt-1.5 max-w-[72ch] leading-relaxed text-ink">{stage.learn}</p>
+                </div>
+                {art !== "off" ? <WireArt name={stage.art} className="hidden shrink-0 md:block" /> : null}
               </div>
             </li>
           ))}
           <li className="relative pl-10 sm:pl-12">
-            <span aria-hidden="true" className="absolute left-0 top-6 size-6 rounded-full border-2 border-highlight bg-highlight-soft" />
+            <span
+              aria-hidden="true"
+              className="absolute left-0 top-6 size-6 rounded-full border-2 border-highlight bg-highlight-soft"
+            />
             <div className="rounded-2xl border border-highlight/60 bg-highlight-soft p-5 md:p-7">
               <h3 className="font-display text-[19px] leading-snug text-highlight">{final.title}</h3>
               <p className="mt-2 leading-relaxed text-ink">{final.text}</p>

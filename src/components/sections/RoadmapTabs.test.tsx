@@ -5,8 +5,8 @@ import { RoadmapTabs } from "./RoadmapTabs";
 
 const { tracks, labels, final } = content.roadmap;
 
-function renderTabs() {
-  return render(<RoadmapTabs tracks={tracks} labels={labels} final={final} />);
+function renderTabs(art: "mesh" | "outline" | "off" = "off") {
+  return render(<RoadmapTabs tracks={tracks} labels={labels} final={final} art={art} />);
 }
 
 describe("RoadmapTabs", () => {
@@ -56,5 +56,21 @@ describe("RoadmapTabs", () => {
       expect(within(panel).queryByText(status)).toBeNull();
     }
     expect(within(panel).queryByText("на выходе")).toBeNull();
+  });
+
+  it("draws a decorative picture for every stage when pictures are on", () => {
+    const { container } = renderTabs("mesh");
+    const pictures = container.querySelectorAll("svg[data-art]");
+    expect(pictures).toHaveLength(tracks[0].stages.length);
+    pictures.forEach((svg, index) => {
+      expect(svg).toHaveAttribute("aria-hidden", "true");
+      expect(svg).toHaveAttribute("data-art", tracks[0].stages[index].art);
+    });
+    expect(container.querySelector("[data-art-style]")).toHaveAttribute("data-art-style", "mesh");
+  });
+
+  it("shows no pictures when they are off", () => {
+    const { container } = renderTabs("off");
+    expect(container.querySelectorAll("svg[data-art]")).toHaveLength(0);
   });
 });

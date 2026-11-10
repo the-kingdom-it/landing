@@ -6,6 +6,7 @@
  * Поле `id` у секции – это якорь в адресе (#roadmap). Если меняешь id, поправь ссылки в header.nav.
  */
 
+import type { ArtName } from "@/lib/art";
 import type { BackgroundId, ThemeSetting } from "@/lib/backgrounds";
 import type { TitleStyleId } from "@/lib/title";
 import type { SeasonSetting } from "@/lib/season";
@@ -43,6 +44,8 @@ export type RoadmapStage = {
   subtitle: string;
   /** Что изучаем на этапе. */
   learn: string;
+  /** Картинка справа в карточке (src/lib/art.ts): magnifier, bug, globe, cube, robot, chip, gear, rocket. */
+  art: ArtName;
   /** Глава про AI — помечается отдельным тегом. */
   ai: boolean;
 };
@@ -337,42 +340,49 @@ export const content: SiteContent = {
             subtitle: "бесплатная диагностика",
             learn: "Что уже умеешь, сколько времени есть, какая цель. Составляем личный план обучения.",
             ai: false,
+            art: "magnifier",
           },
           {
             title: "Основы тестирования",
             subtitle: "как думает тестировщик",
             learn: "Виды и уровни тестирования, тест-дизайн, чек-листы, тест-кейсы и баг-репорты.",
             ai: false,
+            art: "bug",
           },
           {
             title: "Веб, API и базы данных",
             subtitle: "что происходит под капотом",
             learn: "Клиент-сервер, HTTP, DevTools, Postman, основы SQL.",
             ai: false,
+            art: "globe",
           },
           {
             title: "Инфраструктура и процессы",
             subtitle: "как устроена работа в команде",
             learn: "Docker и Kubernetes на уровне тестировщика, логирование и поиск причин багов в логах, процессы в командах, Agile и Scrum.",
             ai: false,
+            art: "cube",
           },
           {
             title: "AI-инструменты",
             subtitle: "отдельная глава",
             learn: "AI-редакторы Cursor и Windsurf, агенты в терминале: Claude Code, Codex, OpenCode. Perplexity для поиска с источниками и AI-браузер Strawberry Browser. Разбираем, какой инструмент брать под задачу и что нельзя отдавать AI.",
             ai: true,
+            art: "robot",
           },
           {
             title: "AI в работе тестировщика",
             subtitle: "отдельная глава",
             learn: "Тест-кейсы, чек-листы и баг-репорты с AI-ассистентом, генерация тестовых данных, первые автотесты с AI. Изучим MCP, skills и sub-agents.",
             ai: true,
+            art: "chip",
           },
           {
             title: "Резюме и собеседования",
             subtitle: "выход на рынок",
             learn: "Резюме под вакансии, стратегия откликов, мок-собеседования с разбором.",
             ai: false,
+            art: "rocket",
           },
         ],
       },
@@ -386,42 +396,49 @@ export const content: SiteContent = {
             subtitle: "бесплатная диагностика",
             learn: "Что уже умеешь, сколько времени есть, какая цель. Составляем личный план обучения.",
             ai: false,
+            art: "magnifier",
           },
           {
             title: "Язык программирования",
             subtitle: "код для тестов",
             learn: "Основы языка под автотесты: синтаксис, структуры данных, ООП, работа с пакетами.",
             ai: false,
+            art: "chip",
           },
           {
             title: "Автотесты UI и API",
             subtitle: "фреймворк с нуля",
             learn: "Playwright и pytest, Page Object, фикстуры, работа с API и тестовыми данными.",
             ai: false,
+            art: "bug",
           },
           {
             title: "AI-инструменты",
             subtitle: "отдельная глава",
             learn: "AI-редакторы Cursor и Windsurf, агенты в терминале: Claude Code, Codex, OpenCode. Perplexity для поиска с источниками и AI-браузер Strawberry Browser. Разбираем, какой инструмент брать под задачу и что нельзя отдавать AI.",
             ai: true,
+            art: "robot",
           },
           {
             title: "AI в автоматизации",
             subtitle: "отдельная глава",
             learn: "AI-ассистенты для написания и рефакторинга автотестов: тесты по требованиям, Page Object, фикстуры, перенос тестов между фреймворками и ревью сгенерированного кода. Генерация тестовых данных. Изучим MCP, skills и sub-agents.",
             ai: true,
+            art: "globe",
           },
           {
             title: "CI и отчёты",
             subtitle: "тесты в пайплайне",
             learn: "Запуск в CI, параллельный прогон, Allure-отчёты, Docker на базовом уровне.",
             ai: false,
+            art: "gear",
           },
           {
             title: "Резюме и собеседования",
             subtitle: "выход на рынок",
             learn: "Резюме автоматизатора, live-coding, мок-собеседования с разбором.",
             ai: false,
+            art: "rocket",
           },
         ],
       },
@@ -435,36 +452,42 @@ export const content: SiteContent = {
             subtitle: "бесплатная диагностика",
             learn: "Сравниваем твой опыт с требованиями целевого грейда и компаний.",
             ai: false,
+            art: "magnifier",
           },
           {
             title: "Стратегия и архитектура тестирования",
             subtitle: "уровень выше",
             learn: "Пирамида тестов, контрактное тестирование, тестовые окружения, стратегия для команды.",
             ai: false,
+            art: "cube",
           },
           {
             title: "Сложные системы",
             subtitle: "глазами QA",
             learn: "Микросервисы, очереди, базы данных, логи и мониторинг.",
             ai: false,
+            art: "globe",
           },
           {
             title: "AI-инструменты",
             subtitle: "отдельная глава",
             learn: "AI-редакторы Cursor и Windsurf, агенты в терминале: Claude Code, Codex, OpenCode. Perplexity для поиска с источниками и AI-браузер Strawberry Browser. Разбираем, какой инструмент брать под задачу и что нельзя отдавать AI.",
             ai: true,
+            art: "robot",
           },
           {
             title: "AI в процессах QA",
             subtitle: "отдельная глава",
             learn: "Внедрение AI в работу команды. Изучим MCP, skills и sub-agents. Правила безопасности и оценка качества ответов модели.",
             ai: true,
+            art: "chip",
           },
           {
             title: "Собеседования уровня бигтех",
             subtitle: "финальная подготовка",
             learn: "Секции по тестированию, кодингу и проектированию, разбор каждой попытки.",
             ai: false,
+            art: "rocket",
           },
         ],
       },
@@ -485,7 +508,7 @@ export const content: SiteContent = {
 
   team: {
     id: "team",
-    title: "Кто с тобой работает",
+    title: "Кто с тобой будет работать",
     members: [
       {
         name: "Валентин Волков",

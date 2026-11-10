@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { content } from "./content";
+import { ART_NAMES } from "./lib/art";
 import { SEASONS } from "./lib/season";
 
 /*
@@ -94,6 +95,12 @@ describe("content", () => {
 
   it("CTA highlights the word «бесплатного»", () => {
     expect(content.cta.titleHighlights).toEqual(["бесплатного"]);
+  });
+
+  it("every roadmap stage has a known picture", () => {
+    for (const track of content.roadmap.tracks) {
+      for (const stage of track.stages) expect(ART_NAMES).toContain(stage.art);
+    }
   });
 
   it("site texts use the short dash instead of the em dash", () => {

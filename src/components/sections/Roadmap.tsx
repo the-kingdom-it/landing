@@ -1,3 +1,4 @@
+import { features } from "@/config";
 import { content } from "@/content";
 import { revealProps } from "@/lib/reveal";
 import { Container } from "../ui/Container";
@@ -24,7 +25,7 @@ export function Roadmap() {
             </div>
           </div>
           <div className="mt-10">
-            <RoadmapTabs tracks={roadmap.tracks} labels={roadmap.labels} final={roadmap.final} />
+            <RoadmapTabs tracks={roadmap.tracks} labels={roadmap.labels} final={roadmap.final} art={features.roadmapArt} />
           </div>
         </Panel>
       </Container>

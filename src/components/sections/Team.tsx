@@ -9,6 +9,7 @@ import { Icon } from "../ui/Icon";
 import { Container } from "../ui/Container";
 import { Panel } from "../ui/Panel";
 import { SectionHeading } from "../ui/SectionHeading";
+import { TypedText } from "../ui/TypedText";
 
 export function Team() {
   const { team } = content;
@@ -46,7 +47,9 @@ export function Team() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-display text-[20px] leading-snug">{member.name}</h3>
-                  <p className="mt-1.5 font-semibold text-highlight">{member.role}</p>
+                  <p className="mt-1.5 font-semibold text-highlight">
+                    <TypedText text={member.role} queue={{ group: "team-roles", index }} />
+                  </p>
                   <p className="mt-3 leading-relaxed text-muted">{member.description}</p>
                   {member.links.length > 0 ? (
                     <ul className="mt-4 flex flex-wrap gap-2">
