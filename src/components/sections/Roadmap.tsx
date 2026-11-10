@@ -14,8 +14,8 @@ export function Roadmap() {
       <Container>
         <Panel>
           <SectionHeading title={roadmap.title} lead={roadmap.lead} />
-          <div {...revealProps(1)} className="mt-8 flex flex-col gap-4 rounded-2xl border border-gold/40 bg-gold-soft p-5 sm:flex-row md:p-6">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold text-on-gold">
+          <div {...revealProps(1)} className="mt-8 flex flex-col gap-4 rounded-2xl border border-highlight/40 bg-highlight-soft p-5 sm:flex-row md:p-6">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-highlight text-on-highlight">
               <Icon name="sparkles" className="size-5" />
             </span>
             <div>

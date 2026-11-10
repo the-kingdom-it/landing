@@ -9,7 +9,7 @@ import {
   type SceneConfig,
 } from "./backgrounds";
 
-const config: SceneConfig = { theme: "light", backgrounds: { light: "12", dark: "7" }, forcedBg: null };
+const config: SceneConfig = { theme: "light", background: "12", forcedBg: null };
 
 describe("resolveBackground", () => {
   it("keeps the kingdom scene for unknown values and accepts numbered ones", () => {
@@ -31,31 +31,41 @@ describe("resolveBackground", () => {
 });
 
 describe("resolveScene", () => {
-  it("uses the default style and its background", () => {
-    expect(resolveScene(config, {})).toEqual({ theme: "light", bg: "12" });
+  it("uses the main background in the default style", () => {
+    expect(resolveScene(config, {})).toEqual({ theme: "light", bg: "12", preview: false });
   });
 
-  it("remembers the visitor's choice", () => {
-    expect(resolveScene(config, { stored: "dark" })).toEqual({ theme: "dark", bg: "7" });
-    expect(resolveScene(config, { stored: "pink" })).toEqual({ theme: "light", bg: "12" });
+  it("remembers the visitor's style on the main background", () => {
+    expect(resolveScene(config, { stored: "dark" })).toEqual({ theme: "dark", bg: "12", preview: false });
+    expect(resolveScene(config, { stored: "pink" })).toEqual({ theme: "light", bg: "12", preview: false });
   });
 
   it("?theme= wins over the remembered choice", () => {
-    expect(resolveScene(config, { theme: "light", stored: "dark" })).toEqual({ theme: "light", bg: "12" });
+    expect(resolveScene(config, { theme: "light", stored: "dark" })).toEqual({ theme: "light", bg: "12", preview: false });
   });
 
-  it("?bg= shows that background in its own style, ignoring the remembered choice", () => {
-    expect(resolveScene(config, { bg: "9", stored: "dark" })).toEqual({ theme: "light", bg: "9" });
-    expect(resolveScene(config, { bg: "3" })).toEqual({ theme: "dark", bg: "3" });
-    expect(resolveScene(config, { bg: "3", theme: "light" })).toEqual({ theme: "light", bg: "3" });
+  it("?bg= previews another background in its own style, ignoring the remembered choice", () => {
+    expect(resolveScene(config, { bg: "9", stored: "dark" })).toEqual({ theme: "light", bg: "9", preview: true });
+    expect(resolveScene(config, { bg: "3" })).toEqual({ theme: "dark", bg: "3", preview: true });
+    expect(resolveScene(config, { bg: "3", theme: "light" })).toEqual({ theme: "light", bg: "3", preview: true });
   });
 
-  it("an unknown ?bg= falls back to the normal behaviour", () => {
-    expect(resolveScene(config, { bg: "zzz" })).toEqual({ theme: "light", bg: "12" });
+  it("?bg= with the main background is not a preview", () => {
+    expect(resolveScene(config, { bg: "12", stored: "dark" })).toEqual({ theme: "dark", bg: "12", preview: false });
+  });
+
+  it("an unknown ?bg= falls back to the main background", () => {
+    expect(resolveScene(config, { bg: "zzz" })).toEqual({ theme: "light", bg: "12", preview: false });
   });
 
   it("a forced background (BG=...) acts like ?bg=", () => {
-    expect(resolveScene({ ...config, forcedBg: "kingdom" }, {})).toEqual({ theme: "dark", bg: "kingdom" });
+    expect(resolveScene({ ...config, forcedBg: "kingdom" }, {})).toEqual({ theme: "dark", bg: "kingdom", preview: true });
+  });
+});
+
+describe("dark variants", () => {
+  it("only the main paper background has a dark variant", () => {
+    expect(BACKGROUNDS.filter((bg) => "darkVariant" in bg && bg.darkVariant).map((bg) => bg.id)).toEqual(["12"]);
   });
 });
 
@@ -69,23 +79,28 @@ describe("buildBackgroundScript", () => {
 
   const run = () => {
     new Function(buildBackgroundScript(config))();
-    return { theme: document.documentElement.dataset.theme, bg: document.documentElement.dataset.bg };
+    const d = document.documentElement.dataset;
+    return { theme: d.theme, bg: d.bg, preview: "preview" in d };
   };
 
+  afterEach(() => {
+    delete document.documentElement.dataset.preview;
+  });
+
   it("applies the default style and background", () => {
-    expect(run()).toEqual({ theme: "light", bg: "12" });
+    expect(run()).toEqual({ theme: "light", bg: "12", preview: false });
   });
 
-  it("applies the remembered style", () => {
+  it("applies the remembered style on the main background", () => {
     window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
-    expect(run()).toEqual({ theme: "dark", bg: "7" });
+    expect(run()).toEqual({ theme: "dark", bg: "12", preview: false });
   });
 
-  it("applies ?bg= and ?theme= from the address", () => {
+  it("marks a ?bg= preview and applies ?theme=", () => {
     window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
     window.history.replaceState(null, "", "/?bg=9");
-    expect(run()).toEqual({ theme: "light", bg: "9" });
+    expect(run()).toEqual({ theme: "light", bg: "9", preview: true });
     window.history.replaceState(null, "", "/?bg=9&theme=dark");
-    expect(run()).toEqual({ theme: "dark", bg: "9" });
+    expect(run()).toEqual({ theme: "dark", bg: "9", preview: true });
   });
 });

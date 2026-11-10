@@ -18,13 +18,14 @@ export const BACKGROUNDS = [
   { id: "9", name: "Облака", theme: "light" },
   { id: "10", name: "Жемчуг", theme: "light" },
   { id: "11", name: "Утро", theme: "light" },
-  { id: "12", name: "Бумага", theme: "light" },
+  // darkVariant: у фона есть тёмная версия public/backgrounds/<id>-dark.webp для тёмной темы
+  { id: "12", name: "Бумага", theme: "light", darkVariant: true },
   { id: "13", name: "Мята", theme: "light" },
   { id: "14", name: "Океан", theme: "dark" },
   { id: "15", name: "Неон", theme: "dark" },
   { id: "16", name: "Изумруд", theme: "dark" },
   { id: "17", name: "Космос", theme: "dark" },
-] as const satisfies readonly { id: string; name: string; theme: Theme }[];
+] as const satisfies readonly { id: string; name: string; theme: Theme; darkVariant?: boolean }[];
 
 export type BackgroundId = (typeof BACKGROUNDS)[number]["id"];
 
@@ -56,29 +57,33 @@ export const THEME_STORAGE_KEY = "kingdom-theme";
 export type SceneConfig = {
   /** Тема по умолчанию. */
   theme: Theme;
-  /** Фон для каждой темы: переключатель темы меняет и фон. */
-  backgrounds: Record<Theme, BackgroundId>;
+  /** Основной фон. Переключатель темы работает только на нём. */
+  background: BackgroundId;
   /** Фон, заданный при запуске (BG=3 npm run dev), — работает как ?bg=. */
   forcedBg: BackgroundId | null;
 };
 
+export type SceneState = { theme: Theme; bg: BackgroundId; preview: boolean };
+
 /**
  * Какой фон и тему показать.
- * ?bg= (или BG=) — этот фон в его «родной» теме, ?theme= может её поменять; сохранённый выбор не мешает.
- * Без ?bg= — ?theme=, затем выбор посетителя, затем тема по умолчанию; фон — пара для темы.
+ * ?bg= (или BG=) с другим фоном — предпросмотр: фон в его «родной» теме, ?theme= может её поменять,
+ * переключатель темы скрыт. Иначе — основной фон, тема из ?theme=, выбора посетителя или по умолчанию.
  */
 export function resolveScene(
   config: SceneConfig,
   input: { bg?: string | null; theme?: string | null; stored?: string | null },
-): { theme: Theme; bg: BackgroundId } {
-  const forced = isBackground(input.bg) ? input.bg : config.forcedBg;
-  if (forced) return { theme: isTheme(input.theme) ? input.theme : backgroundTheme(forced), bg: forced };
+): SceneState {
+  const requested = isBackground(input.bg) ? input.bg : config.forcedBg;
+  if (requested && requested !== config.background) {
+    return { theme: isTheme(input.theme) ? input.theme : backgroundTheme(requested), bg: requested, preview: true };
+  }
   const theme = isTheme(input.theme) ? input.theme : isTheme(input.stored) ? input.stored : config.theme;
-  return { theme, bg: config.backgrounds[theme] };
+  return { theme, bg: config.background, preview: false };
 }
 
-/** Скрипт для <head>: до первой отрисовки ставит <html data-bg> и <html data-theme> по правилам resolveScene. */
+/** Скрипт для <head>: до первой отрисовки ставит <html data-bg data-theme data-preview> по правилам resolveScene. */
 export function buildBackgroundScript(config: SceneConfig): string {
   const themes = JSON.stringify(Object.fromEntries(BACKGROUNDS.map((bg) => [bg.id, bg.theme])));
-  return `(function(){try{var t=${themes},c=${JSON.stringify(config)},p=new URLSearchParams(location.search),ok=function(v){return v==="light"||v==="dark"},q=p.get("bg"),qt=p.get("theme"),st=null;try{st=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})}catch(e){}var f=Object.prototype.hasOwnProperty.call(t,q)?q:c.forcedBg,th,bg;if(f){th=ok(qt)?qt:t[f];bg=f}else{th=ok(qt)?qt:ok(st)?st:c.theme;bg=c.backgrounds[th]}var d=document.documentElement.dataset;d.theme=th;d.bg=bg}catch(e){}})()`;
+  return `(function(){try{var t=${themes},c=${JSON.stringify(config)},p=new URLSearchParams(location.search),ok=function(v){return v==="light"||v==="dark"},q=p.get("bg"),qt=p.get("theme"),st=null;try{st=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})}catch(e){}var r=Object.prototype.hasOwnProperty.call(t,q)?q:c.forcedBg,d=document.documentElement.dataset;if(r&&r!==c.background){d.theme=ok(qt)?qt:t[r];d.bg=r;d.preview=""}else{d.theme=ok(qt)?qt:ok(st)?st:c.theme;d.bg=c.background;delete d.preview}}catch(e){}})()`;
 }

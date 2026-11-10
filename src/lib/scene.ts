@@ -25,5 +25,12 @@ export function sceneStyles(base: string): string {
   const overlays = BACKGROUNDS.filter((bg) => bg.id !== "kingdom")
     .map((bg) => `html[data-bg="${bg.id}"][data-theme="${bg.theme}"]{--scene-overlay:${SOFT_OVERLAY[bg.theme]}}`)
     .join("");
-  return `${desktop}@media (max-width: 767px){${mobile}}${backgrounds}${overlays}`;
+  // тёмная версия фона для тёмной темы (сейчас — только у основного фона «Бумага»)
+  const darkVariants = BACKGROUNDS.filter((bg) => "darkVariant" in bg && bg.darkVariant)
+    .map(
+      (bg) =>
+        `html[data-bg="${bg.id}"][data-theme="dark"]{--scene-image:url("${withBasePath(`/backgrounds/${bg.id}-dark.webp`, base)}");--scene-overlay:${SOFT_OVERLAY.dark}}`,
+    )
+    .join("");
+  return `${desktop}@media (max-width: 767px){${mobile}}${backgrounds}${overlays}${darkVariants}`;
 }

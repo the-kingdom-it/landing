@@ -12,14 +12,14 @@
   --surface: rgba(255, 255, 255, 0.05); /* карточки внутри стекла */
   --ink: #f5efe4; /* основной текст */
   --muted: #d4ccbd; /* вторичный текст */
-  --line: rgba(232, 190, 110, 0.3); /* рамки — полупрозрачное золото */
-  --gold: #e8be6e; /* акцентный текст на тёмном */
+  --line: rgba(150, 180, 240, 0.22); /* рамки — полупрозрачный холодный голубой */
+  --highlight: #8fb4ff; /* акцентный текст и выделения на тёмном */
   --accent: #2b50ff; /* кнопки — меняется только здесь */
   --on-accent: #ffffff; /* текст на акцентном фоне */
   --passed: #2f9a5a; /* «passed»: кружки и полоса прогресса */
   --passed-fg: #8fe0aa; /* «passed»: текст на тёмном */
   --placeholder: rgba(255, 255, 255, 0.08); /* фон плейсхолдера вместо фото */
-  --on-gold: #1a1510; /* текст на золотых плашках (тег AI) */
+  --on-highlight: #0b1222; /* текст на плашках цвета акцента (тег AI) */
   --track: rgba(255, 255, 255, 0.1); /* дорожка полосы прогресса */
   --ring-muted: rgba(255, 255, 255, 0.25); /* пустой кружок шага */
   --snow: #ffffff; /* цвет снега */
@@ -37,7 +37,7 @@
   /* производные — пересчитываются сами */
   --accent-strong: color-mix(in srgb, var(--accent), black 14%);
   --passed-soft: color-mix(in srgb, var(--passed-fg), transparent 84%);
-  --gold-soft: color-mix(in srgb, var(--gold), transparent 85%);
+  --highlight-soft: color-mix(in srgb, var(--highlight), transparent 85%);
 
   /* плавность анимаций */
   --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -56,8 +56,8 @@ html[data-theme="light"] {
   --ink: #0f1115;
   --muted: #3d424a;
   --line: rgba(15, 30, 60, 0.14);
-  --gold: #1a3bc7; /* акцентный текст на светлом — насыщенный синий вместо золота */
-  --on-gold: #ffffff;
+  --highlight: #1a3bc7; /* акцентный текст и выделения на светлом */
+  --on-highlight: #ffffff;
   --passed: #1b7a43;
   --passed-fg: #0f5a30;
   --placeholder: rgba(15, 17, 21, 0.06);
@@ -80,8 +80,8 @@ html[data-theme="light"] {
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-on-accent: var(--on-accent);
@@ -89,7 +89,7 @@ html[data-theme="light"] {
   --color-passed-fg: var(--passed-fg);
   --color-passed-soft: var(--passed-soft);
   --color-placeholder: var(--placeholder);
-  --color-on-gold: var(--on-gold);
+  --color-on-highlight: var(--on-highlight);
   --color-track: var(--track);
   --color-ring-muted: var(--ring-muted);
   --color-paper: var(--paper);
@@ -351,7 +351,7 @@ html[data-theme="light"] {
     content: "";
     position: absolute;
     inset: -4px;
-    border: 2px solid var(--gold);
+    border: 2px solid var(--highlight);
     border-radius: 50%;
     animation: bug-burst 0.45s ease-out forwards;
   }
@@ -563,7 +563,7 @@ html[data-theme="light"] {
 
 @keyframes run-pulse {
   50% {
-    box-shadow: 0 0 0 6px var(--gold-soft);
+    box-shadow: 0 0 0 6px var(--highlight-soft);
   }
 }
 
@@ -658,7 +658,12 @@ html[data-theme="light"] {
   }
 
   :focus-visible {
-    outline: 2px solid var(--gold);
+    outline: 2px solid var(--highlight);
     outline-offset: 3px;
   }
+}
+
+/* При предпросмотре другого фона (?bg=) кнопки темы нет. Вне слоёв — чтобы перебить утилиту inline-flex. */
+html[data-preview] .theme-toggle {
+  display: none;
 }

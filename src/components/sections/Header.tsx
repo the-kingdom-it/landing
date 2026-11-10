@@ -4,7 +4,7 @@ import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
 
 export function Header() {
-  const { brand, header, ui, hero, scene } = content;
+  const { brand, header, ui, hero } = content;
 
   return (
     <header className="site-header glass-strong relative z-40 border-b border-line lg:sticky lg:top-0">
@@ -35,7 +35,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
-          <ThemeToggle labels={ui.themeToggle} backgrounds={scene.backgrounds} />
+          <ThemeToggle labels={ui.themeToggle} />
           <ButtonLink href={header.cta.href} size="sm">
             {header.cta.label}
           </ButtonLink>

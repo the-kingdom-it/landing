@@ -98,10 +98,11 @@ export type SiteContent = {
     /** Тема по умолчанию: "light" — белый стиль, "dark" — тёмное стекло. Посетитель может переключить в шапке. */
     theme: Theme;
     /**
-     * Фон для каждой темы: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
-     * из public/backgrounds (названия — src/lib/backgrounds.ts). Любой фон можно посмотреть по ?bg=3.
+     * Основной фон: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
+     * из public/backgrounds (названия — src/lib/backgrounds.ts). Тёмная тема берёт его тёмную версию
+     * (<номер>-dark.webp, есть у «Бумаги»). Любой другой фон можно посмотреть по ?bg=3.
      */
-    backgrounds: Record<Theme, BackgroundId>;
+    background: BackgroundId;
   };
   brand: {
     /** Буквы в favicon. */
@@ -220,7 +221,7 @@ export const content: SiteContent = {
   scene: {
     season: "winter",
     theme: "light",
-    backgrounds: { light: "12", dark: "7" },
+    background: "12",
   },
 
   brand: {
@@ -560,10 +561,10 @@ export const content: SiteContent = {
   },
 
   bugs: {
-    hint: "По сайту ползают баги – поймай 10 штук и получи скидку в 1000 рублей",
+    hint: "По сайту ползают баги – поймай 3 штуки и получи скидку в 1000 рублей",
     counterLabel: "поймано багов",
     reward: {
-      goal: 10,
+      goal: 3,
       title: "Скидка получена",
       codeLabel: "промокод",
       linkLabel: "Писать сюда",

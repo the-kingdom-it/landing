@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   // BG=3 npm run dev — показать фон 3 (как ?bg=3), THEME=dark npm run dev — тёмная тема по умолчанию
   const forcedBg = BACKGROUNDS.find((bg) => bg.id === process.env.BG)?.id ?? null;
   const theme = process.env.THEME === "dark" || process.env.THEME === "light" ? process.env.THEME : content.scene.theme;
-  const sceneConfig: SceneConfig = { theme, backgrounds: content.scene.backgrounds, forcedBg };
+  const sceneConfig: SceneConfig = { theme, background: content.scene.background, forcedBg };
   const scene = resolveScene(sceneConfig, {});
   return (
     // data-season уточняет скрипт в <head> до отрисовки, поэтому расхождение с сервером ожидаемо
@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-season={resolveSeason(content.scene.season, new Date())}
       data-bg={scene.bg}
       data-theme={scene.theme}
+      data-preview={scene.preview ? "" : undefined}
       suppressHydrationWarning
     >
       <head>

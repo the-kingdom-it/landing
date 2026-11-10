@@ -57,7 +57,7 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
               onClick={() => setActive(index)}
               onKeyDown={onKeyDown}
               className={`flex min-h-14 items-center rounded-xl border px-4 py-3 text-left font-display text-[15px] transition-colors ${
-                selected ? "border-gold bg-gold-soft text-ink" : "border-line bg-surface text-muted hover:text-ink"
+                selected ? "border-highlight bg-highlight-soft text-ink" : "border-line bg-surface text-muted hover:text-ink"
               }`}
             >
               {item.title}
@@ -78,7 +78,7 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
               <span aria-hidden="true" className="absolute -bottom-4 left-[11px] top-0 w-0.5 bg-line" />
               <span
                 aria-hidden="true"
-                className="absolute left-0 top-6 flex size-6 items-center justify-center rounded-full border-2 border-gold bg-canvas font-mono text-[10px] font-semibold text-gold"
+                className="absolute left-0 top-6 flex size-6 items-center justify-center rounded-full border-2 border-highlight bg-canvas font-mono text-[10px] font-semibold text-highlight"
               >
                 {index}
               </span>
@@ -87,7 +87,7 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
                 <h3 className="mt-3 flex flex-wrap items-center gap-2 font-display text-[19px] leading-snug">
                   {stage.title}
                   {stage.ai ? (
-                    <span className="rounded-md bg-gold px-1.5 py-0.5 font-mono text-[11px] font-semibold text-on-gold">
+                    <span className="rounded-md bg-highlight px-1.5 py-0.5 font-mono text-[11px] font-semibold text-on-highlight">
                       {labels.ai}
                     </span>
                   ) : null}
@@ -99,9 +99,9 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
             </li>
           ))}
           <li className="relative pl-10 sm:pl-12">
-            <span aria-hidden="true" className="absolute left-0 top-6 size-6 rounded-full border-2 border-gold bg-gold-soft" />
-            <div className="rounded-2xl border border-gold/60 bg-gold-soft p-5 md:p-7">
-              <h3 className="font-display text-[19px] leading-snug text-gold">{final.title}</h3>
+            <span aria-hidden="true" className="absolute left-0 top-6 size-6 rounded-full border-2 border-highlight bg-highlight-soft" />
+            <div className="rounded-2xl border border-highlight/60 bg-highlight-soft p-5 md:p-7">
+              <h3 className="font-display text-[19px] leading-snug text-highlight">{final.title}</h3>
               <p className="mt-2 leading-relaxed text-ink">{final.text}</p>
             </div>
           </li>

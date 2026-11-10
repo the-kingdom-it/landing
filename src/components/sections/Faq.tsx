@@ -29,7 +29,7 @@ export function Faq() {
                       href={item.link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold"
+                      className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold text-highlight underline decoration-highlight/40 underline-offset-4 transition-colors hover:decoration-highlight"
                     >
                       {item.link.label}
                       <Icon name="arrow-right" className="size-4" />

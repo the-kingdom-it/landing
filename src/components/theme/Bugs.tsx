@@ -191,11 +191,11 @@ export function Bugs({ counterLabel, reward }: { counterLabel: string; reward: B
         ))}
       </div>
       {reward && promo ? (
-        <div role="status" aria-live="polite" className="bug-counter bug-reward glass-strong border border-gold shadow-panel">
-          <p className="font-display text-[15px] text-gold">{reward.title}</p>
+        <div role="status" aria-live="polite" className="bug-counter bug-reward glass-strong border border-highlight shadow-panel">
+          <p className="font-display text-[15px] text-highlight">{reward.title}</p>
           <p className="mt-1.5 font-mono text-sm text-ink">
             {`${reward.codeLabel} `}
-            <span className="select-all font-semibold tracking-wider text-gold">{promo}</span>
+            <span className="select-all font-semibold tracking-wider text-highlight">{promo}</span>
           </p>
           <a
             href={reward.href}

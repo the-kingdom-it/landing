@@ -20,7 +20,7 @@ export function Audience() {
                 {...revealProps(index + 1)}
                 className="rounded-2xl border border-line bg-surface p-6 md:p-8"
               >
-                <span className="flex size-11 items-center justify-center rounded-[10px] bg-gold-soft text-gold">
+                <span className="flex size-11 items-center justify-center rounded-[10px] bg-highlight-soft text-highlight">
                   <Icon name={item.icon} className="size-[22px]" />
                 </span>
                 <h3 className="mt-6 font-display text-[19px] leading-snug">{item.title}</h3>
