@@ -104,6 +104,11 @@
     background: var(--scene-image) center 30% / cover no-repeat, var(--canvas);
   }
 
+  /* тёмным минималистичным фонам (2–7) сильное затемнение не нужно — они и так не мешают читать */
+  html[data-bg]:not([data-bg="kingdom"]):not([data-bg="1"]) {
+    --scene-overlay: linear-gradient(180deg, rgba(8, 10, 18, 0.08) 0%, rgba(8, 10, 18, 0.28) 100%);
+  }
+
   .scene::after {
     content: "";
     position: absolute;

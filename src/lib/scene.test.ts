@@ -15,4 +15,12 @@ describe("sceneStyles", () => {
   it("adds the base path for a site served from a subfolder", () => {
     expect(sceneStyles("/landing")).toContain('url("/landing/scene/winter.webp")');
   });
+
+  it("lets a numbered background replace the scene, on phones too", () => {
+    const css = sceneStyles("/landing");
+    const rule = 'html[data-bg="1"]{--scene-image:url("/landing/backgrounds/1.webp")}';
+    expect(css).toContain(rule);
+    expect(css.indexOf(rule)).toBeGreaterThan(css.lastIndexOf("@media"));
+    expect(css).not.toContain('data-bg="kingdom"');
+  });
 });
