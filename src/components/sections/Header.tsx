@@ -6,7 +6,7 @@ export function Header() {
   const { brand, header, ui, hero } = content;
 
   return (
-    <header className="glass-strong relative z-40 border-b border-line lg:sticky lg:top-0">
+    <header className="site-header glass-strong relative z-40 border-b border-line lg:sticky lg:top-0">
       <a
         href="#main"
         className="sr-only rounded-lg bg-paper px-4 py-3 text-paper-ink focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
