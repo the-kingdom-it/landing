@@ -103,6 +103,10 @@ describe("landing page", () => {
       delete document.documentElement.dataset.season;
     });
 
+    it("roadmap pictures are on by default, in the mesh style", () => {
+      expect(features.roadmapArt).toBe("mesh");
+    });
+
     it("is off by default and no particles are rendered", () => {
       expect(features.snow).toBe(false);
       document.documentElement.dataset.season = "winter";

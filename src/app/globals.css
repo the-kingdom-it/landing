@@ -654,6 +654,50 @@ html[data-theme="light"] {
 }
 
 /*
+ * КАРТИНКИ РОАДМАПА (компонент WireArt, фича-тогл features.roadmapArt в src/config.ts)
+ * mesh — каркасная сетка, outline — только контур со свечением.
+ */
+@layer components {
+  .wire-art {
+    width: 132px;
+    height: 132px;
+    color: var(--highlight);
+    opacity: 0.85;
+  }
+
+  .wire-art .wa-out {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .wire-art .wa-mesh {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1;
+    opacity: 0.6;
+  }
+
+  .wire-art .wa-fill {
+    fill: currentColor;
+  }
+
+  [data-art-style="outline"] .wire-art .wa-mesh {
+    display: none;
+  }
+
+  [data-art-style="outline"] .wire-art {
+    filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor, transparent 45%));
+  }
+
+  [data-art-style="outline"] .wire-art .wa-out {
+    stroke-width: 2.8;
+  }
+}
+
+/*
  * ПРОГОН
  * Шаги карточки path_to_offer.spec «прогоняются» как тесты (компонент ReportCard).
  * Базовые стили — итоговое состояние; анимация включается только без «уменьшить движение».
