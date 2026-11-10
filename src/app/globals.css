@@ -321,6 +321,21 @@
     max-width: calc(100vw - 32px);
   }
 
+  /*
+   * Тёмная полоса над шапкой: когда страницу «оттягивают» у верхнего края (резиновый скролл в Safari и на Mac),
+   * над шапкой виден фон, а не картинка сцены. Полоса выше экрана, на прокрутку и клики не влияет.
+   */
+  .site-header::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 100vh;
+    background: var(--canvas);
+    pointer-events: none;
+  }
+
   /* подсказку про жуков показываем, только когда они действительно ползают */
   html:not([data-bugs]) .bug-hint {
     visibility: hidden;
