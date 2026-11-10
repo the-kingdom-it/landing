@@ -369,6 +369,143 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
 }
 
 /*
+ * ПРОГОН
+ * Шаги карточки path_to_offer.spec «прогоняются» как тесты (компонент ReportCard).
+ * Базовые стили — итоговое состояние; анимация включается только без «уменьшить движение».
+ */
+@property --count {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer components {
+  .run-stack {
+    display: inline-grid;
+    place-items: center end;
+  }
+
+  .run-layer {
+    grid-area: 1 / 1;
+  }
+
+  .run-pending,
+  .run-running {
+    opacity: 0;
+  }
+
+  .run-count {
+    --count: var(--count-final);
+    counter-reset: run var(--count);
+  }
+
+  .run-count::before {
+    content: counter(run);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .run-stack {
+      --t-run: calc(var(--run-start) + var(--i, 0) * var(--run-step));
+      --t-pass: calc(var(--t-run) + var(--run-step));
+    }
+
+    .run-pending {
+      opacity: 1;
+      animation: run-off 1ms linear var(--t-run) forwards;
+    }
+
+    .run-running {
+      animation:
+        run-on 1ms linear var(--t-run) forwards,
+        run-off 1ms linear var(--t-pass) forwards;
+    }
+
+    .run-spinner {
+      animation:
+        run-on 1ms linear var(--t-run) forwards,
+        run-off 1ms linear var(--t-pass) forwards,
+        run-spin 0.7s linear infinite;
+    }
+
+    .run-passed {
+      opacity: 0;
+      animation: run-on 1ms linear var(--t-pass) forwards;
+    }
+
+    .run-check {
+      animation: run-pop 0.45s var(--ease-out-back) var(--t-pass) both;
+    }
+
+    .run-count {
+      animation-name: run-count;
+      animation-delay: var(--run-start);
+      animation-fill-mode: both;
+    }
+
+    .run-bar {
+      animation-name: run-bar;
+      animation-delay: var(--run-start);
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
+
+    .run-next-dot {
+      animation: run-pulse 1.6s ease-in-out calc(var(--run-start) + 3s) infinite;
+    }
+  }
+}
+
+@keyframes run-on {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes run-off {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes run-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes run-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes run-count {
+  from {
+    --count: 0;
+  }
+  to {
+    --count: var(--count-final);
+  }
+}
+
+@keyframes run-bar {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes run-pulse {
+  50% {
+    box-shadow: 0 0 0 6px var(--gold-soft);
+  }
+}
+
+/*
  * АНИМАЦИИ
  * 1. Появление при прокрутке: блоки с атрибутом data-reveal (src/lib/reveal.ts)
  *    проявляются, когда доезжают до экрана. Включает их компонент ScrollReveal.

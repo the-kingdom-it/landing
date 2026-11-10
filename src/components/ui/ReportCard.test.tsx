@@ -37,4 +37,20 @@ describe("ReportCard", () => {
     expect(within(items[0]).getByText(report.statusPassed)).toBeInTheDocument();
     expect(within(items[2]).getByText(report.statusPending)).toBeInTheDocument();
   });
+
+  it("labels passed steps PASSED and the next step PENDING, like a test run", () => {
+    render(<ReportCard report={report} />);
+    const items = screen.getAllByRole("listitem");
+    expect(within(items[0]).getByText(report.runLabels.passed)).toBeInTheDocument();
+    expect(within(items[1]).getByText(report.runLabels.passed)).toBeInTheDocument();
+    expect(within(items[2]).getByText(report.runLabels.pending)).toBeInTheDocument();
+    expect(within(items[2]).queryByText(report.runLabels.passed)).toBeNull();
+  });
+
+  it("runs the passed steps one after another", () => {
+    render(<ReportCard report={report} />);
+    const items = screen.getAllByRole("listitem");
+    expect(items[0].style.getPropertyValue("--i")).toBe("0");
+    expect(items[1].style.getPropertyValue("--i")).toBe("1");
+  });
 });

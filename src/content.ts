@@ -88,6 +88,8 @@ export type SiteContent = {
       progressLabel: string;
       statusPassed: string;
       statusPending: string;
+      /** Статусы «прогона» шагов в карточке, как в отчёте автотестов. */
+      runLabels: { pending: string; running: string; passed: string };
       steps: ReportStep[];
     };
   };
@@ -200,6 +202,7 @@ export const content: SiteContent = {
       progressLabel: "Пройдено шагов на пути к офферу",
       statusPassed: "пройдено",
       statusPending: "впереди",
+      runLabels: { pending: "PENDING", running: "RUNNING", passed: "PASSED" },
       steps: [
         { label: "Диагностика уровня", passed: true },
         { label: "Личный план", passed: true },
