@@ -24,13 +24,16 @@ npm run build    # сборка в папку out/
 | Фото команды | `public/team/` + поле `photo` в `src/content.ts` (подробности в `public/team/README.txt`) |
 | Порядок секций, убрать секцию | массив `sections` в `src/app/page.tsx` |
 | Вёрстка отдельной секции | `src/components/sections/<Секция>.tsx` |
+| Сезон фона (зима, весна, лето, осень или по дате) | `content.scene.season` в `src/content.ts` |
+| Картинки сцены | `public/scene/` |
+| Роадмап: треки, этапы, главы про AI | `content.roadmap` в `src/content.ts` (у этапа `ai: true` — тег AI) |
+| Жуки: подсказка, счётчик, выключить | `content.bugs` в `src/content.ts`; скорость и поведение — `src/lib/bugs.ts` |
 
 ### Тексты
 
 Всё в `src/content.ts`, в компонентах текста нет (это проверяет тест). Значения в `[КВАДРАТНЫХ СКОБКАХ]`
 нужно заменить перед публикацией. Их легко найти поиском по `[`:
 
-- `[ЧАСЫ]` — FAQ;
 - `[https://ваш-домен.ru]` — `meta.siteUrl`. Пока здесь плейсхолдер, `og:url` и `og:image` не выводятся.
 
 Картинка для соцсетей: положи `public/og.png` (1200×630) и укажи `ogImage: "/og.png"`.
@@ -38,8 +41,9 @@ npm run build    # сборка в папку out/
 
 ### Цвета
 
-Акцент меняется в одной строке — `--accent` в `src/app/globals.css`. Оттуда цвет попадает в утилиты
-Tailwind (`bg-accent`, `text-accent`), производные оттенки (`--accent-strong`, `--accent-soft`) и favicon.
+Тема — «тёмное стекло» поверх сцены. Цвета кнопок — `--accent`, акцентный текст на тёмном — `--gold`,
+стекло — `--glass` / `--glass-strong`, затемнение сцены — `--scene-overlay`. Всё в блоке `:root`
+файла `src/app/globals.css`; оттуда цвета попадают в утилиты Tailwind (`bg-accent`, `text-gold`, `glass`…) и в favicon.
 В Tailwind v4 нет отдельного `tailwind.config`: его роль играет блок `@theme inline` в том же файле.
 
 ### Favicon
@@ -47,11 +51,25 @@ Tailwind (`bg-accent`, `text-accent`), производные оттенки (`-
 Генерируется при сборке (`src/app/favicon.svg/route.ts`): инициалы берутся из `content.brand.initials`,
 цвет — из `--accent`. Отдельно править не нужно.
 
+### Королевство: сцена, сезоны, частицы, жуки
+
+- **Сезон.** `content.scene.season`: `"winter"`, `"spring"`, `"summer"`, `"autumn"` или `"auto"` (по месяцу:
+  дек–фев зима, мар–май весна, июн–авг лето, сен–ноя осень). Любой сезон можно посмотреть по адресу `?season=summer`.
+- **Картинки.** `public/scene/<сезон>.webp` (десктоп) и `<сезон>-m.webp` (портретный кроп для телефонов).
+  Загружается только картинка текущего сезона. Пересобрать из PNG:
+  `cwebp -q 72 -m 6 autumn.png -o public/scene/autumn.webp` и
+  `cwebp -q 72 -m 6 -crop 480 0 620 1033 autumn.png -o public/scene/autumn-m.webp`.
+- **Частицы.** Снег, листья, лепестки или светлячки по сезону: часть летит за стеклом, часть — поверх.
+  Количество — `src/lib/particles.ts`, внешний вид — блок «ЧАСТИЦЫ» в `globals.css`.
+- **Жуки.** Ползают по экрану, курсор становится лупой. Поймать — навести лупу и задержать или кликнуть,
+  на телефоне — тап. Тексты — `content.bugs`, `bugs: null` убирает жуков, подсказку и счётчик.
+- Если в системе включено «уменьшить движение» или JS не загрузился, частиц и жуков нет.
+
 ### Секции
 
 ```tsx
 // src/app/page.tsx
-const sections = [Hero, Audience, Process, Pricing, Team, Referral, Faq, Cta];
+const sections = [Hero, Audience, Roadmap, Pricing, Team, Referral, Faq, Cta];
 ```
 
 Убрать секцию — удали её из массива. Если на неё вели ссылки (меню, кнопки — поиск по `#id` в `content.ts`),

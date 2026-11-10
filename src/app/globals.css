@@ -1,30 +1,37 @@
 @import "tailwindcss";
 
 /*
- * ДИЗАЙН-ТОКЕНЫ
+ * ДИЗАЙН-ТОКЕНЫ — тема «тёмное стекло» поверх сцены королевства.
  * Все цвета сайта задаются здесь. Поменяй значение — изменится везде:
  * в утилитах Tailwind (bg-accent, text-muted, border-line…) и в favicon.
  */
 :root {
-  --canvas: #f3f4f1; /* фон страницы */
-  --surface: #ffffff; /* фон карточек */
-  --ink: #0f1115; /* основной текст и тёмная секция */
-  --muted: #3d424a; /* вторичный текст */
-  --line: #dcded9; /* бордеры */
-  --accent: #2b50ff; /* акцентный цвет — меняется только здесь */
+  --canvas: #0b0d14; /* фон под сценой, пока картинка грузится */
+  --glass: rgba(12, 14, 22, 0.64); /* стеклянные панели секций */
+  --glass-strong: rgba(9, 10, 16, 0.82); /* шапка, футер, секция «Оплата» */
+  --surface: rgba(255, 255, 255, 0.05); /* карточки внутри стекла */
+  --ink: #f5efe4; /* основной текст */
+  --muted: #d4ccbd; /* вторичный текст */
+  --line: rgba(232, 190, 110, 0.3); /* рамки — полупрозрачное золото */
+  --gold: #e8be6e; /* акцентный текст на тёмном */
+  --accent: #2b50ff; /* кнопки — меняется только здесь */
   --on-accent: #ffffff; /* текст на акцентном фоне */
-  --passed: #1b7a43; /* «passed»-зелёный */
-  --placeholder: #e3e5e0; /* фон плейсхолдера вместо фото */
+  --passed: #2f9a5a; /* «passed»: кружки и полоса прогресса */
+  --passed-fg: #8fe0aa; /* «passed»: текст на тёмном */
+  --placeholder: rgba(255, 255, 255, 0.08); /* фон плейсхолдера вместо фото */
 
-  /* тёмная секция «Оплата» */
-  --on-dark: #ffffff;
-  --on-dark-muted: #a9aeb6;
-  --line-dark: #2a2e36;
+  /* светлая карточка постоплаты и светлые кнопки */
+  --paper: #f7f1e6;
+  --paper-ink: #1a1510;
+  --paper-muted: #4a4237;
 
-  /* производные — пересчитываются от акцента сами */
+  /* затемнение сцены, чтобы текст на стекле читался даже на светлых местах картинки */
+  --scene-overlay: linear-gradient(180deg, rgba(8, 10, 18, 0.42) 0%, rgba(8, 10, 18, 0.55) 55%, rgba(8, 10, 18, 0.7) 100%);
+
+  /* производные — пересчитываются сами */
   --accent-strong: color-mix(in srgb, var(--accent), black 14%);
-  --accent-soft: color-mix(in srgb, var(--accent), white 90%);
-  --passed-soft: color-mix(in srgb, var(--passed), white 88%);
+  --passed-soft: color-mix(in srgb, var(--passed-fg), transparent 84%);
+  --gold-soft: color-mix(in srgb, var(--gold), transparent 85%);
 
   /* плавность анимаций */
   --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -41,20 +48,478 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
-  --color-accent-soft: var(--accent-soft);
   --color-on-accent: var(--on-accent);
   --color-passed: var(--passed);
+  --color-passed-fg: var(--passed-fg);
   --color-passed-soft: var(--passed-soft);
   --color-placeholder: var(--placeholder);
-  --color-on-dark: var(--on-dark);
-  --color-on-dark-muted: var(--on-dark-muted);
-  --color-line-dark: var(--line-dark);
+  --color-paper: var(--paper);
+  --color-paper-ink: var(--paper-ink);
+  --color-paper-muted: var(--paper-muted);
+
+  --shadow-panel: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
 
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* Стекло: полупрозрачный фон с размытием того, что за ним */
+@utility glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+
+@utility glass-strong {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+
+/*
+ * СЦЕНА
+ * Картинка сезона за всей страницей. Сезон ставит <html data-season> (content.scene.season).
+ * Файлы: public/scene/<сезон>.webp и <сезон>-m.webp (портретный кроп для телефонов).
+ */
+html[data-season="winter"] { --scene-image: url("/scene/winter.webp"); }
+html[data-season="spring"] { --scene-image: url("/scene/spring.webp"); }
+html[data-season="summer"] { --scene-image: url("/scene/summer.webp"); }
+html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
+
+@media (max-width: 767px) {
+  html[data-season="winter"] { --scene-image: url("/scene/winter-m.webp"); }
+  html[data-season="spring"] { --scene-image: url("/scene/spring-m.webp"); }
+  html[data-season="summer"] { --scene-image: url("/scene/summer-m.webp"); }
+  html[data-season="autumn"] { --scene-image: url("/scene/autumn-m.webp"); }
+}
+
+@layer components {
+  .scene {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background: var(--scene-image) center 30% / cover no-repeat, var(--canvas);
+  }
+
+  .scene::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--scene-overlay);
+  }
+}
+
+/*
+ * ЧАСТИЦЫ
+ * Летят между сценой и стеклом (компонент Particles, параметры — src/lib/particles.ts).
+ * Сдвиг вниз — свойство translate, покачивание — transform, вращение — rotate: они не мешают друг другу.
+ */
+@layer components {
+  .particles {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* передний слой: поверх контента (под жуками и шапкой), крупнее и быстрее — ближе к зрителю */
+  .particles--front {
+    z-index: 20;
+    --depth-scale: 1.8;
+    --depth-speed: 0.7;
+  }
+
+  .particle {
+    position: absolute;
+    top: -6vh;
+    left: var(--x);
+    animation: particle-fall calc(var(--fall) * var(--depth-speed, 1)) linear var(--delay) infinite;
+    will-change: translate;
+  }
+
+  .particle > i {
+    display: block;
+    width: calc(var(--size) * var(--depth-scale, 1));
+    height: calc(var(--size) * var(--depth-scale, 1));
+    animation: particle-sway var(--sway) ease-in-out var(--delay) infinite alternate;
+  }
+
+  /* снег */
+  .particles--winter .particle > i {
+    border-radius: 50%;
+    background: #fff;
+    opacity: var(--alpha);
+    filter: blur(var(--blur));
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.55);
+  }
+
+  /* крупные хлопья спереди — мягкие и полупрозрачные, чтобы не мешать читать */
+  .particles--winter.particles--front .particle > i {
+    opacity: calc(var(--alpha) * 0.75);
+    filter: blur(calc(var(--blur) + 0.8px));
+  }
+
+  /* листья и лепестки */
+  .particles--autumn .particle > i,
+  .particles--spring .particle > i {
+    background: var(--color);
+    animation:
+      particle-sway var(--sway) ease-in-out var(--delay) infinite alternate,
+      particle-spin var(--spin) linear var(--delay) infinite;
+  }
+
+  .particles--autumn .particle > i {
+    border-radius: 0 80% 0 80%;
+    opacity: 0.9;
+  }
+
+  .particles--spring .particle > i {
+    border-radius: 70% 10% 70% 10%;
+    opacity: 0.85;
+  }
+
+  /* листья и лепестки спереди — мельче и прозрачнее, чтобы не закрывать текст */
+  .particles--autumn.particles--front,
+  .particles--spring.particles--front {
+    --depth-scale: 1.1;
+  }
+
+  .particles--autumn.particles--front .particle > i,
+  .particles--spring.particles--front .particle > i {
+    opacity: 0.5;
+  }
+
+  /* светлячки: не падают, а кружат и мерцают */
+  .particles--summer .particle {
+    top: var(--y);
+    animation: particle-wander var(--fall) ease-in-out var(--delay) infinite alternate;
+  }
+
+  .particles--summer .particle > i {
+    border-radius: 50%;
+    background: #ffe58a;
+    box-shadow: 0 0 10px 3px rgba(255, 214, 102, 0.75);
+    animation: particle-pulse var(--sway) ease-in-out var(--delay) infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .particles {
+      display: none;
+    }
+  }
+}
+
+@keyframes particle-fall {
+  to {
+    translate: 0 112vh;
+  }
+}
+
+@keyframes particle-sway {
+  from {
+    transform: translateX(calc(var(--drift, 0px) * -1));
+  }
+  to {
+    transform: translateX(var(--drift, 0px));
+  }
+}
+
+@keyframes particle-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes particle-wander {
+  to {
+    translate: var(--dx) var(--dy);
+  }
+}
+
+@keyframes particle-pulse {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * ЖУКИ И ЛУПА
+ * Жуки ползают поверх контента (под шапкой), компонент Bugs, «физика» — src/lib/bugs.ts.
+ * Курсор-лупа — только для мыши и только пока жуки на странице (html[data-bugs]).
+ */
+@layer components {
+  .bugs {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .bug {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 52px;
+    height: 57px;
+    margin: -28px 0 0 -26px;
+    pointer-events: auto;
+    touch-action: manipulation;
+    will-change: transform;
+    /* лёгкое свечение, чтобы чёрный жук читался на тёмном стекле */
+    filter: drop-shadow(0 0 6px rgba(255, 236, 200, 0.32));
+  }
+
+  .bug-sprite {
+    display: block;
+    overflow: visible;
+  }
+
+  .bug-shadow {
+    fill: rgba(0, 0, 0, 0.45);
+  }
+
+  .bug-legs {
+    transform-box: view-box;
+    transform-origin: 20px 26px;
+    animation: bug-legs 0.24s ease-in-out infinite alternate;
+  }
+
+  .bug-legs--b {
+    animation-direction: alternate-reverse;
+  }
+
+  /* разбегаются после награды: не ловятся и не мешают кликам */
+  .bug--scatter {
+    pointer-events: none;
+  }
+
+  .bug--scatter .bug-legs {
+    animation-duration: 0.1s;
+  }
+
+  .bug--caught .bug-sprite {
+    animation: bug-caught 0.45s var(--ease-out-soft) forwards;
+  }
+
+  .bug--caught .bug-legs {
+    animation-play-state: paused;
+  }
+
+  .bug--caught::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    animation: bug-burst 0.45s ease-out forwards;
+  }
+
+  /* награда за жуков: ссылка в плашке кликабельна (селектор сильнее, чем у .bug-counter) */
+  .bug-counter.bug-reward {
+    padding: 16px 18px;
+    border-radius: 16px;
+    pointer-events: auto;
+    max-width: calc(100vw - 32px);
+  }
+
+  /* подсказку про жуков показываем, только когда они действительно ползают */
+  html:not([data-bugs]) .bug-hint {
+    visibility: hidden;
+  }
+
+  .bug-counter {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 30;
+    padding: 10px 14px;
+    border-radius: 12px;
+    pointer-events: none;
+  }
+
+  @media (pointer: fine) {
+    html[data-bugs] body {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M27 27l14 14' stroke='%230b0d14' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M27 27l14 14' stroke='%23e8be6e' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='18' r='12' fill='rgba%28255%2C255%2C255%2C0.12%29' stroke='%230b0d14' stroke-width='5'/%3E%3Ccircle cx='18' cy='18' r='12' fill='none' stroke='%23f5efe4' stroke-width='2.5'/%3E%3C/svg%3E") 18 18, zoom-in;
+    }
+  }
+}
+
+@keyframes bug-legs {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes bug-caught {
+  35% {
+    transform: translateY(-8px) scale(1.35);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-8px) scale(0.2) rotate(220deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bug-burst {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/*
+ * ПРОГОН
+ * Шаги карточки path_to_offer.spec «прогоняются» как тесты (компонент ReportCard).
+ * Базовые стили — итоговое состояние; анимация включается только без «уменьшить движение».
+ */
+@property --count {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer components {
+  .run-stack {
+    display: inline-grid;
+    place-items: center end;
+  }
+
+  .run-layer {
+    grid-area: 1 / 1;
+  }
+
+  .run-pending,
+  .run-running {
+    opacity: 0;
+  }
+
+  .run-count {
+    --count: var(--count-final);
+    counter-reset: run var(--count);
+  }
+
+  .run-count::before {
+    content: counter(run);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .run-stack {
+      --t-run: calc(var(--run-start) + var(--i, 0) * var(--run-step));
+      --t-pass: calc(var(--t-run) + var(--run-step));
+    }
+
+    .run-pending {
+      opacity: 1;
+      animation: run-off 1ms linear var(--t-run) forwards;
+    }
+
+    .run-running {
+      animation:
+        run-on 1ms linear var(--t-run) forwards,
+        run-off 1ms linear var(--t-pass) forwards;
+    }
+
+    .run-spinner {
+      animation:
+        run-on 1ms linear var(--t-run) forwards,
+        run-off 1ms linear var(--t-pass) forwards,
+        run-spin 0.7s linear infinite;
+    }
+
+    .run-passed {
+      opacity: 0;
+      animation: run-on 1ms linear var(--t-pass) forwards;
+    }
+
+    .run-check {
+      animation: run-pop 0.45s var(--ease-out-back) var(--t-pass) both;
+    }
+
+    .run-count {
+      animation-name: run-count;
+      animation-delay: var(--run-start);
+      animation-fill-mode: both;
+    }
+
+    .run-bar {
+      animation-name: run-bar;
+      animation-delay: var(--run-start);
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
+
+    .run-next-dot {
+      animation: run-pulse 1.6s ease-in-out calc(var(--run-start) + 3s) infinite;
+    }
+  }
+}
+
+@keyframes run-on {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes run-off {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes run-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes run-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes run-count {
+  from {
+    --count: 0;
+  }
+  to {
+    --count: var(--count-final);
+  }
+}
+
+@keyframes run-bar {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes run-pulse {
+  50% {
+    box-shadow: 0 0 0 6px var(--gold-soft);
+  }
 }
 
 /*
@@ -148,7 +613,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--gold);
     outline-offset: 3px;
   }
 }

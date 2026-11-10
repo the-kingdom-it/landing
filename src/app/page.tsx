@@ -5,10 +5,14 @@ import { Footer } from "@/components/sections/Footer";
 import { Header } from "@/components/sections/Header";
 import { Hero } from "@/components/sections/Hero";
 import { Pricing } from "@/components/sections/Pricing";
-import { Process } from "@/components/sections/Process";
+import { Roadmap } from "@/components/sections/Roadmap";
 import { Referral } from "@/components/sections/Referral";
 import { Team } from "@/components/sections/Team";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { Bugs } from "@/components/theme/Bugs";
+import { Particles } from "@/components/theme/Particles";
+import { content } from "@/content";
+import { Scene } from "@/components/theme/Scene";
 
 /*
  * Порядок секций на странице.
@@ -19,7 +23,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 const sections = [
   Hero,
   Audience,
-  Process,
+  Roadmap,
   Pricing,
   Team,
   Referral,
@@ -30,6 +34,8 @@ const sections = [
 export default function Home() {
   return (
     <>
+      <Scene />
+      <Particles />
       <Header />
       <main id="main">
         {sections.map((Section, index) => (
@@ -37,6 +43,7 @@ export default function Home() {
         ))}
       </main>
       <Footer />
+      {content.bugs ? <Bugs counterLabel={content.bugs.counterLabel} reward={content.bugs.reward} /> : null}
       <ScrollReveal />
     </>
   );
