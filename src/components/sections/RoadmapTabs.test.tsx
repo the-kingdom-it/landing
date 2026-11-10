@@ -1,12 +1,12 @@
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { content } from "@/content";
 import { RoadmapTabs } from "./RoadmapTabs";
 
-const { tracks, labels, statuses, final } = content.roadmap;
+const { tracks, labels, final } = content.roadmap;
 
 function renderTabs() {
-  return render(<RoadmapTabs tracks={tracks} labels={labels} statuses={statuses} final={final} />);
+  return render(<RoadmapTabs tracks={tracks} labels={labels} final={final} />);
 }
 
 describe("RoadmapTabs", () => {
@@ -17,7 +17,11 @@ describe("RoadmapTabs", () => {
     expect(tabs[0]).toHaveAttribute("aria-selected", "true");
     const panel = screen.getByRole("tabpanel");
     expect(within(panel).getByText(tracks[0].goal)).toBeInTheDocument();
-    for (const stage of tracks[0].stages) expect(within(panel).getByText(stage.title)).toBeInTheDocument();
+    for (const stage of tracks[0].stages) {
+      expect(within(panel).getByText(stage.title)).toBeInTheDocument();
+      expect(within(panel).getByText(stage.learn)).toBeInTheDocument();
+    }
+    expect(within(panel).getByText(final.title)).toBeInTheDocument();
   });
 
   it("switches the track on click", () => {
@@ -44,47 +48,12 @@ describe("RoadmapTabs", () => {
     expect(within(panel).getAllByText(labels.ai)).toHaveLength(tracks[0].stages.filter((stage) => stage.ai).length);
   });
 
-  it("shows every stage as passed when scroll animation is unavailable", () => {
+  it("shows no run statuses and no result block", () => {
     renderTabs();
     const panel = screen.getByRole("tabpanel");
-    expect(within(panel).getAllByText(statuses.passed)).toHaveLength(tracks[0].stages.length);
-    expect(within(panel).getByText(final.title)).toBeInTheDocument();
-  });
-
-  describe("with scroll animation", () => {
-    type Callback = (entries: Array<{ isIntersecting: boolean; target: Element }>) => void;
-    let fire: Callback;
-
-    beforeEach(() => {
-      vi.useFakeTimers();
-      vi.stubGlobal("matchMedia", (query: string) => ({ matches: false, media: query }));
-      vi.stubGlobal(
-        "IntersectionObserver",
-        class {
-          constructor(callback: Callback) {
-            fire = callback;
-          }
-          observe() {}
-          unobserve() {}
-          disconnect() {}
-        },
-      );
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-      vi.unstubAllGlobals();
-    });
-
-    it("runs a stage when it scrolls into view: pending → running → passed", () => {
-      const { container } = renderTabs();
-      const panel = screen.getByRole("tabpanel");
-      expect(within(panel).getAllByText(statuses.pending)).toHaveLength(tracks[0].stages.length);
-      const first = container.querySelector("[data-stage]")!;
-      act(() => fire([{ isIntersecting: true, target: first }]));
-      expect(within(first as HTMLElement).getByText(statuses.running)).toBeInTheDocument();
-      act(() => vi.advanceTimersByTime(1000));
-      expect(within(first as HTMLElement).getByText(statuses.passed)).toBeInTheDocument();
-    });
+    for (const status of ["PENDING", "RUNNING", "PASSED", "NEXT"]) {
+      expect(within(panel).queryByText(status)).toBeNull();
+    }
+    expect(within(panel).queryByText("на выходе")).toBeNull();
   });
 });

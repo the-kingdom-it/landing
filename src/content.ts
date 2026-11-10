@@ -30,6 +30,8 @@ export type TeamMember = {
   /** Путь от папки public/, например "/team/valentin.jpg". null – плейсхолдер с инициалами. */
   photo: string | null;
   photoAlt: string;
+  /** Ссылки под описанием, например Telegram. Пустой массив — без ссылок. */
+  links: LinkItem[];
   /** Значок компании под фото: логотип из public/ и название. null — без значка. */
   company: { name: string; logo: string } | null;
 };
@@ -39,8 +41,6 @@ export type RoadmapStage = {
   subtitle: string;
   /** Что изучаем на этапе. */
   learn: string;
-  /** Что есть на выходе. */
-  result: string;
   /** Глава про AI — помечается отдельным тегом. */
   ai: boolean;
 };
@@ -59,11 +59,8 @@ export type RoadmapLabels = {
   goal: string;
   stage: string;
   learn: string;
-  result: string;
   ai: string;
 };
-
-export type RoadmapStatuses = { pending: string; running: string; passed: string; next: string };
 
 export type PriceCard = {
   label: string;
@@ -136,7 +133,6 @@ export type SiteContent = {
     /** Блок о том, зачем в обучении главы про AI. */
     ai: { title: string; text: string };
     labels: RoadmapLabels;
-    statuses: RoadmapStatuses;
     /** Последний шаг каждого трека. */
     final: { title: string; text: string };
     tracks: RoadmapTrack[];
@@ -276,7 +272,7 @@ export const content: SiteContent = {
   roadmap: {
     id: "roadmap",
     title: "Роадмап: выбери свой трек",
-    lead: "У каждого этапа понятный результат на выходе. Листай вниз – статусы обновляются по мере прохождения.",
+    lead: "У каждого этапа понятный результат на выходе.",
     ai: {
       title: "AI уже здесь",
       text: "Мы видим это изнутри: AI-ассистенты уже пишут тест-кейсы, генерируют тестовые данные и помогают с автотестами. Требования к тестировщикам изменились – от кандидатов ждут, что они умеют работать с AI и тестировать продукты с AI-функциями. Поэтому мы адаптируем обучение под современные требования рынка: в каждом треке есть отдельные главы про AI.",
@@ -286,10 +282,8 @@ export const content: SiteContent = {
       goal: "цель трека:",
       stage: "ЭТАП",
       learn: "изучаем",
-      result: "на выходе",
       ai: "AI",
     },
-    statuses: { pending: "PENDING", running: "RUNNING", passed: "PASSED", next: "NEXT" },
     final: {
       title: "Оффер",
       text: "Получаешь оффер – и только после этого вносишь основную оплату.",
@@ -305,42 +299,36 @@ export const content: SiteContent = {
             title: "Знакомство и личный план",
             subtitle: "бесплатная диагностика",
             learn: "Что уже умеешь, сколько времени есть, какая цель. Составляем личный план обучения.",
-            result: "Личный план и понятный маршрут до оффера",
             ai: false,
           },
           {
             title: "Основы тестирования",
             subtitle: "как думает тестировщик",
             learn: "Виды и уровни тестирования, тест-дизайн, чек-листы, тест-кейсы и баг-репорты.",
-            result: "Первые тест-кейсы и баг-репорты на реальном приложении",
             ai: false,
           },
           {
             title: "Веб, API и базы данных",
             subtitle: "что происходит под капотом",
             learn: "Клиент-сервер, HTTP, DevTools, Postman, основы SQL.",
-            result: "Умеешь проверить фронт, API и данные в базе",
             ai: false,
           },
           {
             title: "AI в работе тестировщика",
             subtitle: "отдельная глава",
             learn: "Как с AI разбирать требования, генерировать тест-кейсы и тестовые данные – и как ловить ошибки самого AI.",
-            result: "Свой набор приёмов и промптов для ежедневных задач",
             ai: true,
           },
           {
             title: "Проект в портфолио",
             subtitle: "живое приложение",
             learn: "Тестируешь приложение от требований до итогового отчёта.",
-            result: "Проект, который можно показать на собеседовании",
             ai: false,
           },
           {
             title: "Резюме и собеседования",
             subtitle: "выход на рынок",
             learn: "Резюме под вакансии, стратегия откликов, мок-собеседования с разбором.",
-            result: "Резюме, отклики и уверенность на собеседовании",
             ai: false,
           },
         ],
@@ -355,42 +343,36 @@ export const content: SiteContent = {
             title: "Диагностика и выбор стека",
             subtitle: "бесплатная диагностика",
             learn: "Разбираем твой опыт и интересные вакансии, выбираем язык и инструменты.",
-            result: "Личный план и стек под твою цель",
             ai: false,
           },
           {
             title: "Язык программирования",
             subtitle: "код для тестов",
             learn: "Основы языка под автотесты: синтаксис, структуры данных, ООП, работа с пакетами.",
-            result: "Уверенно пишешь код для автотестов",
             ai: false,
           },
           {
             title: "Автотесты UI и API",
             subtitle: "фреймворк с нуля",
             learn: "Playwright и pytest, Page Object, фикстуры, работа с API и тестовыми данными.",
-            result: "Первые стабильные автотесты",
             ai: false,
           },
           {
             title: "AI в автоматизации",
             subtitle: "отдельная глава",
             learn: "AI-ассистенты для написания и рефакторинга автотестов, генерация данных, тестирование AI-функций продукта.",
-            result: "Пишешь тесты быстрее и понимаешь, что генерирует AI",
             ai: true,
           },
           {
             title: "CI и отчёты",
             subtitle: "тесты в пайплайне",
             learn: "Запуск в CI, параллельный прогон, Allure-отчёты, Docker на базовом уровне.",
-            result: "Фреймворк, который сам запускается в пайплайне",
             ai: false,
           },
           {
             title: "Резюме и собеседования",
             subtitle: "выход на рынок",
             learn: "Резюме автоматизатора, live-coding, мок-собеседования с разбором.",
-            result: "Готовность к техническому интервью",
             ai: false,
           },
         ],
@@ -405,35 +387,30 @@ export const content: SiteContent = {
             title: "Диагностика пробелов",
             subtitle: "бесплатная диагностика",
             learn: "Сравниваем твой опыт с требованиями целевого грейда и компаний.",
-            result: "План закрытия пробелов",
             ai: false,
           },
           {
             title: "Стратегия и архитектура тестирования",
             subtitle: "уровень выше",
             learn: "Пирамида тестов, контрактное тестирование, тестовые окружения, стратегия для команды.",
-            result: "Тест-стратегия на реальном примере",
             ai: false,
           },
           {
             title: "Сложные системы",
             subtitle: "глазами QA",
             learn: "Микросервисы, очереди, базы данных, логи и мониторинг.",
-            result: "Уверенно говоришь про сложную архитектуру",
             ai: false,
           },
           {
             title: "AI в процессах QA",
             subtitle: "отдельная глава",
             learn: "Внедрение AI-инструментов в команду, тестирование LLM-функций, оценка качества ответов модели.",
-            result: "Кейс внедрения AI, который не стыдно рассказать",
             ai: true,
           },
           {
             title: "Собеседования уровня бигтех",
             subtitle: "финальная подготовка",
             learn: "Секции по тестированию, кодингу и проектированию, разбор каждой попытки.",
-            result: "Готовность к сильным собеседованиям",
             ai: false,
           },
         ],
@@ -465,6 +442,7 @@ export const content: SiteContent = {
         stack: [],
         photo: "/team/valentin.jpg",
         photoAlt: "Валентин Волков, AQA Engineer",
+        links: [{ label: "Канал @different_it", href: "https://t.me/different_it" }],
         company: { name: "Т-Банк", logo: "/team/tbank.svg" },
       },
       {
@@ -475,6 +453,7 @@ export const content: SiteContent = {
         stack: [],
         photo: "/team/qa-lead.jpg",
         photoAlt: "Александр, AQA Lead",
+        links: [{ label: "Написать @praleksander", href: "https://t.me/praleksander" }],
         company: null,
       },
     ],

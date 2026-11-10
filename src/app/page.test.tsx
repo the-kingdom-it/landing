@@ -77,9 +77,24 @@ describe("landing page", () => {
     }
   });
 
+  it("links each team member to their Telegram in a new tab", () => {
+    const { container } = render(<Home />);
+    const team = within(container.querySelector<HTMLElement>(`#${content.team.id}`)!);
+    for (const member of content.team.members) {
+      for (const link of member.links) {
+        const anchor = team.getByRole("link", { name: link.label });
+        expect(anchor).toHaveAttribute("href", link.href);
+        expect(anchor).toHaveAttribute("target", "_blank");
+      }
+    }
+    const hrefs = content.team.members.flatMap((member) => member.links.map((link) => link.href));
+    expect(hrefs).toEqual(expect.arrayContaining(["https://t.me/different_it", "https://t.me/praleksander"]));
+  });
+
   it("shows the company badge only for members who have one", () => {
     const { container } = render(<Home />);
-    const cards = container.querySelectorAll(`#${content.team.id} li`);
+    const cards = Array.from(container.querySelector(`#${content.team.id} ul`)!.children);
+    expect(cards).toHaveLength(content.team.members.length);
     content.team.members.forEach((member, index) => {
       const card = cards[index] as HTMLElement;
       if (member.company) {

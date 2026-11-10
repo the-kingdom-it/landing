@@ -24,7 +24,7 @@ export function Roadmap() {
             </div>
           </div>
           <div className="mt-10">
-            <RoadmapTabs tracks={roadmap.tracks} labels={roadmap.labels} statuses={roadmap.statuses} final={roadmap.final} />
+            <RoadmapTabs tracks={roadmap.tracks} labels={roadmap.labels} final={roadmap.final} />
           </div>
         </Panel>
       </Container>
