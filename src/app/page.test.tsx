@@ -54,6 +54,12 @@ describe("landing page", () => {
     expect(within(banner).queryByText(content.brand.initials)).toBeNull();
   });
 
+  it("has a theme toggle in the header", () => {
+    render(<Home />);
+    const banner = screen.getByRole("banner");
+    expect(within(banner).getByRole("button", { name: new RegExp(content.ui.themeToggle.toDark) })).toBeInTheDocument();
+  });
+
   it("renders the hero report with computed progress", () => {
     render(<Home />);
     const passed = content.hero.report.steps.filter((step) => step.passed).length;

@@ -372,6 +372,17 @@ html[data-theme="light"] {
     box-shadow: 0 50vh 0 50vh var(--canvas);
   }
 
+  /* иконка и подпись кнопки темы: в светлой теме — «луна», в тёмной — «солнце» */
+  .theme-when-light,
+  .theme-when-dark {
+    display: flex;
+  }
+
+  html[data-theme="dark"] .theme-when-light,
+  html:not([data-theme="dark"]) .theme-when-dark {
+    display: none;
+  }
+
   /* подсказку про жуков показываем, только когда они действительно ползают */
   html:not([data-bugs]) .bug-hint {
     visibility: hidden;

@@ -1,9 +1,10 @@
 import { content } from "@/content";
+import { ThemeToggle } from "../theme/ThemeToggle";
 import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
 
 export function Header() {
-  const { brand, header, ui, hero } = content;
+  const { brand, header, ui, hero, scene } = content;
 
   return (
     <header className="site-header glass-strong relative z-40 border-b border-line lg:sticky lg:top-0">
@@ -33,9 +34,12 @@ export function Header() {
           </ul>
         </nav>
 
-        <ButtonLink href={header.cta.href} size="sm" className="ml-auto lg:ml-0">
-          {header.cta.label}
-        </ButtonLink>
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <ThemeToggle labels={ui.themeToggle} backgrounds={scene.backgrounds} />
+          <ButtonLink href={header.cta.href} size="sm">
+            {header.cta.label}
+          </ButtonLink>
+        </div>
       </Container>
     </header>
   );

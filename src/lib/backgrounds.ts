@@ -4,8 +4,6 @@
  * (светлое стекло, тёмный текст), на тёмных — тёмное стекло.
  */
 export type Theme = "light" | "dark";
-/** "auto" — тема по фону. */
-export type ThemeSetting = Theme | "auto";
 
 export const BACKGROUNDS = [
   { id: "kingdom", name: "Королевство (по сезонам)", theme: "dark" },
@@ -52,17 +50,35 @@ export function backgroundTheme(id: BackgroundId): Theme {
   return BACKGROUNDS.find((bg) => bg.id === id)?.theme ?? "dark";
 }
 
-/** Тема: ?theme= из адреса, затем настройка, "auto" — по фону. */
-export function resolveTheme(setting: string | undefined, background: BackgroundId, override?: string | null): Theme {
-  if (isTheme(override)) return override;
-  return isTheme(setting) ? setting : backgroundTheme(background);
-}
+/** Ключ, под которым браузер посетителя помнит выбранную тему. */
+export const THEME_STORAGE_KEY = "kingdom-theme";
+
+export type SceneConfig = {
+  /** Тема по умолчанию. */
+  theme: Theme;
+  /** Фон для каждой темы: переключатель темы меняет и фон. */
+  backgrounds: Record<Theme, BackgroundId>;
+  /** Фон, заданный при запуске (BG=3 npm run dev), — работает как ?bg=. */
+  forcedBg: BackgroundId | null;
+};
 
 /**
- * Скрипт для <head>: до первой отрисовки ставит <html data-bg> и <html data-theme>.
- * ?bg=3 в адресе переключает фон, ?theme=light|dark — тему.
+ * Какой фон и тему показать.
+ * ?bg= (или BG=) — этот фон в его «родной» теме, ?theme= может её поменять; сохранённый выбор не мешает.
+ * Без ?bg= — ?theme=, затем выбор посетителя, затем тема по умолчанию; фон — пара для темы.
  */
-export function buildBackgroundScript(defaultBg: BackgroundId, themeSetting: string): string {
+export function resolveScene(
+  config: SceneConfig,
+  input: { bg?: string | null; theme?: string | null; stored?: string | null },
+): { theme: Theme; bg: BackgroundId } {
+  const forced = isBackground(input.bg) ? input.bg : config.forcedBg;
+  if (forced) return { theme: isTheme(input.theme) ? input.theme : backgroundTheme(forced), bg: forced };
+  const theme = isTheme(input.theme) ? input.theme : isTheme(input.stored) ? input.stored : config.theme;
+  return { theme, bg: config.backgrounds[theme] };
+}
+
+/** Скрипт для <head>: до первой отрисовки ставит <html data-bg> и <html data-theme> по правилам resolveScene. */
+export function buildBackgroundScript(config: SceneConfig): string {
   const themes = JSON.stringify(Object.fromEntries(BACKGROUNDS.map((bg) => [bg.id, bg.theme])));
-  return `(function(){try{var t=${themes},p=new URLSearchParams(location.search),q=p.get("bg"),b=Object.prototype.hasOwnProperty.call(t,q)?q:${JSON.stringify(defaultBg)},s=p.get("theme"),f=${JSON.stringify(themeSetting)},d=document.documentElement.dataset;d.bg=b;d.theme=s==="light"||s==="dark"?s:f==="light"||f==="dark"?f:t[b]}catch(e){}})()`;
+  return `(function(){try{var t=${themes},c=${JSON.stringify(config)},p=new URLSearchParams(location.search),ok=function(v){return v==="light"||v==="dark"},q=p.get("bg"),qt=p.get("theme"),st=null;try{st=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})}catch(e){}var f=Object.prototype.hasOwnProperty.call(t,q)?q:c.forcedBg,th,bg;if(f){th=ok(qt)?qt:t[f];bg=f}else{th=ok(qt)?qt:ok(st)?st:c.theme;bg=c.backgrounds[th]}var d=document.documentElement.dataset;d.theme=th;d.bg=bg}catch(e){}})()`;
 }

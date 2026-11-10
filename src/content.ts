@@ -6,7 +6,7 @@
  * Поле `id` у секции – это якорь в адресе (#roadmap). Если меняешь id, поправь ссылки в header.nav.
  */
 
-import type { BackgroundId, ThemeSetting } from "@/lib/backgrounds";
+import type { BackgroundId, Theme } from "@/lib/backgrounds";
 import type { SeasonSetting } from "@/lib/season";
 
 export type LinkItem = {
@@ -95,13 +95,13 @@ export type SiteContent = {
      * Для проверки любой сезон можно открыть по адресу ?season=summer.
      */
     season: SeasonSetting;
+    /** Тема по умолчанию: "light" — белый стиль, "dark" — тёмное стекло. Посетитель может переключить в шапке. */
+    theme: Theme;
     /**
-     * Фон: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
-     * из public/backgrounds. Посмотреть любой: ?bg=3 в адресе или BG=3 npm run dev.
+     * Фон для каждой темы: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
+     * из public/backgrounds (названия — src/lib/backgrounds.ts). Любой фон можно посмотреть по ?bg=3.
      */
-    background: BackgroundId;
-    /** Стиль: "auto" — по фону (светлый фон — белый стиль), "light" или "dark" — всегда. ?theme=light в адресе. */
-    theme: ThemeSetting;
+    backgrounds: Record<Theme, BackgroundId>;
   };
   brand: {
     /** Буквы в favicon. */
@@ -112,6 +112,8 @@ export type SiteContent = {
   ui: {
     skipToContent: string;
     navLabel: string;
+    /** Подписи кнопки темы для скринридеров. */
+    themeToggle: { toDark: string; toLight: string };
   };
   header: {
     nav: LinkItem[];
@@ -217,8 +219,8 @@ export const content: SiteContent = {
 
   scene: {
     season: "winter",
-    background: "kingdom",
-    theme: "auto",
+    theme: "light",
+    backgrounds: { light: "12", dark: "7" },
   },
 
   brand: {
@@ -229,6 +231,7 @@ export const content: SiteContent = {
   ui: {
     skipToContent: "Перейти к содержанию",
     navLabel: "Навигация по странице",
+    themeToggle: { toDark: "Включить тёмную тему", toLight: "Включить светлую тему" },
   },
 
   header: {
