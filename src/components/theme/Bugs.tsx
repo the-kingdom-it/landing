@@ -72,7 +72,7 @@ export function Bugs({ counterLabel, reward }: { counterLabel: string; reward: B
       });
     };
 
-    // награда получена: курсор снова обычный, оставшиеся жуки разбегаются к краям
+    // награда получена: оставшиеся жуки разбегаются к краям и больше не появляются
     const finish = () => {
       done = true;
       cursor = null;
