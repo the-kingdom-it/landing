@@ -22,7 +22,6 @@ describe("content", () => {
 
   it("lists are not empty", () => {
     expect(content.audience.items.length).toBeGreaterThan(0);
-    expect(content.process.steps.length).toBeGreaterThan(0);
     expect(content.team.members.length).toBeGreaterThan(0);
     expect(content.faq.items.length).toBeGreaterThan(0);
     expect(content.header.nav.length).toBeGreaterThan(0);
@@ -66,6 +65,19 @@ describe("content", () => {
   it("postpayment card links to the same Telegram as the CTA button", () => {
     expect(content.pricing.postpayment.link?.href).toBe(content.cta.button.href);
     expect(content.pricing.postpayment.link?.label).toBe(content.cta.handle);
+  });
+
+  it("every roadmap track has stages and at least one AI chapter", () => {
+    expect(content.roadmap.tracks.length).toBeGreaterThan(1);
+    for (const track of content.roadmap.tracks) {
+      expect(track.stages.length).toBeGreaterThan(0);
+      expect(track.stages.some((stage) => stage.ai)).toBe(true);
+    }
+  });
+
+  it("roadmap track ids are unique", () => {
+    const ids = content.roadmap.tracks.map((track) => track.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("scene season is a known season or auto", () => {

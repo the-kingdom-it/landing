@@ -5,7 +5,7 @@ import { Footer } from "@/components/sections/Footer";
 import { Header } from "@/components/sections/Header";
 import { Hero } from "@/components/sections/Hero";
 import { Pricing } from "@/components/sections/Pricing";
-import { Process } from "@/components/sections/Process";
+import { Roadmap } from "@/components/sections/Roadmap";
 import { Referral } from "@/components/sections/Referral";
 import { Team } from "@/components/sections/Team";
 import { ScrollReveal } from "@/components/ScrollReveal";
@@ -23,7 +23,7 @@ import { Scene } from "@/components/theme/Scene";
 const sections = [
   Hero,
   Audience,
-  Process,
+  Roadmap,
   Pricing,
   Team,
   Referral,

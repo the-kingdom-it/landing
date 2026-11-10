@@ -26,6 +26,7 @@ npm run build    # сборка в папку out/
 | Вёрстка отдельной секции | `src/components/sections/<Секция>.tsx` |
 | Сезон фона (зима, весна, лето, осень или по дате) | `content.scene.season` в `src/content.ts` |
 | Картинки сцены | `public/scene/` |
+| Роадмап: треки, этапы, главы про AI | `content.roadmap` в `src/content.ts` (у этапа `ai: true` — тег AI) |
 | Жуки: подсказка, счётчик, выключить | `content.bugs` в `src/content.ts`; скорость и поведение — `src/lib/bugs.ts` |
 
 ### Тексты
@@ -34,6 +35,7 @@ npm run build    # сборка в папку out/
 нужно заменить перед публикацией. Их легко найти поиском по `[`:
 
 - `[ЧАСЫ]` — FAQ;
+- `[срок]` — сроки треков в роадмапе (`roadmap.tracks[].duration`);
 - `[https://ваш-домен.ru]` — `meta.siteUrl`. Пока здесь плейсхолдер, `og:url` и `og:image` не выводятся.
 
 Картинка для соцсетей: положи `public/og.png` (1200×630) и укажи `ogImage: "/og.png"`.
@@ -69,7 +71,7 @@ npm run build    # сборка в папку out/
 
 ```tsx
 // src/app/page.tsx
-const sections = [Hero, Audience, Process, Pricing, Team, Referral, Faq, Cta];
+const sections = [Hero, Audience, Roadmap, Pricing, Team, Referral, Faq, Cta];
 ```
 
 Убрать секцию — удали её из массива. Если на неё вели ссылки (меню, кнопки — поиск по `#id` в `content.ts`),
