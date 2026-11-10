@@ -87,7 +87,7 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
                 <h3 className="mt-3 flex flex-wrap items-center gap-2 font-display text-[19px] leading-snug">
                   {stage.title}
                   {stage.ai ? (
-                    <span className="rounded-md bg-gold px-1.5 py-0.5 font-mono text-[11px] font-semibold text-paper-ink">
+                    <span className="rounded-md bg-gold px-1.5 py-0.5 font-mono text-[11px] font-semibold text-on-gold">
                       {labels.ai}
                     </span>
                   ) : null}

@@ -19,6 +19,12 @@
   --passed: #2f9a5a; /* «passed»: кружки и полоса прогресса */
   --passed-fg: #8fe0aa; /* «passed»: текст на тёмном */
   --placeholder: rgba(255, 255, 255, 0.08); /* фон плейсхолдера вместо фото */
+  --on-gold: #1a1510; /* текст на золотых плашках (тег AI) */
+  --track: rgba(255, 255, 255, 0.1); /* дорожка полосы прогресса */
+  --ring-muted: rgba(255, 255, 255, 0.25); /* пустой кружок шага */
+  --snow: #ffffff; /* цвет снега */
+  --panel-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
 
   /* светлая карточка постоплаты и светлые кнопки */
   --paper: #f7f1e6;
@@ -36,6 +42,32 @@
   /* плавность анимаций */
   --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
   --ease-out-back: cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+/*
+ * БЕЛЫЙ СТИЛЬ — светлое матовое стекло и тёмный текст. Включается на светлых фонах
+ * (или ?theme=light). Переопределяет только токены, компоненты те же.
+ */
+html[data-theme="light"] {
+  --canvas: #eef2f8;
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-strong: rgba(255, 255, 255, 0.86);
+  --surface: rgba(255, 255, 255, 0.6);
+  --ink: #0f1115;
+  --muted: #3d424a;
+  --line: rgba(15, 30, 60, 0.14);
+  --gold: #1a3bc7; /* акцентный текст на светлом — насыщенный синий вместо золота */
+  --on-gold: #ffffff;
+  --passed: #1b7a43;
+  --passed-fg: #0f5a30;
+  --placeholder: rgba(15, 17, 21, 0.06);
+  --paper: #f3f6fb;
+  --track: rgba(15, 17, 21, 0.1);
+  --ring-muted: rgba(15, 17, 21, 0.25);
+  --snow: #a9bddc;
+  --panel-shadow: 0 24px 60px -18px rgba(20, 40, 80, 0.25);
+  --scene-overlay: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.5) 100%);
+  color-scheme: light;
 }
 
 /*
@@ -57,11 +89,14 @@
   --color-passed-fg: var(--passed-fg);
   --color-passed-soft: var(--passed-soft);
   --color-placeholder: var(--placeholder);
+  --color-on-gold: var(--on-gold);
+  --color-track: var(--track);
+  --color-ring-muted: var(--ring-muted);
   --color-paper: var(--paper);
   --color-paper-ink: var(--paper-ink);
   --color-paper-muted: var(--paper-muted);
 
-  --shadow-panel: 0 24px 60px -12px rgba(0, 0, 0, 0.55);
+  --shadow-panel: var(--panel-shadow);
 
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
@@ -88,10 +123,19 @@
  * Пути к картинкам (--scene-image) задаёт src/lib/scene.ts — там учитывается базовый путь сайта.
  */
 @layer components {
+  /*
+   * Сцена «липкая», а не fixed: при прокрутке выглядит так же, но когда страницу «оттягивают»
+   * у верхнего края (резиновый скролл в Safari и Chrome на Mac), сцена уезжает вместе со страницей
+   * и над шапкой виден тёмный фон, а не картинка. Отрицательный отступ — чтобы она не занимала места.
+   */
   .scene {
-    position: fixed;
-    inset: 0;
+    position: sticky;
+    top: 0;
     z-index: -10;
+    height: 100vh;
+    height: 100lvh;
+    margin-bottom: -100vh;
+    margin-bottom: -100lvh;
     background: var(--scene-image) center 30% / cover no-repeat, var(--canvas);
   }
 
@@ -142,10 +186,10 @@
   /* снег */
   .particles--winter .particle > i {
     border-radius: 50%;
-    background: #fff;
+    background: var(--snow);
     opacity: var(--alpha);
     filter: blur(var(--blur));
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.55);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--snow), transparent 45%);
   }
 
   /* крупные хлопья спереди — мягкие и полупрозрачные, чтобы не мешать читать */
@@ -322,23 +366,8 @@
   }
 
   /*
-   * Тёмная полоса над шапкой: когда страницу «оттягивают» у верхнего края (резиновый скролл в Safari и на Mac),
-   * над шапкой виден фон, а не картинка сцены. Полоса выше экрана, на прокрутку и клики не влияет.
-   */
-  .site-header::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 100%;
-    height: 100vh;
-    background: var(--canvas);
-    pointer-events: none;
-  }
-
-  /*
-   * То же под футером, но тенью: тень не удлиняет страницу (в отличие от блока под футером),
-   * а при «оттягивании» у нижнего края закрывает сцену тёмным фоном.
+   * Тёмный фон под футером, тенью: тень не удлиняет страницу (в отличие от блока под футером),
+   * а при «оттягивании» у нижнего края закрывает сцену.
    */
   .site-footer {
     box-shadow: 0 50vh 0 50vh var(--canvas);
