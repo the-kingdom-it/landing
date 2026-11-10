@@ -572,12 +572,15 @@ html[data-theme="light"] {
     pointer-events: none;
   }
 
+  /*
+   * Толщина — в единицах рисунка (viewBox), без vector-effect: non-scaling-stroke. С ним Chrome считает
+   * штрих в пикселях экрана, и на растянутом SVG анимация прорисовки не доходит до конца линии.
+   */
   html[data-title="9"] .title-circle path {
     fill: none;
     stroke: var(--mark);
-    stroke-width: 3.5px;
+    stroke-width: 5;
     stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
   }
 
   /* овалы прорисовываются по очереди после появления заголовка */
@@ -587,6 +590,65 @@ html[data-theme="light"] {
       stroke-dashoffset: 1;
       animation: title-draw 0.9s cubic-bezier(0.55, 0.1, 0.35, 1) forwards;
       animation-delay: calc(0.7s + var(--i, 0) * 0.65s);
+    }
+  }
+}
+
+/*
+ * РИСОВАННЫЕ ВЫДЕЛЕНИЯ в заголовках секций (компонент MarkedText): овал или подчёркивание «от руки»
+ * прорисовывается, когда блок доезжает до экрана. Без JS и при «уменьшить движение» — сразу нарисовано.
+ */
+@layer components {
+  .draw-mark {
+    position: relative;
+    display: inline-block;
+  }
+
+  .draw-mark--circle {
+    margin: 0 0.16em;
+  }
+
+  .draw-svg {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .draw-svg--circle {
+    inset: -0.18em -0.3em -0.14em;
+    width: calc(100% + 0.6em);
+    height: calc(100% + 0.32em);
+  }
+
+  .draw-svg--underline {
+    left: -0.04em;
+    bottom: -0.14em;
+    width: calc(100% + 0.08em);
+    height: 0.3em;
+  }
+
+  /* толщина в единицах рисунка — см. комментарий у .title-circle */
+  .draw-svg path {
+    fill: none;
+    stroke: var(--highlight);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .draw-svg--underline path {
+    stroke-width: 6;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-reveal-ready] [data-reveal]:not([data-revealed]) > h2 .draw-svg path {
+      stroke-dashoffset: 1;
+    }
+
+    html[data-reveal-ready] [data-revealed] > h2 .draw-svg path {
+      stroke-dashoffset: 1;
+      animation: title-draw 1s cubic-bezier(0.55, 0.1, 0.35, 1) 0.5s forwards;
     }
   }
 }

@@ -31,6 +31,19 @@ describe("landing page", () => {
     });
   });
 
+  it("draws a hand-drawn mark around «бесплатного» in the CTA title", () => {
+    const { container } = render(<Home />);
+    const heading = within(container.querySelector<HTMLElement>(`#${content.cta.id}`)!).getByRole("heading", { level: 2 });
+    expect(heading.textContent).toBe(content.cta.title);
+    const marks = [...heading.querySelectorAll<HTMLElement>(".draw-mark")];
+    expect(marks.map((mark) => mark.firstChild?.textContent)).toEqual(content.cta.titleHighlights);
+    for (const mark of marks) {
+      const svg = mark.querySelector("svg.draw-svg");
+      expect(svg).toHaveAttribute("aria-hidden", "true");
+      expect(svg!.querySelector("path")).toHaveAttribute("pathLength", "1");
+    }
+  });
+
   it("never leaves a preposition hanging before a circled word", () => {
     render(<Home />);
     const marks = [...screen.getByRole("heading", { level: 1 }).querySelectorAll<HTMLElement>(".title-mark")];

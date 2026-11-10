@@ -190,6 +190,9 @@ export type SiteContent = {
   cta: {
     id: string;
     title: string;
+    /** Слова заголовка, выделенные «от руки», и вид выделения: "circle" — обвести, "underline" — подчеркнуть. */
+    titleHighlights: string[];
+    titleMark: "circle" | "underline";
     text: string;
     button: LinkItem;
     handle: string;
@@ -566,6 +569,8 @@ export const content: SiteContent = {
   cta: {
     id: "cta",
     title: "Начнём с бесплатного созвона",
+    titleHighlights: ["бесплатного"],
+    titleMark: "underline",
     text: "Расскажи, где ты сейчас и куда хочешь прийти. Разберём твой уровень и предложим план.",
     button: { label: "Написать в Telegram", href: telegram.url },
     handle: telegram.handle,
