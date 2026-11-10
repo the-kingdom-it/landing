@@ -157,6 +157,16 @@ describe("landing page", () => {
     }
   });
 
+  it("types each team member's role", () => {
+    const { container } = render(<Home />);
+    const cards = Array.from(container.querySelector(`#${content.team.id} ul`)!.children);
+    content.team.members.forEach((member, index) => {
+      const typed = cards[index].querySelector(".typed");
+      expect(typed).not.toBeNull();
+      expect(typed!.querySelector(".sr-only")).toHaveTextContent(member.role);
+    });
+  });
+
   it("links each team member to their Telegram in a new tab", () => {
     const { container } = render(<Home />);
     const team = within(container.querySelector<HTMLElement>(`#${content.team.id}`)!);

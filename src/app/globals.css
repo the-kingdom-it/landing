@@ -698,6 +698,41 @@ html[data-theme="light"] {
 }
 
 /*
+ * ПЕЧАТЬ ТЕКСТА (компонент TypedText): невидимая копия держит место, поверх печатается текст и мигает курсор.
+ */
+@layer components {
+  .typed-stack {
+    display: inline-grid;
+  }
+
+  .typed-reserve,
+  .typed-text {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+  }
+
+  .typed-reserve {
+    visibility: hidden;
+  }
+
+  .typed-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -0.15em;
+    background: currentColor;
+    animation: caret-blink 0.9s steps(1) infinite;
+  }
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/*
  * ПРОГОН
  * Шаги карточки path_to_offer.spec «прогоняются» как тесты (компонент ReportCard).
  * Базовые стили — итоговое состояние; анимация включается только без «уменьшить движение».
