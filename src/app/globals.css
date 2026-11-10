@@ -447,6 +447,125 @@ html[data-theme="light"] {
 }
 
 /*
+ * ЗАГОЛОВОК
+ * Варианты выделения слов QA и AQA в заголовке первого экрана: <html data-title="N"> (?title=N в адресе,
+ * по умолчанию content.hero.titleStyle). Список с названиями — src/lib/title.ts.
+ */
+@layer components {
+  .title-mark {
+    --mark: var(--highlight);
+    --marker: color-mix(in srgb, var(--accent), transparent 62%);
+    white-space: nowrap;
+  }
+
+  /* на тёмном маркер плотнее, иначе его не видно */
+  html:not([data-theme="light"]) .title-mark {
+    --marker: color-mix(in srgb, var(--accent), transparent 25%);
+  }
+
+  /* 1 — цвет акцента */
+  html[data-title="1"] .title-mark {
+    color: var(--mark);
+  }
+
+  /* 2 — градиент */
+  html[data-title="2"] .title-mark {
+    background: linear-gradient(100deg, var(--accent) 10%, #8b5cf6 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.04em;
+  }
+
+  /* 3 — маркер */
+  html[data-title="3"] .title-mark {
+    background: linear-gradient(transparent 58%, var(--marker) 58%, var(--marker) 92%, transparent 92%);
+    padding: 0 0.08em;
+    margin: 0 -0.04em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* 4 — рукописное подчёркивание */
+  html[data-title="4"] .title-mark {
+    position: relative;
+    display: inline-block;
+  }
+
+  html[data-title="4"] .title-mark::after {
+    content: "";
+    position: absolute;
+    left: -0.04em;
+    right: -0.04em;
+    bottom: -0.12em;
+    height: 0.24em;
+    background: var(--mark);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M3 13 C 40 4%2C 70 18%2C 105 10 S 165 5%2C 197 11' fill='none' stroke='black' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M3 13 C 40 4%2C 70 18%2C 105 10 S 165 5%2C 197 11' fill='none' stroke='black' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+
+  /* 5 — прописью */
+  html[data-title="5"] .title-mark {
+    display: inline-block;
+    font-family: var(--font-caveat), cursive;
+    font-weight: 700;
+    font-size: 1.32em;
+    line-height: 0.8;
+    letter-spacing: 0;
+    color: var(--mark);
+    transform: rotate(-4deg) translateY(0.04em);
+  }
+
+  /* 6 — курсив с засечками */
+  html[data-title="6"] .title-mark {
+    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.18em;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: var(--mark);
+  }
+
+  /* 7 — код-плашка */
+  html[data-title="7"] .title-mark {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.86em;
+    letter-spacing: -0.02em;
+    padding: 0.02em 0.24em 0.06em;
+    border: 0.05em solid color-mix(in srgb, var(--mark), transparent 40%);
+    border-radius: 0.18em;
+    background: color-mix(in srgb, var(--mark), transparent 88%);
+    color: var(--mark);
+  }
+
+  /* 8 — контур */
+  html[data-title="8"] .title-mark {
+    color: transparent;
+    -webkit-text-stroke: 0.035em var(--mark);
+  }
+
+  /* 9 — обведено от руки */
+  html[data-title="9"] .title-mark {
+    position: relative;
+    display: inline-block;
+    margin: 0 0.16em;
+  }
+
+  html[data-title="9"] .title-mark::after {
+    content: "";
+    position: absolute;
+    inset: -0.16em -0.26em -0.12em;
+    background: var(--mark);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'%3E%3Cpath d='M150 12 C 95 2%2C 20 10%2C 8 45 C -2 78%2C 70 96%2C 120 92 C 175 88%2C 198 62%2C 190 36 C 182 14%2C 140 6%2C 92 9' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'%3E%3Cpath d='M150 12 C 95 2%2C 20 10%2C 8 45 C -2 78%2C 70 96%2C 120 92 C 175 88%2C 198 62%2C 190 36 C 182 14%2C 140 6%2C 92 9' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    pointer-events: none;
+  }
+}
+
+/*
  * ПРОГОН
  * Шаги карточки path_to_offer.spec «прогоняются» как тесты (компонент ReportCard).
  * Базовые стили — итоговое состояние; анимация включается только без «уменьшить движение».

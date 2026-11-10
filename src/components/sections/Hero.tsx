@@ -1,5 +1,6 @@
 import { content } from "@/content";
 import { motionDelay } from "@/lib/reveal";
+import { splitTitle } from "@/lib/title";
 import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
 import { ReportCard } from "../ui/ReportCard";
@@ -18,7 +19,15 @@ export function Hero() {
             </p>
           ) : null}
           <h1 style={motionDelay(0)} className="motion-rise text-balance font-display text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[46px] lg:text-[54px]">
-            {hero.title}
+            {splitTitle(hero.title, hero.titleHighlights).map((part, index) =>
+              part.mark ? (
+                <span key={index} className="title-mark">
+                  {part.text}
+                </span>
+              ) : (
+                part.text
+              ),
+            )}
           </h1>
           <p style={motionDelay(100)} className="motion-rise mt-6 max-w-[580px] text-lg leading-relaxed text-muted">
             {hero.subtitle}

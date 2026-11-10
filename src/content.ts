@@ -7,6 +7,7 @@
  */
 
 import type { BackgroundId, ThemeSetting } from "@/lib/backgrounds";
+import type { TitleStyleId } from "@/lib/title";
 import type { SeasonSetting } from "@/lib/season";
 
 export type LinkItem = {
@@ -128,6 +129,10 @@ export type SiteContent = {
     /** Моноширинная надпись над заголовком. null — без надписи. */
     eyebrow: string | null;
     title: string;
+    /** Слова заголовка, которые выделяются. */
+    titleHighlights: string[];
+    /** Стиль выделения: "0" — без выделения, "1"…"9" — варианты (src/lib/title.ts). Посмотреть: ?title=3. */
+    titleStyle: TitleStyleId;
     subtitle: string;
     primaryCta: LinkItem;
     secondaryCta: LinkItem;
@@ -252,6 +257,8 @@ export const content: SiteContent = {
     id: "top",
     eyebrow: null,
     title: "Доведём до оффера в QA и AQA",
+    titleHighlights: ["QA", "AQA"],
+    titleStyle: "0",
     subtitle:
       "Составим личный план обучения, натаскаем и будем проводить собеседования, пока не получишь оффер. Основная оплата – только после оффера.",
     primaryCta: { label: "Записаться на бесплатный созвон", href: "#cta" },

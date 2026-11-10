@@ -12,6 +12,13 @@ describe("landing page", () => {
     expect(headings[0]).toHaveTextContent(content.hero.title);
   });
 
+  it("highlights QA and AQA in the hero title without changing its text", () => {
+    render(<Home />);
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1.textContent).toBe(content.hero.title);
+    expect([...h1.querySelectorAll(".title-mark")].map((el) => el.textContent)).toEqual(content.hero.titleHighlights);
+  });
+
   it("every in-page link points to an element rendered on the page", () => {
     // Убрал секцию из массива в page.tsx — этот тест покажет ссылки, которые на неё вели
     const { container } = render(<Home />);
