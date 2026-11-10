@@ -67,11 +67,11 @@ describe("content", () => {
     expect(content.pricing.postpayment.link?.label).toBe(content.cta.handle);
   });
 
-  it("every roadmap track has stages and at least one AI chapter", () => {
+  it("every roadmap track has two AI chapters: tools and applying them", () => {
     expect(content.roadmap.tracks.length).toBeGreaterThan(1);
     for (const track of content.roadmap.tracks) {
       expect(track.stages.length).toBeGreaterThan(0);
-      expect(track.stages.some((stage) => stage.ai)).toBe(true);
+      expect(track.stages.filter((stage) => stage.ai)).toHaveLength(2);
     }
   });
 

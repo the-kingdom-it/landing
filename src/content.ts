@@ -329,9 +329,15 @@ export const content: SiteContent = {
             ai: false,
           },
           {
+            title: "AI-инструменты",
+            subtitle: "отдельная глава",
+            learn: "AI-редакторы Cursor и Windsurf, агенты в терминале: Claude Code, Codex, OpenCode. Perplexity для поиска с источниками и AI-браузер Strawberry Browser. Разбираем, какой инструмент брать под задачу и что нельзя отдавать AI.",
+            ai: true,
+          },
+          {
             title: "AI в работе тестировщика",
             subtitle: "отдельная глава",
-            learn: "Как с AI разбирать требования, генерировать тест-кейсы и тестовые данные – и как ловить ошибки самого AI.",
+            learn: "Тест-кейсы, чек-листы и баг-репорты с AI-ассистентом, генерация тестовых данных, первые автотесты с AI. Изучим MCP, skills и sub-agents.",
             ai: true,
           },
           {
@@ -366,9 +372,15 @@ export const content: SiteContent = {
             ai: false,
           },
           {
+            title: "AI-инструменты",
+            subtitle: "отдельная глава",
+            learn: "AI-редакторы Cursor и Windsurf, агенты в терминале: Claude Code, Codex, OpenCode. Perplexity для поиска с источниками и AI-браузер Strawberry Browser. Разбираем, какой инструмент брать под задачу и что нельзя отдавать AI.",
+            ai: true,
+          },
+          {
             title: "AI в автоматизации",
             subtitle: "отдельная глава",
-            learn: "AI-ассистенты для написания и рефакторинга автотестов, генерация данных.",
+            learn: "AI-ассистенты для написания и рефакторинга автотестов: тесты по требованиям, Page Object, фикстуры, перенос тестов между фреймворками и ревью сгенерированного кода. Генерация тестовых данных. Изучим MCP, skills и sub-agents.",
             ai: true,
           },
           {
@@ -409,9 +421,15 @@ export const content: SiteContent = {
             ai: false,
           },
           {
+            title: "AI-инструменты",
+            subtitle: "отдельная глава",
+            learn: "AI-редакторы Cursor и Windsurf, агенты в терминале: Claude Code, Codex, OpenCode. Perplexity для поиска с источниками и AI-браузер Strawberry Browser. Разбираем, какой инструмент брать под задачу и что нельзя отдавать AI.",
+            ai: true,
+          },
+          {
             title: "AI в процессах QA",
             subtitle: "отдельная глава",
-            learn: "Внедрение AI-инструментов в команду, оценка качества ответов модели.",
+            learn: "Внедрение AI в работу команды. Изучим MCP, skills и sub-agents. Правила безопасности и оценка качества ответов модели.",
             ai: true,
           },
           {
