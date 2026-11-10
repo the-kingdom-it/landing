@@ -46,7 +46,7 @@ export function Team() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-display text-[20px] leading-snug">{member.name}</h3>
-                  <p className="mt-1.5 font-semibold text-gold">{member.role}</p>
+                  <p className="mt-1.5 font-semibold text-highlight">{member.role}</p>
                   <p className="mt-3 leading-relaxed text-muted">{member.description}</p>
                   {member.links.length > 0 ? (
                     <ul className="mt-4 flex flex-wrap gap-2">
@@ -56,7 +56,7 @@ export function Team() {
                             href={link.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 text-sm font-medium text-ink transition-colors hover:border-gold hover:text-gold"
+                            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 text-sm font-medium text-ink transition-colors hover:border-highlight hover:text-highlight"
                           >
                             <Icon name="send" className="size-4" />
                             {link.label}

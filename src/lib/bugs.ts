@@ -2,6 +2,8 @@
 
 export type Point = { x: number; y: number };
 export type View = { width: number; height: number };
+/** Прямоугольник блока интерфейса в координатах экрана — жуки его обходят. */
+export type Rect = { left: number; top: number; right: number; bottom: number };
 export type Bug = {
   id: number;
   x: number;
@@ -35,6 +37,10 @@ export const BUG = {
   dwellMs: 220,
   /** Самый длинный учитываемый кадр — чтобы жук не «телепортировался» после фоновой вкладки. */
   maxFrameMs: 50,
+  /** Насколько далеко вперёд жук «смотрит», чтобы обойти блок, и как резко поворачивает. */
+  avoidLook: 44,
+  avoidPad: 6,
+  avoidTurnRate: 7,
   /** Скорость, с которой жуки разбегаются после награды. */
   scatterSpeed: 420,
 } as const;
@@ -71,11 +77,42 @@ export function spawnBug(id: number, view: View, rand: () => number = Math.rando
   };
 }
 
-/** Один кадр: жук петляет, а рядом с лупой ускоряется и разворачивается от неё. */
-export function stepBug(bug: Bug, dtMs: number, _view: View, cursor: Point | null, rand: () => number = Math.random): Bug {
+function inRect(x: number, y: number, rect: Rect, pad = 0): boolean {
+  return x > rect.left - pad && x < rect.right + pad && y > rect.top - pad && y < rect.bottom + pad;
+}
+
+/**
+ * Один кадр: жук петляет, рядом с курсором ускоряется и разворачивается от него,
+ * а перед блоками интерфейса (obstacles) сворачивает в сторону, где свободно.
+ */
+export function stepBug(
+  bug: Bug,
+  dtMs: number,
+  _view: View,
+  cursor: Point | null,
+  rand: () => number = Math.random,
+  obstacles: Rect[] = [],
+): Bug {
   const dt = Math.min(dtMs, BUG.maxFrameMs) / 1000;
-  const turn = clamp(bug.turn + (rand() - 0.5) * 2 * BUG.wanderAccel * dt, -BUG.maxTurn, BUG.maxTurn);
+  let turn = clamp(bug.turn + (rand() - 0.5) * 2 * BUG.wanderAccel * dt, -BUG.maxTurn, BUG.maxTurn);
   let angle = bug.angle + turn * dt;
+
+  // уже под блоком — просто выходим из-под него; иначе смотрим вперёд и обходим
+  const underPanel = obstacles.some((rect) => inRect(bug.x, bug.y, rect));
+  if (obstacles.length > 0 && !underPanel) {
+    const blocked = (a: number) => {
+      const px = bug.x + Math.cos(a) * BUG.avoidLook;
+      const py = bug.y + Math.sin(a) * BUG.avoidLook;
+      return obstacles.some((rect) => inRect(px, py, rect, BUG.avoidPad));
+    };
+    if (blocked(angle)) {
+      const leftFree = !blocked(angle - 0.9);
+      const rightFree = !blocked(angle + 0.9);
+      const side = leftFree && !rightFree ? -1 : rightFree && !leftFree ? 1 : bug.turn >= 0 ? 1 : -1;
+      angle += side * BUG.avoidTurnRate * dt;
+      turn = side * BUG.maxTurn;
+    }
+  }
   let speed = bug.baseSpeed;
 
   if (cursor) {
@@ -89,14 +126,10 @@ export function stepBug(bug: Bug, dtMs: number, _view: View, cursor: Point | nul
     }
   }
 
-  return {
-    ...bug,
-    angle,
-    turn,
-    speed,
-    x: bug.x + Math.cos(angle) * speed * dt,
-    y: bug.y + Math.sin(angle) * speed * dt,
-  };
+  const next = { ...bug, angle, turn, speed, x: bug.x + Math.cos(angle) * speed * dt, y: bug.y + Math.sin(angle) * speed * dt };
+  // не заходим под блок, даже если поворот не успел: стоим на месте и продолжаем поворачивать
+  if (!underPanel && obstacles.some((rect) => inRect(next.x, next.y, rect))) return { ...next, x: bug.x, y: bug.y };
+  return next;
 }
 
 export function isOffscreen(bug: Bug, view: View): boolean {

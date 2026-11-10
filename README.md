@@ -27,6 +27,7 @@ npm run build    # сборка в папку out/
 | Сезон фона (зима, весна, лето, осень или по дате) | `content.scene.season` в `src/content.ts` |
 | Картинки сцены | `public/scene/` |
 | Роадмап: треки, этапы, главы про AI | `content.roadmap` в `src/content.ts` (у этапа `ai: true` — тег AI) |
+| Фича-тоглы (снег) | `src/config.ts` |
 | Жуки: подсказка, счётчик, выключить | `content.bugs` в `src/content.ts`; скорость и поведение — `src/lib/bugs.ts` |
 
 ### Тексты
@@ -59,12 +60,13 @@ npm run build    # сборка в папку out/
   Загружается только картинка текущего сезона. Пересобрать из PNG:
   `cwebp -q 72 -m 6 autumn.png -o public/scene/autumn.webp` и
   `cwebp -q 72 -m 6 -crop 480 0 620 1033 autumn.png -o public/scene/autumn-m.webp`.
-- **Фон (временный выбор).** `content.scene.background`: `"kingdom"` — картинки королевства по сезонам,
-  `"1"`…`"17"` — минималистичные фоны из `public/backgrounds/` (список с названиями — `src/lib/backgrounds.ts`).
-  Посмотреть любой без правок: `?bg=3` в адресе (например, `http://localhost:3000/?bg=3`) или `BG=3 npm run dev`.
-- **Стиль.** `content.scene.theme`: `"auto"` — по фону (на светлых фонах белый стиль, на тёмных — тёмное стекло),
-  `"light"` или `"dark"` — всегда. Без правок: `?theme=light` в адресе или `THEME=light npm run dev`.
-  Цвета белого стиля — блок `html[data-theme="light"]` в `globals.css`.
+- **Тема и фон.** Основной фон — 12 «Бумага» (`content.scene.background`). Тема по умолчанию как в системе
+  посетителя (`content.scene.theme: "system"`, можно `"light"` или `"dark"`); кнопка в шапке переключает её,
+  браузер запоминает выбор. Тёмная тема берёт тёмную версию фона `public/backgrounds/12-dark.webp`.
+  Цвета тем — `:root` (тёмная) и `html[data-theme="light"]` (белая) в `globals.css`.
+- **Посмотреть другой фон** без правок: `?bg=3` в адресе (фон в своей теме, `?theme=dark|light` её меняет)
+  или `BG=3 npm run dev`; `THEME=dark npm run dev` — тёмная тема по умолчанию.
+- **Фича-тоглы** — `src/config.ts`: `snow` включает снег и другие сезонные частицы (по умолчанию выключен).
 - **Частицы.** Снег, листья, лепестки или светлячки по сезону: часть летит за стеклом, часть — поверх.
   Количество — `src/lib/particles.ts`, внешний вид — блок «ЧАСТИЦЫ» в `globals.css`.
 - **Жуки.** Ползают по экрану. Поймать — кликнуть по жуку или навести на него курсор и задержать,

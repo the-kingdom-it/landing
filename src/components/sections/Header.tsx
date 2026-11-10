@@ -1,4 +1,5 @@
 import { content } from "@/content";
+import { ThemeToggle } from "../theme/ThemeToggle";
 import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
 
@@ -33,9 +34,12 @@ export function Header() {
           </ul>
         </nav>
 
-        <ButtonLink href={header.cta.href} size="sm" className="ml-auto lg:ml-0">
-          {header.cta.label}
-        </ButtonLink>
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <ThemeToggle labels={ui.themeToggle} />
+          <ButtonLink href={header.cta.href} size="sm">
+            {header.cta.label}
+          </ButtonLink>
+        </div>
       </Container>
     </header>
   );

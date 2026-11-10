@@ -96,3 +96,28 @@ describe("scatterBug", () => {
     expect(isOffscreen(bug, view)).toBe(true);
   });
 });
+
+describe("stepBug with obstacles", () => {
+  const panel = { left: 560, top: 300, right: 900, bottom: 500 };
+  const inside = (b: { x: number; y: number }) => b.x > panel.left && b.x < panel.right && b.y > panel.top && b.y < panel.bottom;
+
+  it("turns away from a panel ahead instead of crawling under it", () => {
+    let bug = bugAt({ x: 420, y: 400, angle: 0 });
+    for (let i = 0; i < 300; i++) {
+      bug = stepBug(bug, 16, view, null, () => 0.5, [panel]);
+      expect(inside(bug)).toBe(false);
+    }
+  });
+
+  it("walks out of a panel it already happens to be under", () => {
+    let bug = bugAt({ x: 700, y: 400, angle: 0 });
+    for (let i = 0; i < 400 && inside(bug); i++) bug = stepBug(bug, 16, view, null, () => 0.5, [panel]);
+    expect(inside(bug)).toBe(false);
+  });
+
+  it("moves as before when there are no obstacles", () => {
+    const a = stepBug(bugAt({ angle: 0 }), 16, view, null, () => 0.5);
+    const b = stepBug(bugAt({ angle: 0 }), 16, view, null, () => 0.5, []);
+    expect(b).toEqual(a);
+  });
+});

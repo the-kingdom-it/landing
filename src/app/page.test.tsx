@@ -1,5 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { features } from "@/config";
 import { content } from "@/content";
 import Home from "./page";
 
@@ -52,6 +53,27 @@ describe("landing page", () => {
     const home = within(banner).getByRole("link", { name: "Kingdom IT" });
     expect(home).toHaveAttribute("href", `#${content.hero.id}`);
     expect(within(banner).queryByText(content.brand.initials)).toBeNull();
+  });
+
+  describe("snow feature toggle", () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      delete document.documentElement.dataset.season;
+    });
+
+    it("is off by default and no particles are rendered", () => {
+      expect(features.snow).toBe(false);
+      document.documentElement.dataset.season = "winter";
+      vi.stubGlobal("matchMedia", (query: string) => ({ matches: false, media: query }));
+      const { container } = render(<Home />);
+      expect(container.querySelector(".particles")).toBeNull();
+    });
+  });
+
+  it("has a theme toggle in the header", () => {
+    render(<Home />);
+    const banner = screen.getByRole("banner");
+    expect(within(banner).getByRole("button", { name: new RegExp(content.ui.themeToggle.toDark) })).toBeInTheDocument();
   });
 
   it("renders the hero report with computed progress", () => {

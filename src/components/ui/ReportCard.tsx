@@ -75,25 +75,25 @@ export function ReportCard({ report }: ReportCardProps) {
               {step.passed ? (
                 <span aria-hidden="true" className="run-stack size-6 shrink-0">
                   <span className="run-layer run-pending size-6 rounded-full border-2 border-ring-muted" />
-                  <span className="run-layer run-running run-spinner size-6 rounded-full border-2 border-gold border-t-transparent" />
+                  <span className="run-layer run-running run-spinner size-6 rounded-full border-2 border-highlight border-t-transparent" />
                   <span className="run-layer run-passed run-check flex size-6 items-center justify-center rounded-full bg-passed text-on-accent">
                     <Icon name="check" className="size-3.5" strokeWidth={2.5} />
                   </span>
                 </span>
               ) : (
-                <span className="run-next-dot size-6 shrink-0 rounded-full border-2 border-gold" aria-hidden="true" />
+                <span className="run-next-dot size-6 shrink-0 rounded-full border-2 border-highlight" aria-hidden="true" />
               )}
-              <span className={`min-w-0 flex-1 text-[15px] ${step.passed ? "text-ink" : "font-semibold text-gold"}`}>
+              <span className={`min-w-0 flex-1 text-[15px] ${step.passed ? "text-ink" : "font-semibold text-highlight"}`}>
                 {step.label}
               </span>
               {step.passed ? (
                 <span aria-hidden="true" className="run-stack shrink-0 font-mono text-[11px] font-medium tracking-wide">
                   <span className="run-layer run-pending text-muted">{report.runLabels.pending}</span>
-                  <span className="run-layer run-running text-gold">{report.runLabels.running}</span>
+                  <span className="run-layer run-running text-highlight">{report.runLabels.running}</span>
                   <span className="run-layer run-passed text-passed-fg">{report.runLabels.passed}</span>
                 </span>
               ) : (
-                <span aria-hidden="true" className="shrink-0 font-mono text-[11px] font-medium tracking-wide text-gold">
+                <span aria-hidden="true" className="shrink-0 font-mono text-[11px] font-medium tracking-wide text-highlight">
                   {report.runLabels.pending}
                 </span>
               )}

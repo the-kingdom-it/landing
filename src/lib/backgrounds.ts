@@ -4,8 +4,8 @@
  * (светлое стекло, тёмный текст), на тёмных — тёмное стекло.
  */
 export type Theme = "light" | "dark";
-/** "auto" — тема по фону. */
-export type ThemeSetting = Theme | "auto";
+/** "system" — как в системе посетителя (светлая или тёмная тема ОС). */
+export type ThemeSetting = Theme | "system";
 
 export const BACKGROUNDS = [
   { id: "kingdom", name: "Королевство (по сезонам)", theme: "dark" },
@@ -20,13 +20,14 @@ export const BACKGROUNDS = [
   { id: "9", name: "Облака", theme: "light" },
   { id: "10", name: "Жемчуг", theme: "light" },
   { id: "11", name: "Утро", theme: "light" },
-  { id: "12", name: "Бумага", theme: "light" },
+  // darkVariant: у фона есть тёмная версия public/backgrounds/<id>-dark.webp для тёмной темы
+  { id: "12", name: "Бумага", theme: "light", darkVariant: true },
   { id: "13", name: "Мята", theme: "light" },
   { id: "14", name: "Океан", theme: "dark" },
   { id: "15", name: "Неон", theme: "dark" },
   { id: "16", name: "Изумруд", theme: "dark" },
   { id: "17", name: "Космос", theme: "dark" },
-] as const satisfies readonly { id: string; name: string; theme: Theme }[];
+] as const satisfies readonly { id: string; name: string; theme: Theme; darkVariant?: boolean }[];
 
 export type BackgroundId = (typeof BACKGROUNDS)[number]["id"];
 
@@ -52,17 +53,40 @@ export function backgroundTheme(id: BackgroundId): Theme {
   return BACKGROUNDS.find((bg) => bg.id === id)?.theme ?? "dark";
 }
 
-/** Тема: ?theme= из адреса, затем настройка, "auto" — по фону. */
-export function resolveTheme(setting: string | undefined, background: BackgroundId, override?: string | null): Theme {
-  if (isTheme(override)) return override;
-  return isTheme(setting) ? setting : backgroundTheme(background);
-}
+/** Ключ, под которым браузер посетителя помнит выбранную тему. */
+export const THEME_STORAGE_KEY = "kingdom-theme";
+
+export type SceneConfig = {
+  /** Тема по умолчанию: "system" — как в системе посетителя. */
+  theme: ThemeSetting;
+  /** Основной фон. Переключатель темы работает только на нём. */
+  background: BackgroundId;
+  /** Фон, заданный при запуске (BG=3 npm run dev), — работает как ?bg=. */
+  forcedBg: BackgroundId | null;
+};
+
+export type SceneState = { theme: Theme; bg: BackgroundId; preview: boolean };
 
 /**
- * Скрипт для <head>: до первой отрисовки ставит <html data-bg> и <html data-theme>.
- * ?bg=3 в адресе переключает фон, ?theme=light|dark — тему.
+ * Какой фон и тему показать.
+ * ?bg= (или BG=) с другим фоном — предпросмотр: фон в его «родной» теме, ?theme= может её поменять,
+ * переключатель темы скрыт. Иначе — основной фон, тема из ?theme=, выбора посетителя или по умолчанию.
  */
-export function buildBackgroundScript(defaultBg: BackgroundId, themeSetting: string): string {
+export function resolveScene(
+  config: SceneConfig,
+  input: { bg?: string | null; theme?: string | null; stored?: string | null; system?: Theme | null },
+): SceneState {
+  const requested = isBackground(input.bg) ? input.bg : config.forcedBg;
+  if (requested && requested !== config.background) {
+    return { theme: isTheme(input.theme) ? input.theme : backgroundTheme(requested), bg: requested, preview: true };
+  }
+  const fallback: Theme = config.theme === "system" ? (input.system ?? "light") : config.theme;
+  const theme = isTheme(input.theme) ? input.theme : isTheme(input.stored) ? input.stored : fallback;
+  return { theme, bg: config.background, preview: false };
+}
+
+/** Скрипт для <head>: до первой отрисовки ставит <html data-bg data-theme data-preview> по правилам resolveScene. */
+export function buildBackgroundScript(config: SceneConfig): string {
   const themes = JSON.stringify(Object.fromEntries(BACKGROUNDS.map((bg) => [bg.id, bg.theme])));
-  return `(function(){try{var t=${themes},p=new URLSearchParams(location.search),q=p.get("bg"),b=Object.prototype.hasOwnProperty.call(t,q)?q:${JSON.stringify(defaultBg)},s=p.get("theme"),f=${JSON.stringify(themeSetting)},d=document.documentElement.dataset;d.bg=b;d.theme=s==="light"||s==="dark"?s:f==="light"||f==="dark"?f:t[b]}catch(e){}})()`;
+  return `(function(){try{var t=${themes},c=${JSON.stringify(config)},p=new URLSearchParams(location.search),ok=function(v){return v==="light"||v==="dark"},q=p.get("bg"),qt=p.get("theme"),st=null;try{st=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})}catch(e){}var r=Object.prototype.hasOwnProperty.call(t,q)?q:c.forcedBg,d=document.documentElement.dataset;if(r&&r!==c.background){d.theme=ok(qt)?qt:t[r];d.bg=r;d.preview=""}else{var sys="light";try{if(matchMedia("(prefers-color-scheme: dark)").matches)sys="dark"}catch(e){}d.theme=ok(qt)?qt:ok(st)?st:c.theme==="system"?sys:c.theme;d.bg=c.background;delete d.preview}}catch(e){}})()`;
 }

@@ -13,7 +13,7 @@ export function Hero() {
         <div className="glass rounded-[28px] border border-line p-6 shadow-panel sm:p-8 md:p-10">
           {hero.eyebrow ? (
             <p className="mb-5 flex items-center gap-2.5 font-mono text-[13px] text-muted">
-              <span aria-hidden="true" className="size-2 rounded-[2px] bg-gold" />
+              <span aria-hidden="true" className="size-2 rounded-[2px] bg-highlight" />
               {hero.eyebrow}
             </p>
           ) : null}

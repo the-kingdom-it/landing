@@ -32,4 +32,9 @@ describe("sceneStyles", () => {
     expect(css).not.toContain('html[data-bg="1"][data-theme="dark"]');
     expect(css).not.toContain('html[data-bg="kingdom"]');
   });
+
+  it("uses the dark paper picture for the main background in the dark style", () => {
+    const css = sceneStyles("/landing");
+    expect(css).toContain('html[data-bg="12"][data-theme="dark"]{--scene-image:url("/landing/backgrounds/12-dark.webp")');
+  });
 });

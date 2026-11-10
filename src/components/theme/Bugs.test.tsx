@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Bugs } from "./Bugs";
+import { Bugs, isBugUncovered } from "./Bugs";
 
 function mockMedia({ reduce = false, fine = true } = {}) {
   vi.stubGlobal("matchMedia", (query: string) => ({
@@ -97,5 +97,26 @@ describe("Bugs", () => {
     act(() => vi.advanceTimersByTime(5000));
     expect(container.querySelectorAll("[data-bug]")).toHaveLength(0);
     expect(document.documentElement.dataset.bugs).toBeUndefined();
+  });
+});
+
+describe("isBugUncovered", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("is true when the point hits the bug itself", () => {
+    const bug = document.createElement("div");
+    const part = document.createElement("span");
+    bug.appendChild(part);
+    document.elementFromPoint = () => part;
+    expect(isBugUncovered(bug, { x: 10, y: 10 })).toBe(true);
+  });
+
+  it("is false when a panel covers the bug", () => {
+    const bug = document.createElement("div");
+    const panel = document.createElement("section");
+    document.elementFromPoint = () => panel;
+    expect(isBugUncovered(bug, { x: 10, y: 10 })).toBe(false);
   });
 });

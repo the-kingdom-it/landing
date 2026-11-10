@@ -96,12 +96,16 @@ export type SiteContent = {
      */
     season: SeasonSetting;
     /**
-     * Фон: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
-     * из public/backgrounds. Посмотреть любой: ?bg=3 в адресе или BG=3 npm run dev.
+     * Тема по умолчанию: "system" — как в системе посетителя, "light" — белый стиль, "dark" — тёмное стекло.
+     * Посетитель может переключить в шапке, выбор запоминается.
+     */
+    theme: ThemeSetting;
+    /**
+     * Основной фон: "kingdom" — картинки королевства по сезонам, "1"…"17" — минималистичные фоны
+     * из public/backgrounds (названия — src/lib/backgrounds.ts). Тёмная тема берёт его тёмную версию
+     * (<номер>-dark.webp, есть у «Бумаги»). Любой другой фон можно посмотреть по ?bg=3.
      */
     background: BackgroundId;
-    /** Стиль: "auto" — по фону (светлый фон — белый стиль), "light" или "dark" — всегда. ?theme=light в адресе. */
-    theme: ThemeSetting;
   };
   brand: {
     /** Буквы в favicon. */
@@ -112,6 +116,8 @@ export type SiteContent = {
   ui: {
     skipToContent: string;
     navLabel: string;
+    /** Подписи кнопки темы для скринридеров. */
+    themeToggle: { toDark: string; toLight: string };
   };
   header: {
     nav: LinkItem[];
@@ -217,8 +223,8 @@ export const content: SiteContent = {
 
   scene: {
     season: "winter",
-    background: "kingdom",
-    theme: "auto",
+    theme: "system",
+    background: "12",
   },
 
   brand: {
@@ -229,6 +235,7 @@ export const content: SiteContent = {
   ui: {
     skipToContent: "Перейти к содержанию",
     navLabel: "Навигация по странице",
+    themeToggle: { toDark: "Включить тёмную тему", toLight: "Включить светлую тему" },
   },
 
   header: {
@@ -557,10 +564,10 @@ export const content: SiteContent = {
   },
 
   bugs: {
-    hint: "По сайту ползают баги – поймай 10 штук и получи скидку в 1000 рублей",
+    hint: "По сайту ползают баги – поймай 3 штуки и получи скидку в 1000 рублей",
     counterLabel: "поймано багов",
     reward: {
-      goal: 10,
+      goal: 3,
       title: "Скидка получена",
       codeLabel: "промокод",
       linkLabel: "Писать сюда",
