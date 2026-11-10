@@ -6,8 +6,17 @@ describe("splitTitle", () => {
 
   it("marks the highlighted words and keeps the text intact", () => {
     const parts = splitTitle(title, ["QA", "AQA"]);
-    expect(parts.map((part) => part.text).join("")).toBe(title);
+    expect(parts.map((part) => (part.prefix ?? "") + part.text).join("")).toBe(title);
     expect(parts.filter((part) => part.mark).map((part) => part.text)).toEqual(["QA", "AQA"]);
+  });
+
+  it("keeps a preposition glued with a non-breaking space together with the marked word", () => {
+    const parts = splitTitle("оффера в\u00a0QA и\u00a0AQA", ["QA", "AQA"]);
+    expect(parts.filter((part) => part.mark)).toEqual([
+      { text: "QA", mark: true, prefix: "в\u00a0" },
+      { text: "AQA", mark: true, prefix: "и\u00a0" },
+    ]);
+    expect(parts.map((part) => (part.prefix ?? "") + part.text).join("")).toBe("оффера в\u00a0QA и\u00a0AQA");
   });
 
   it("does not mark a word inside a longer one", () => {

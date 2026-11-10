@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { content } from "@/content";
 import { motionDelay } from "@/lib/reveal";
 import { splitTitle } from "@/lib/title";
@@ -19,15 +20,29 @@ export function Hero() {
             </p>
           ) : null}
           <h1 style={motionDelay(0)} className="motion-rise text-balance font-display text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[46px] lg:text-[54px]">
-            {splitTitle(hero.title, hero.titleHighlights).map((part, index) =>
-              part.mark ? (
-                <span key={index} className="title-mark">
-                  {part.text}
-                </span>
-              ) : (
-                part.text
-              ),
-            )}
+            {(() => {
+              let markIndex = 0;
+              return splitTitle(hero.title, hero.titleHighlights).map((part, index) =>
+                part.mark ? (
+                  // предлог и выделенное слово не разрываются переносом строки
+                  <span key={index} className="title-nobreak">
+                    {part.prefix}
+                    <span className="title-mark" style={{ "--i": String(markIndex++) } as CSSProperties}>
+                      {part.text}
+                      {/* овал «от руки» для варианта 9: рисуется анимацией обводки */}
+                      <svg className="title-circle" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true">
+                        <path
+                          pathLength="1"
+                          d="M150 12 C 95 2, 20 10, 8 45 C -2 78, 70 96, 120 92 C 175 88, 198 62, 190 36 C 182 14, 140 6, 92 9"
+                        />
+                      </svg>
+                    </span>
+                  </span>
+                ) : (
+                  part.text
+                ),
+              );
+            })()}
           </h1>
           <p style={motionDelay(100)} className="motion-rise mt-6 max-w-[580px] text-lg leading-relaxed text-muted">
             {hero.subtitle}
