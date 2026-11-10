@@ -1,4 +1,5 @@
 import { content } from "@/content";
+import { withBasePath } from "@/lib/base-path";
 import { getInitials } from "@/lib/initials";
 import { resolvePhoto } from "@/lib/photo";
 import { revealProps } from "@/lib/reveal";
@@ -25,13 +26,20 @@ export function Team() {
                 className="flex flex-col gap-6 rounded-2xl border border-line bg-surface p-6 sm:flex-row sm:items-start md:p-8"
               >
                 <div className="flex w-[120px] shrink-0 flex-col gap-3 md:w-40">
-                  <Avatar src={resolvePhoto(member.photo)} alt={member.photoAlt} initials={getInitials(member.name)} />
+                  <Avatar
+                    src={(() => {
+                      const photo = resolvePhoto(member.photo);
+                      return photo ? withBasePath(photo) : null;
+                    })()}
+                    alt={member.photoAlt}
+                    initials={getInitials(member.name)}
+                  />
                   {member.company ? (
                     <span
                       data-company=""
                       className="flex w-full items-center justify-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink"
                     >
-                      <Image src={member.company.logo} alt="" width={20} height={20} unoptimized className="size-5" />
+                      <Image src={withBasePath(member.company.logo)} alt="" width={20} height={20} unoptimized className="size-5" />
                       {member.company.name}
                     </span>
                   ) : null}

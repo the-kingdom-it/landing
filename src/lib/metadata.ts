@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import type { SiteContent } from "@/content";
+import { BASE_PATH, withBasePath } from "./base-path";
 import { toUrl } from "./url";
 
 /** Meta title/description, Open Graph и favicon из content.meta. */
-export function buildMetadata(meta: SiteContent["meta"]): Metadata {
+export function buildMetadata(meta: SiteContent["meta"], basePath: string = BASE_PATH): Metadata {
   const base = toUrl(meta.siteUrl);
   // Соцсетям нужен абсолютный адрес картинки — без настоящего домена её не отдаём
   const images = base && meta.ogImage ? [{ url: meta.ogImage, width: 1200, height: 630 }] : undefined;
@@ -27,6 +28,7 @@ export function buildMetadata(meta: SiteContent["meta"]): Metadata {
       title: meta.title,
       description: meta.description,
     },
-    icons: { icon: [{ url: "/favicon.svg", type: "image/svg+xml" }] },
+    // Next.js не добавляет базовый путь к иконкам из метаданных — добавляем сами
+    icons: { icon: [{ url: withBasePath("/favicon.svg", basePath), type: "image/svg+xml" }] },
   };
 }
