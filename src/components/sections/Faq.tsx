@@ -22,7 +22,20 @@ export function Faq() {
                     <Icon name="plus" className="size-4" strokeWidth={2} />
                   </span>
                 </summary>
-                <p className="pb-6 pr-0 leading-relaxed text-muted md:pr-14">{item.answer}</p>
+                <div className="pb-6 pr-0 md:pr-14">
+                  <p className="leading-relaxed text-muted">{item.answer}</p>
+                  {item.link ? (
+                    <a
+                      href={item.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex min-h-11 items-center gap-2 font-semibold text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold"
+                    >
+                      {item.link.label}
+                      <Icon name="arrow-right" className="size-4" />
+                    </a>
+                  ) : null}
+                </div>
               </details>
             ))}
           </div>

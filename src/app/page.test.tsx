@@ -70,6 +70,18 @@ describe("landing page", () => {
     });
   });
 
+  it("renders links inside FAQ answers and opens them in a new tab", () => {
+    const { container } = render(<Home />);
+    const faq = within(container.querySelector<HTMLElement>(`#${content.faq.id}`)!);
+    const withLinks = content.faq.items.filter((item) => item.link);
+    expect(withLinks.length).toBeGreaterThan(0);
+    for (const item of withLinks) {
+      const anchor = faq.getByRole("link", { name: item.link!.label });
+      expect(anchor).toHaveAttribute("href", item.link!.href);
+      expect(anchor).toHaveAttribute("target", "_blank");
+    }
+  });
+
   it("shows initials placeholders when team photo files are missing", () => {
     render(<Home />);
     for (const member of content.team.members) {
