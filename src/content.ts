@@ -30,6 +30,8 @@ export type TeamMember = {
   /** Путь от папки public/, например "/team/valentin.jpg". null – плейсхолдер с инициалами. */
   photo: string | null;
   photoAlt: string;
+  /** Значок компании под фото: логотип из public/ и название. null — без значка. */
+  company: { name: string; logo: string } | null;
 };
 
 export type PriceCard = {
@@ -293,6 +295,7 @@ export const content: SiteContent = {
         stack: [],
         photo: "/team/valentin.jpg",
         photoAlt: "Валентин Волков, AQA Engineer",
+        company: { name: "Т-Банк", logo: "/team/tbank.svg" },
       },
       {
         name: "Александр",
@@ -302,6 +305,7 @@ export const content: SiteContent = {
         stack: [],
         photo: "/team/qa-lead.jpg",
         photoAlt: "Александр, AQA Lead",
+        company: null,
       },
     ],
   },

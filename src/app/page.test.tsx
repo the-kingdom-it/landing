@@ -77,6 +77,21 @@ describe("landing page", () => {
     }
   });
 
+  it("shows the company badge only for members who have one", () => {
+    const { container } = render(<Home />);
+    const cards = container.querySelectorAll(`#${content.team.id} li`);
+    content.team.members.forEach((member, index) => {
+      const card = cards[index] as HTMLElement;
+      if (member.company) {
+        expect(within(card).getByText(member.company.name)).toBeInTheDocument();
+        expect(card.querySelector(`img[src*="${member.company.logo}"]`)).not.toBeNull();
+      } else {
+        expect(card.querySelector("[data-company]")).toBeNull();
+      }
+    });
+    expect(content.team.members.some((member) => member.company)).toBe(true);
+  });
+
   it("links the CTA button to Telegram in a new tab and shows the handle", () => {
     const { container } = render(<Home />);
     const cta = within(container.querySelector<HTMLElement>(`#${content.cta.id}`)!);

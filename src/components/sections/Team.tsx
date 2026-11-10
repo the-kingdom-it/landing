@@ -2,6 +2,7 @@ import { content } from "@/content";
 import { getInitials } from "@/lib/initials";
 import { resolvePhoto } from "@/lib/photo";
 import { revealProps } from "@/lib/reveal";
+import Image from "next/image";
 import { Avatar } from "../ui/Avatar";
 import { Container } from "../ui/Container";
 import { Panel } from "../ui/Panel";
@@ -22,7 +23,18 @@ export function Team() {
                 {...revealProps(index + 1)}
                 className="flex flex-col gap-6 rounded-2xl border border-line bg-surface p-6 sm:flex-row sm:items-start md:p-8"
               >
-                <Avatar src={resolvePhoto(member.photo)} alt={member.photoAlt} initials={getInitials(member.name)} />
+                <div className="flex shrink-0 flex-col items-start gap-3">
+                  <Avatar src={resolvePhoto(member.photo)} alt={member.photoAlt} initials={getInitials(member.name)} />
+                  {member.company ? (
+                    <span
+                      data-company=""
+                      className="inline-flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1.5 pr-3 text-xs font-medium text-ink"
+                    >
+                      <Image src={member.company.logo} alt="" width={20} height={20} unoptimized className="size-5" />
+                      {member.company.name}
+                    </span>
+                  ) : null}
+                </div>
                 <div className="min-w-0">
                   <h3 className="font-display text-[20px] leading-snug">{member.name}</h3>
                   <p className="mt-1.5 font-semibold text-gold">{member.role}</p>
