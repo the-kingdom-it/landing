@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BUG, type Bug, isInLens, isOffscreen, type Point, spawnBug, stepBug } from "@/lib/bugs";
+import type { BugReward } from "@/content";
+import { BUG, type Bug, isInLens, isOffscreen, makePromoCode, type Point, scatterBug, spawnBug, stepBug } from "@/lib/bugs";
+import { Icon } from "../ui/Icon";
 import { BugDefs, BugSprite } from "./BugSprite";
 
 const CATCH_ANIMATION_MS = 450;
@@ -13,9 +15,14 @@ const toTransform = (bug: Bug) => `translate3d(${bug.x}px, ${bug.y}px, 0) rotate
  * Движение считается в requestAnimationFrame и пишется прямо в style.transform — без перерисовки React.
  * При «уменьшить движение» жуков нет.
  */
-export function Bugs({ counterLabel }: { counterLabel: string }) {
+export function Bugs({ counterLabel, reward }: { counterLabel: string; reward: BugReward | null }) {
   const [ids, setIds] = useState<number[]>([]);
   const [caught, setCaught] = useState(0);
+  const [promo, setPromo] = useState<string | null>(null);
+  /** После награды жуки разбегаются и больше не появляются. */
+  const [scattered, setScattered] = useState(false);
+  const caughtCount = useRef(0);
+  const goal = reward?.goal ?? null;
   const [caughtIds, setCaughtIds] = useState<ReadonlySet<number>>(() => new Set());
   const bugs = useRef(new Map<number, Bug>());
   /* последняя позиция каждого жука: пойманный остаётся на месте, пока играет анимация */
@@ -34,6 +41,8 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
     let cursor: Point | null = null;
     let nextId = 1;
     let active = true;
+    let done = false;
+    const steady = () => 0.5;
     root.dataset.bugs = "";
 
     const later = (fn: () => void, ms: number) => {
@@ -45,7 +54,7 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
     };
 
     const spawn = () => {
-      if (!active || bugs.current.size >= max) return;
+      if (!active || done || bugs.current.size >= max) return;
       const id = nextId++;
       const bug = spawnBug(id, view());
       bugs.current.set(id, bug);
@@ -63,10 +72,25 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
       });
     };
 
+    // награда получена: курсор снова обычный, оставшиеся жуки разбегаются к краям
+    const finish = () => {
+      done = true;
+      cursor = null;
+      delete root.dataset.bugs;
+      const size = view();
+      for (const [id, bug] of bugs.current) bugs.current.set(id, scatterBug(bug, size));
+      setScattered(true);
+    };
+
     catchBug.current = (id) => {
-      if (!bugs.current.delete(id)) return;
+      if (done || !bugs.current.delete(id)) return;
       setCaughtIds((set) => new Set(set).add(id));
-      setCaught((count) => count + 1);
+      caughtCount.current += 1;
+      setCaught(caughtCount.current);
+      if (goal !== null && caughtCount.current >= goal) {
+        setPromo((code) => code ?? makePromoCode());
+        finish();
+      }
       later(() => {
         drop(id);
         later(spawn, 1500 + Math.random() * 2000);
@@ -82,14 +106,15 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
       last = time;
       const size = view();
       for (const [id, bug] of bugs.current) {
-        const moved = stepBug(bug, dt, size, cursor);
+        const moved = done ? stepBug(bug, dt, size, null, steady) : stepBug(bug, dt, size, cursor);
         if (isOffscreen(moved, size)) {
           bugs.current.delete(id);
           drop(id);
           later(spawn, 800 + Math.random() * 1500);
           continue;
         }
-        const next = { ...moved, dwell: isInLens(moved, cursor) ? moved.dwell + Math.min(dt, BUG.maxFrameMs) : 0 };
+        const inLens = !done && isInLens(moved, cursor);
+        const next = { ...moved, dwell: inLens ? moved.dwell + Math.min(dt, BUG.maxFrameMs) : 0 };
         if (next.dwell >= BUG.dwellMs) {
           catchBug.current(id);
           continue;
@@ -100,6 +125,7 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
         const node = nodes.current.get(id);
         if (node) node.style.transform = transform;
       }
+      if (done && bugs.current.size === 0) return;
       raf = requestAnimationFrame(frame);
     };
     const start = () => {
@@ -134,7 +160,7 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
       trackedTransforms.clear();
       delete root.dataset.bugs;
     };
-  }, []);
+  }, [goal]);
 
   return (
     <>
@@ -144,7 +170,7 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
           <div
             key={id}
             data-bug=""
-            className={caughtIds.has(id) ? "bug bug--caught" : "bug"}
+            className={caughtIds.has(id) ? "bug bug--caught" : scattered ? "bug bug--scatter" : "bug"}
             style={{ transform: transforms.current.get(id) }}
             ref={(node) => {
               if (node) nodes.current.set(id, node);
@@ -164,7 +190,24 @@ export function Bugs({ counterLabel }: { counterLabel: string }) {
           </div>
         ))}
       </div>
-      {caught > 0 ? (
+      {reward && promo ? (
+        <div role="status" aria-live="polite" className="bug-counter bug-reward glass-strong border border-gold shadow-panel">
+          <p className="font-display text-[15px] text-gold">{reward.title}</p>
+          <p className="mt-1.5 font-mono text-sm text-ink">
+            {`${reward.codeLabel} `}
+            <span className="select-all font-semibold tracking-wider text-gold">{promo}</span>
+          </p>
+          <a
+            href={reward.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-accent px-4 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-strong"
+          >
+            {reward.linkLabel}
+            <Icon name="send" className="size-4" />
+          </a>
+        </div>
+      ) : caught > 0 ? (
         <div role="status" aria-live="polite" className="bug-counter glass-strong border border-line font-mono text-sm text-ink shadow-panel">
           {`${counterLabel}: ${caught}`}
         </div>

@@ -62,6 +62,15 @@ export type RoadmapLabels = {
   ai: string;
 };
 
+/** Награда за пойманных жуков: вместо счётчика появляются промокод и ссылка. */
+export type BugReward = {
+  goal: number;
+  title: string;
+  codeLabel: string;
+  linkLabel: string;
+  href: string;
+};
+
 export type PriceCard = {
   label: string;
   amount: string;
@@ -171,6 +180,8 @@ export type SiteContent = {
   bugs: {
     hint: string;
     counterLabel: string;
+    /** null — без награды, только счётчик. */
+    reward: BugReward | null;
   } | null;
   footer: {
     /** Текст после «© год» слева. null — только «© год». */
@@ -499,6 +510,13 @@ export const content: SiteContent = {
   bugs: {
     hint: "По королевству ползают баги – поймай лупой 10 штук и получи скидку в 1000 рублей",
     counterLabel: "поймано багов",
+    reward: {
+      goal: 10,
+      title: "Скидка получена",
+      codeLabel: "промокод",
+      linkLabel: "Писать сюда",
+      href: telegram.url,
+    },
   },
 
   footer: {

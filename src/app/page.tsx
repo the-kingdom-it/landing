@@ -43,7 +43,7 @@ export default function Home() {
         ))}
       </main>
       <Footer />
-      {content.bugs ? <Bugs counterLabel={content.bugs.counterLabel} /> : null}
+      {content.bugs ? <Bugs counterLabel={content.bugs.counterLabel} reward={content.bugs.reward} /> : null}
       <ScrollReveal />
     </>
   );

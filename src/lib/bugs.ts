@@ -35,6 +35,8 @@ export const BUG = {
   dwellMs: 220,
   /** Самый длинный учитываемый кадр — чтобы жук не «телепортировался» после фоновой вкладки. */
   maxFrameMs: 50,
+  /** Скорость, с которой жуки разбегаются после награды. */
+  scatterSpeed: 420,
 } as const;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -103,4 +105,21 @@ export function isOffscreen(bug: Bug, view: View): boolean {
 
 export function isInLens(bug: Bug, cursor: Point | null, radius: number = BUG.lensRadius): boolean {
   return cursor !== null && Math.hypot(bug.x - cursor.x, bug.y - cursor.y) <= radius;
+}
+
+/** Промокод за пойманных жуков: шесть случайных цифр (владелец их не проверяет). */
+export function makePromoCode(rand: () => number = Math.random): string {
+  return String(100000 + Math.floor(rand() * 900000));
+}
+
+/** Жук разбегается: быстро и без петляний к ближайшему краю экрана. */
+export function scatterBug(bug: Bug, view: View): Bug {
+  const exits: [number, number][] = [
+    [bug.x, Math.PI],
+    [view.width - bug.x, 0],
+    [bug.y, -Math.PI / 2],
+    [view.height - bug.y, Math.PI / 2],
+  ];
+  const [, angle] = exits.reduce((best, exit) => (exit[0] < best[0] ? exit : best));
+  return { ...bug, angle, turn: 0, speed: BUG.scatterSpeed, baseSpeed: BUG.scatterSpeed, dwell: 0 };
 }

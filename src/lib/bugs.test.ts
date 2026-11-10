@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BUG, isInLens, isOffscreen, spawnBug, stepBug, type Bug } from "./bugs";
+import { BUG, isInLens, isOffscreen, makePromoCode, scatterBug, spawnBug, stepBug, type Bug } from "./bugs";
 
 const view = { width: 1000, height: 800 };
 const sequence = (...values: number[]) => {
@@ -67,5 +67,32 @@ describe("isInLens", () => {
     expect(isInLens(bugAt({}), { x: 505, y: 404 })).toBe(true);
     expect(isInLens(bugAt({}), { x: 560, y: 400 })).toBe(false);
     expect(isInLens(bugAt({}), null)).toBe(false);
+  });
+});
+
+describe("makePromoCode", () => {
+  it("is a six-digit number without a leading zero", () => {
+    for (let i = 0; i < 50; i++) expect(makePromoCode()).toMatch(/^[1-9]\d{5}$/);
+  });
+
+  it("is driven by the random source", () => {
+    expect(makePromoCode(() => 0)).toBe("100000");
+    expect(makePromoCode(() => 0.999999)).toBe("999999");
+  });
+});
+
+describe("scatterBug", () => {
+  it("sends the bug fast toward the nearest edge, away from the center", () => {
+    const left = scatterBug(bugAt({ x: 200, y: 400, angle: 0 }), view);
+    expect(Math.cos(left.angle)).toBeLessThan(-0.9);
+    expect(left.speed).toBe(BUG.scatterSpeed);
+    const bottom = scatterBug(bugAt({ x: 500, y: 700, angle: -Math.PI / 2 }), view);
+    expect(Math.sin(bottom.angle)).toBeGreaterThan(0.9);
+  });
+
+  it("leaves the screen without turning back", () => {
+    let bug = scatterBug(bugAt({ x: 300, y: 300 }), view);
+    for (let i = 0; i < 200 && !isOffscreen(bug, view); i++) bug = stepBug(bug, 16, view, null, () => 0.5);
+    expect(isOffscreen(bug, view)).toBe(true);
   });
 });

@@ -298,6 +298,15 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
     animation-direction: alternate-reverse;
   }
 
+  /* разбегаются после награды: не ловятся и не мешают кликам */
+  .bug--scatter {
+    pointer-events: none;
+  }
+
+  .bug--scatter .bug-legs {
+    animation-duration: 0.1s;
+  }
+
   .bug--caught .bug-sprite {
     animation: bug-caught 0.45s var(--ease-out-soft) forwards;
   }
@@ -313,6 +322,14 @@ html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
     border: 2px solid var(--gold);
     border-radius: 50%;
     animation: bug-burst 0.45s ease-out forwards;
+  }
+
+  /* награда за жуков: ссылка в плашке кликабельна (селектор сильнее, чем у .bug-counter) */
+  .bug-counter.bug-reward {
+    padding: 16px 18px;
+    border-radius: 16px;
+    pointer-events: auto;
+    max-width: calc(100vw - 32px);
   }
 
   /* подсказку про жуков показываем, только когда они действительно ползают */
