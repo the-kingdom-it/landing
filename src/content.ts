@@ -242,7 +242,7 @@ export const content: SiteContent = {
         { label: "Практика и проекты", passed: true },
         { label: "Мок-собеседования", passed: true },
         { label: "Резюме и отклики", passed: true },
-        { label: "Оффер – следующий шаг твой", passed: false },
+        { label: "Оффер", passed: false },
       ],
     },
   },
