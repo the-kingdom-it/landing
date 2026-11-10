@@ -85,19 +85,8 @@
  * СЦЕНА
  * Картинка сезона за всей страницей. Сезон ставит <html data-season> (content.scene.season).
  * Файлы: public/scene/<сезон>.webp и <сезон>-m.webp (портретный кроп для телефонов).
+ * Пути к картинкам (--scene-image) задаёт src/lib/scene.ts — там учитывается базовый путь сайта.
  */
-html[data-season="winter"] { --scene-image: url("/scene/winter.webp"); }
-html[data-season="spring"] { --scene-image: url("/scene/spring.webp"); }
-html[data-season="summer"] { --scene-image: url("/scene/summer.webp"); }
-html[data-season="autumn"] { --scene-image: url("/scene/autumn.webp"); }
-
-@media (max-width: 767px) {
-  html[data-season="winter"] { --scene-image: url("/scene/winter-m.webp"); }
-  html[data-season="spring"] { --scene-image: url("/scene/spring-m.webp"); }
-  html[data-season="summer"] { --scene-image: url("/scene/summer-m.webp"); }
-  html[data-season="autumn"] { --scene-image: url("/scene/autumn-m.webp"); }
-}
-
 @layer components {
   .scene {
     position: fixed;
