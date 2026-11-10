@@ -39,4 +39,10 @@ describe("buildMetadata", () => {
   it("points the icon to the generated favicon.svg", () => {
     expect(buildMetadata(content.meta).icons).toEqual({ icon: [{ url: "/favicon.svg", type: "image/svg+xml" }] });
   });
+
+  it("adds the base path to the favicon for a site served from a subfolder", () => {
+    expect(buildMetadata(content.meta, "/landing").icons).toEqual({
+      icon: [{ url: "/landing/favicon.svg", type: "image/svg+xml" }],
+    });
+  });
 });

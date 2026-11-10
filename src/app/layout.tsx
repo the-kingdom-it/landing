@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { content } from "@/content";
 import { buildMetadata } from "@/lib/metadata";
+import { BASE_PATH } from "@/lib/base-path";
+import { sceneStyles } from "@/lib/scene";
 import { buildSeasonScript, resolveSeason } from "@/lib/season";
 import { fontVariables } from "./fonts";
 import "./globals.css";
@@ -18,6 +20,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: buildSeasonScript(content.scene.season) }} />
+        <style dangerouslySetInnerHTML={{ __html: sceneStyles(BASE_PATH) }} />
       </head>
       <body className="font-sans antialiased">{children}</body>
     </html>

@@ -93,6 +93,19 @@ npm run build
 
 Залей содержимое папки `out/` на хостинг (любой статический: S3, Netlify, GitHub Pages, обычный веб-сервер).
 
+### GitHub Pages
+
+Публикация настроена в `.github/workflows/deploy.yml`: после каждого изменения в `main` GitHub Actions
+прогоняет тесты, собирает сайт и выкладывает его на GitHub Pages.
+
+1. Репозиторий должен быть публичным (на бесплатном плане GitHub Pages работает только для публичных).
+2. Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+3. Влей изменения в `main` (или Actions → Deploy to GitHub Pages → Run workflow).
+4. Сайт откроется по адресу `https://<организация>.github.io/<репозиторий>/`.
+
+Сайт в подпапке (`/<репозиторий>/`) работает сам: workflow передаёт сборке путь через `NEXT_PUBLIC_BASE_PATH`.
+Свой домен подключается в Settings → Pages → Custom domain; после этого подпапка исчезает автоматически.
+
 ### VPS + nginx
 
 ```bash
