@@ -15,6 +15,7 @@ describe("RoadmapTabs", () => {
     const tabs = screen.getAllByRole("tab");
     expect(tabs).toHaveLength(tracks.length);
     expect(tabs[0]).toHaveAttribute("aria-selected", "true");
+    tabs.forEach((tab, index) => expect(tab.textContent).toBe(tracks[index].title));
     const panel = screen.getByRole("tabpanel");
     expect(within(panel).getByText(tracks[0].goal)).toBeInTheDocument();
     for (const stage of tracks[0].stages) {

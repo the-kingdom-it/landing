@@ -56,12 +56,11 @@ export function RoadmapTabs({ tracks, labels, final }: RoadmapTabsProps) {
               tabIndex={selected ? 0 : -1}
               onClick={() => setActive(index)}
               onKeyDown={onKeyDown}
-              className={`flex min-h-14 flex-col items-start justify-center gap-0.5 rounded-xl border px-4 py-3 text-left transition-colors ${
+              className={`flex min-h-14 items-center rounded-xl border px-4 py-3 text-left font-display text-[15px] transition-colors ${
                 selected ? "border-gold bg-gold-soft text-ink" : "border-line bg-surface text-muted hover:text-ink"
               }`}
             >
-              <span className="font-display text-[15px]">{item.title}</span>
-              <span className="font-mono text-xs text-muted">{item.duration}</span>
+              {item.title}
             </button>
           );
         })}
