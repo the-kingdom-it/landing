@@ -447,6 +447,213 @@ html[data-theme="light"] {
 }
 
 /*
+ * ЗАГОЛОВОК
+ * Варианты выделения слов QA и AQA в заголовке первого экрана: <html data-title="N"> (?title=N в адресе,
+ * по умолчанию content.hero.titleStyle). Список с названиями — src/lib/title.ts.
+ */
+@layer components {
+  .title-nobreak {
+    white-space: nowrap;
+  }
+
+  .title-mark {
+    --mark: var(--highlight);
+    --marker: color-mix(in srgb, var(--accent), transparent 62%);
+    white-space: nowrap;
+  }
+
+  /* на тёмном маркер плотнее, иначе его не видно */
+  html:not([data-theme="light"]) .title-mark {
+    --marker: color-mix(in srgb, var(--accent), transparent 25%);
+  }
+
+  /* 1 — цвет акцента */
+  html[data-title="1"] .title-mark {
+    color: var(--mark);
+  }
+
+  /* 2 — градиент */
+  html[data-title="2"] .title-mark {
+    background: linear-gradient(100deg, var(--accent) 10%, #8b5cf6 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.04em;
+  }
+
+  /* 3 — маркер */
+  html[data-title="3"] .title-mark {
+    background: linear-gradient(transparent 58%, var(--marker) 58%, var(--marker) 92%, transparent 92%);
+    padding: 0 0.08em;
+    margin: 0 -0.04em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* 4 — рукописное подчёркивание */
+  html[data-title="4"] .title-mark {
+    position: relative;
+    display: inline-block;
+  }
+
+  html[data-title="4"] .title-mark::after {
+    content: "";
+    position: absolute;
+    left: -0.04em;
+    right: -0.04em;
+    bottom: -0.12em;
+    height: 0.24em;
+    background: var(--mark);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M3 13 C 40 4%2C 70 18%2C 105 10 S 165 5%2C 197 11' fill='none' stroke='black' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M3 13 C 40 4%2C 70 18%2C 105 10 S 165 5%2C 197 11' fill='none' stroke='black' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  }
+
+  /* 5 — прописью */
+  html[data-title="5"] .title-mark {
+    display: inline-block;
+    font-family: var(--font-caveat), cursive;
+    font-weight: 700;
+    font-size: 1.32em;
+    line-height: 0.8;
+    letter-spacing: 0;
+    color: var(--mark);
+    transform: rotate(-4deg) translateY(0.04em);
+  }
+
+  /* 6 — курсив с засечками */
+  html[data-title="6"] .title-mark {
+    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.18em;
+    line-height: 0.9;
+    letter-spacing: 0;
+    color: var(--mark);
+  }
+
+  /* 7 — код-плашка */
+  html[data-title="7"] .title-mark {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.86em;
+    letter-spacing: -0.02em;
+    padding: 0.02em 0.24em 0.06em;
+    border: 0.05em solid color-mix(in srgb, var(--mark), transparent 40%);
+    border-radius: 0.18em;
+    background: color-mix(in srgb, var(--mark), transparent 88%);
+    color: var(--mark);
+  }
+
+  /* 8 — контур */
+  html[data-title="8"] .title-mark {
+    color: transparent;
+    -webkit-text-stroke: 0.035em var(--mark);
+  }
+
+  /* 9 — обведено от руки */
+  html[data-title="9"] .title-mark {
+    position: relative;
+    display: inline-block;
+    margin: 0 0.16em;
+  }
+
+  .title-circle {
+    display: none;
+  }
+
+  html[data-title="9"] .title-circle {
+    display: block;
+    position: absolute;
+    inset: -0.16em -0.26em -0.12em;
+    width: calc(100% + 0.52em);
+    height: calc(100% + 0.28em);
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /*
+   * Толщина — в единицах рисунка (viewBox), без vector-effect: non-scaling-stroke. С ним Chrome считает
+   * штрих в пикселях экрана, и на растянутом SVG анимация прорисовки не доходит до конца линии.
+   */
+  html[data-title="9"] .title-circle path {
+    fill: none;
+    stroke: var(--mark);
+    stroke-width: 5;
+    stroke-linecap: round;
+  }
+
+  /* овалы прорисовываются по очереди после появления заголовка */
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-title="9"] .title-circle path {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: title-draw 0.9s cubic-bezier(0.55, 0.1, 0.35, 1) forwards;
+      animation-delay: calc(0.7s + var(--i, 0) * 0.65s);
+    }
+  }
+}
+
+/*
+ * РИСОВАННЫЕ ВЫДЕЛЕНИЯ в заголовках секций (компонент MarkedText): овал или подчёркивание «от руки»
+ * прорисовывается, когда блок доезжает до экрана. Без JS и при «уменьшить движение» — сразу нарисовано.
+ */
+@layer components {
+  .draw-mark {
+    position: relative;
+    display: inline-block;
+  }
+
+  .draw-mark--circle {
+    margin: 0 0.16em;
+  }
+
+  .draw-svg {
+    position: absolute;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .draw-svg--circle {
+    inset: -0.18em -0.3em -0.14em;
+    width: calc(100% + 0.6em);
+    height: calc(100% + 0.32em);
+  }
+
+  .draw-svg--underline {
+    left: -0.04em;
+    bottom: -0.14em;
+    width: calc(100% + 0.08em);
+    height: 0.3em;
+  }
+
+  /* толщина в единицах рисунка — см. комментарий у .title-circle */
+  .draw-svg path {
+    fill: none;
+    stroke: var(--highlight);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .draw-svg--underline path {
+    stroke-width: 6;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-reveal-ready] [data-reveal]:not([data-revealed]) > h2 .draw-svg path {
+      stroke-dashoffset: 1;
+    }
+
+    html[data-reveal-ready] [data-revealed] > h2 .draw-svg path {
+      stroke-dashoffset: 1;
+      animation: title-draw 1s cubic-bezier(0.55, 0.1, 0.35, 1) 0.5s forwards;
+    }
+  }
+}
+
+/*
  * ПРОГОН
  * Шаги карточки path_to_offer.spec «прогоняются» как тесты (компонент ReportCard).
  * Базовые стили — итоговое состояние; анимация включается только без «уменьшить движение».
@@ -530,6 +737,12 @@ html[data-theme="light"] {
     .run-next-dot {
       animation: run-pulse 1.6s ease-in-out calc(var(--run-start) + 3s) infinite;
     }
+  }
+}
+
+@keyframes title-draw {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 

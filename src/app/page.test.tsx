@@ -9,7 +9,49 @@ describe("landing page", () => {
     render(<Home />);
     const headings = screen.getAllByRole("heading", { level: 1 });
     expect(headings).toHaveLength(1);
-    expect(headings[0]).toHaveTextContent(content.hero.title);
+    expect(headings[0].textContent).toBe(content.hero.title);
+  });
+
+  it("highlights QA and AQA in the hero title without changing its text", () => {
+    render(<Home />);
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(h1.textContent).toBe(content.hero.title);
+    expect([...h1.querySelectorAll(".title-mark")].map((el) => el.textContent)).toEqual(content.hero.titleHighlights);
+  });
+
+  it("draws a hand-drawn circle around each highlighted word, one after another", () => {
+    render(<Home />);
+    const marks = [...screen.getByRole("heading", { level: 1 }).querySelectorAll<HTMLElement>(".title-mark")];
+    marks.forEach((mark, index) => {
+      const svg = mark.querySelector("svg.title-circle");
+      expect(svg).not.toBeNull();
+      expect(svg).toHaveAttribute("aria-hidden", "true");
+      expect(svg!.querySelector("path")).toHaveAttribute("pathLength", "1");
+      expect(mark.style.getPropertyValue("--i")).toBe(String(index));
+    });
+  });
+
+  it("draws a hand-drawn mark around «бесплатного» in the CTA title", () => {
+    const { container } = render(<Home />);
+    const heading = within(container.querySelector<HTMLElement>(`#${content.cta.id}`)!).getByRole("heading", { level: 2 });
+    expect(heading.textContent).toBe(content.cta.title);
+    const marks = [...heading.querySelectorAll<HTMLElement>(".draw-mark")];
+    expect(marks.map((mark) => mark.firstChild?.textContent)).toEqual(content.cta.titleHighlights);
+    for (const mark of marks) {
+      const svg = mark.querySelector("svg.draw-svg");
+      expect(svg).toHaveAttribute("aria-hidden", "true");
+      expect(svg!.querySelector("path")).toHaveAttribute("pathLength", "1");
+    }
+  });
+
+  it("never leaves a preposition hanging before a circled word", () => {
+    render(<Home />);
+    const marks = [...screen.getByRole("heading", { level: 1 }).querySelectorAll<HTMLElement>(".title-mark")];
+    for (const mark of marks) {
+      const group = mark.closest(".title-nobreak");
+      expect(group).not.toBeNull();
+      expect(group!.textContent).toMatch(/^\S+\u00a0/);
+    }
   });
 
   it("every in-page link points to an element rendered on the page", () => {

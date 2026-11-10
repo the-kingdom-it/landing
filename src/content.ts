@@ -7,6 +7,7 @@
  */
 
 import type { BackgroundId, ThemeSetting } from "@/lib/backgrounds";
+import type { TitleStyleId } from "@/lib/title";
 import type { SeasonSetting } from "@/lib/season";
 
 export type LinkItem = {
@@ -128,6 +129,10 @@ export type SiteContent = {
     /** Моноширинная надпись над заголовком. null — без надписи. */
     eyebrow: string | null;
     title: string;
+    /** Слова заголовка, которые выделяются. */
+    titleHighlights: string[];
+    /** Стиль выделения: "0" — без выделения, "1"…"9" — варианты (src/lib/title.ts). Посмотреть: ?title=3. */
+    titleStyle: TitleStyleId;
     subtitle: string;
     primaryCta: LinkItem;
     secondaryCta: LinkItem;
@@ -185,6 +190,9 @@ export type SiteContent = {
   cta: {
     id: string;
     title: string;
+    /** Слова заголовка, выделенные «от руки», и вид выделения: "circle" — обвести, "underline" — подчеркнуть. */
+    titleHighlights: string[];
+    titleMark: "circle" | "underline";
     text: string;
     button: LinkItem;
     handle: string;
@@ -251,7 +259,10 @@ export const content: SiteContent = {
   hero: {
     id: "top",
     eyebrow: null,
-    title: "Доведём до оффера в QA и AQA",
+    // \u00a0 — неразрывный пробел: короткие слова «до», «в», «и» не отрываются от следующего на переносе строки
+    title: "Доведём до\u00a0оффера в\u00a0QA и\u00a0AQA",
+    titleHighlights: ["QA", "AQA"],
+    titleStyle: "9",
     subtitle:
       "Составим личный план обучения, натаскаем и будем проводить собеседования, пока не получишь оффер. Основная оплата – только после оффера.",
     primaryCta: { label: "Записаться на бесплатный созвон", href: "#cta" },
@@ -511,7 +522,7 @@ export const content: SiteContent = {
   faq: {
     id: "faq",
     title: "Частые вопросы",
-    lead: "Не нашёл ответа – спроси на бесплатном созвоне.",
+    lead: "Не нашёл ответа – спроси на созвоне или напиши мне. Отвечу на всё бесплатно – про рынок, собесы, обучение, что угодно.",
     items: [
       {
         question: "Что значит оплата после трудоустройства (постоплата)?",
@@ -558,6 +569,8 @@ export const content: SiteContent = {
   cta: {
     id: "cta",
     title: "Начнём с бесплатного созвона",
+    titleHighlights: ["бесплатного"],
+    titleMark: "underline",
     text: "Расскажи, где ты сейчас и куда хочешь прийти. Разберём твой уровень и предложим план.",
     button: { label: "Написать в Telegram", href: telegram.url },
     handle: telegram.handle,

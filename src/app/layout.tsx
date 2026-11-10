@@ -5,6 +5,7 @@ import { BACKGROUNDS, buildBackgroundScript, resolveScene, type SceneConfig } fr
 import { BASE_PATH } from "@/lib/base-path";
 import { sceneStyles } from "@/lib/scene";
 import { buildSeasonScript, resolveSeason } from "@/lib/season";
+import { buildTitleScript } from "@/lib/title";
 import { fontVariables } from "./fonts";
 import "./globals.css";
 
@@ -25,11 +26,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       data-bg={scene.bg}
       data-theme={scene.theme}
       data-preview={scene.preview ? "" : undefined}
+      data-title={content.hero.titleStyle}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: buildSeasonScript(content.scene.season) }} />
         <script dangerouslySetInnerHTML={{ __html: buildBackgroundScript(sceneConfig) }} />
+        <script dangerouslySetInnerHTML={{ __html: buildTitleScript(content.hero.titleStyle) }} />
         <style dangerouslySetInnerHTML={{ __html: sceneStyles(BASE_PATH) }} />
       </head>
       <body className="font-sans antialiased">{children}</body>

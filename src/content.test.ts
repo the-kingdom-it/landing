@@ -88,6 +88,14 @@ describe("content", () => {
     expect(content.scene.theme).toBe("system");
   });
 
+  it("hero title is circled by hand (style 9) by default", () => {
+    expect(content.hero.titleStyle).toBe("9");
+  });
+
+  it("CTA highlights the word «бесплатного»", () => {
+    expect(content.cta.titleHighlights).toEqual(["бесплатного"]);
+  });
+
   it("site texts use the short dash instead of the em dash", () => {
     expect(JSON.stringify(content)).not.toContain("\u2014");
   });
