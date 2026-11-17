@@ -73,8 +73,8 @@ describe("content", () => {
 
   it("plans are manual and automation with the agreed prices", () => {
     expect(content.pricing.plans.map((plan) => [plan.id, plan.price])).toEqual([
-      ["manual", "2 000 ₽"],
-      ["auto", "2 500 ₽"],
+      ["manual", "2\u00a0000\u00a0₽"],
+      ["auto", "2\u00a0500\u00a0₽"],
     ]);
     for (const plan of content.pricing.plans) expect(plan.share).toBe("99% от оффера");
   });

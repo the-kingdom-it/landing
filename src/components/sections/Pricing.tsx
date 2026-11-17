@@ -10,6 +10,7 @@ import { SectionHeading } from "../ui/SectionHeading";
  * Тарифы. На телефоне карточки листаются свайпом (scroll-snap), край следующей виден;
  * от md – сетка из двух колонок без прокрутки.
  * Ряд выходит под боковые отступы панели (-mx), чтобы карточка листалась до края панели.
+ * Скроллбар прячется только на сенсорных экранах: мышью без него ряд не догадаться пролистать.
  * Появление при прокрутке висит на всём ряду: карточка, обрезанная рядом, сама бы не проявилась.
  */
 export function Pricing() {
@@ -23,7 +24,7 @@ export function Pricing() {
           <ul
             data-plans=""
             {...revealProps(1)}
-            className="-mx-5 mt-8 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-1 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:px-8 md:mx-0 md:mt-10 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0"
+            className="-mx-5 mt-8 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-1 pointer-coarse:scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:px-8 md:mx-0 md:mt-10 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0"
           >
             {pricing.plans.map((plan) => (
               <li key={plan.id} className="w-[calc(100%-1.75rem)] max-w-[420px] shrink-0 snap-start md:w-auto md:max-w-none">
@@ -44,14 +45,14 @@ function PlanCard({ plan }: { plan: PricePlan }) {
   return (
     <article
       aria-labelledby={titleId}
-      className="flex h-full flex-col rounded-2xl bg-paper p-5 text-paper-ink ring-1 ring-paper-ink/10 sm:p-6 lg:p-8 [&_:focus-visible]:outline-accent"
+      className="flex h-full flex-col rounded-2xl bg-paper p-4 text-paper-ink ring-1 ring-paper-ink/10 min-[360px]:p-5 sm:p-6 lg:p-8 [&_:focus-visible]:outline-accent"
     >
-      <h3 id={titleId} className="font-display text-[20px] leading-tight sm:text-[22px] lg:text-[26px]">
+      <h3 id={titleId} className="font-display text-[18px] leading-tight min-[360px]:text-[20px] sm:text-[22px] lg:text-[26px]">
         {plan.title}
       </h3>
       <p className="mt-3 leading-relaxed text-paper-muted">{plan.audience}</p>
 
-      <p className="mt-6 font-display text-[40px] leading-none text-accent lg:text-[48px]">{plan.price}</p>
+      <p className="mt-6 font-display text-[32px] leading-none text-accent min-[360px]:text-[38px] sm:text-[40px] lg:text-[48px]">{plan.price}</p>
       <p className="mt-2 text-paper-muted">
         {labels.prepayment} + {plan.share}
       </p>

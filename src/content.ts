@@ -80,7 +80,7 @@ export type PricePlan = {
   title: string;
   /** Для кого тариф – строка под названием. */
   audience: string;
-  /** Предоплата крупно. Пробелы внутри цены – неразрывные ( ), чтобы цена не переносилась. */
+  /** Предоплата крупно. Пробелы внутри цены – неразрывные (\u00a0), чтобы цена не переносилась. */
   price: string;
   /** Основная оплата после оффера, например "99% от оффера". */
   share: string;
@@ -522,9 +522,9 @@ export const content: SiteContent = {
     plans: [
       {
         id: "manual",
-        title: "Ручное тестирование с нуля",
+        title: "Ручное тестирование с\u00a0нуля",
         audience: "Старт в IT для новичков. Выйдешь на уровень Middle QA Manual.",
-        price: "2 000 ₽",
+        price: "2\u00a0000\u00a0₽",
         share: "99% от оффера",
         features: [
           "Личный план обучения",
@@ -534,15 +534,15 @@ export const content: SiteContent = {
           "Мок-собеседования",
           "Сопровождение до оффера",
         ],
-        result: { position: "Middle QA Manual Engineer", salary: "120 000 – 200 000 ₽" },
+        result: { position: "Middle QA Manual Engineer", salary: "120\u00a0000 – 200\u00a0000\u00a0₽" },
         cta: { label: "Начать обучение", href: telegram.url },
       },
       {
         id: "auto",
-        // ­ – мягкий перенос: на узкой карточке слово делится как «Авто-/тестирование».
-        title: "Авто­тестирование",
+        // \u00ad – мягкий перенос: на узкой карточке слово делится как «Авто-/тестирование».
+        title: "Авто\u00adтестирование",
         audience: "Для тех, кто уже тестирует руками и хочет перейти в автоматизацию.",
-        price: "2 500 ₽",
+        price: "2\u00a0500\u00a0₽",
         share: "99% от оффера",
         features: [
           "Личный план обучения",
@@ -553,7 +553,7 @@ export const content: SiteContent = {
           "Сопровождение до оффера",
           "Лайвкодинг",
         ],
-        result: { position: "Automation QA Engineer / SDET", salary: "170 000 – 300 000 ₽" },
+        result: { position: "Automation QA Engineer / SDET", salary: "170\u00a0000 – 300\u00a0000\u00a0₽" },
         cta: { label: "Начать обучение", href: telegram.url },
       },
     ],

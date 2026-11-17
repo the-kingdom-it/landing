@@ -27,6 +27,7 @@ npm run build    # сборка в папку out/
 | Сезон фона (зима, весна, лето, осень или по дате) | `content.scene.season` в `src/content.ts` |
 | Картинки сцены | `public/scene/` |
 | Роадмап: треки, этапы, главы про AI | `content.roadmap` в `src/content.ts` (у этапа `ai: true` — тег AI) |
+| Тарифы: цены, пункты с галочками, результат | `content.pricing.plans` в `src/content.ts` (новый тариф — ещё одна запись; пробелы в ценах — `\u00a0`) |
 | Фича-тоглы (снег, картинки роадмапа) | `src/config.ts` |
 | Жуки: подсказка, счётчик, выключить | `content.bugs` в `src/content.ts`; скорость и поведение — `src/lib/bugs.ts` |
 

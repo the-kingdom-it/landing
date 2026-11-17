@@ -214,6 +214,7 @@ describe("landing page", () => {
 
     content.pricing.plans.forEach((plan, index) => {
       const card = within(cards[index]);
+      expect(within(pricing).getByRole("article", { name: plan.title })).toBe(cards[index]);
       expect(card.getByRole("heading", { name: plan.title })).toBeInTheDocument();
       expect(cards[index].textContent).toContain(plan.price);
       expect(cards[index].textContent).toContain(`${content.pricing.labels.prepayment} + ${plan.share}`);
@@ -231,7 +232,7 @@ describe("landing page", () => {
     const { container } = render(<Home />);
     const strip = container.querySelector(`#${content.pricing.id} [data-plans]`)!;
     expect(strip).toHaveAttribute("data-reveal");
-    expect(strip.querySelectorAll("article[data-reveal], article [data-reveal]")).toHaveLength(0);
+    expect(strip.querySelectorAll("[data-reveal]")).toHaveLength(0);
   });
 
   it("renders the footer with the copyright year and the full name only", () => {
