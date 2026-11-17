@@ -1,10 +1,10 @@
 import { revealProps } from "@/lib/reveal";
-import { type HandMark, MarkedText } from "./HandDrawn";
+import { MarkedText, type TitleMark } from "./HandDrawn";
 
 type SectionHeadingProps = {
   title: string;
   /** Слова заголовка, выделенные «от руки». */
-  highlight?: { words: readonly string[]; mark: HandMark };
+  highlight?: { words: readonly string[]; mark: TitleMark };
   lead?: string;
   className?: string;
 };

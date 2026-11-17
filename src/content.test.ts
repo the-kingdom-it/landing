@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "./content";
 import { ART_NAMES } from "./lib/art";
+import { discountPercent } from "./lib/price";
 import { SEASONS } from "./lib/season";
 
 /*
@@ -77,6 +78,28 @@ describe("content", () => {
       ["auto", "2\u00a0500\u00a0₽"],
     ]);
     for (const plan of content.pricing.plans) expect(plan.share).toBe("99% от оффера");
+  });
+
+  it("discount: plans show crossed-out 4 000 and 5 000", () => {
+    expect(content.pricing.plans.map((plan) => [plan.id, plan.oldPrice])).toEqual([
+      ["manual", "4\u00a0000\u00a0₽"],
+      ["auto", "5\u00a0000\u00a0₽"],
+    ]);
+  });
+
+  it("promo badge, while the promo is on, says the discount lasts until the end of the year, without Black Friday", () => {
+    if (content.pricing.promo) expect(content.pricing.promo.label).toBe("Скидка до конца года");
+    expect(JSON.stringify(content)).not.toMatch(/black friday/i);
+  });
+
+  it("every old price is higher than the current price, so the strike-through is a real discount", () => {
+    for (const plan of content.pricing.plans) {
+      if (plan.oldPrice) expect(discountPercent(plan.price, plan.oldPrice)).toBeGreaterThan(0);
+    }
+  });
+
+  it("promo deadline, if set, never splits the day from the month at a line break", () => {
+    expect(content.pricing.promo?.note ?? "").not.toMatch(/\d [а-яё]/i);
   });
 
   it("automation plan has everything from manual plus live coding", () => {

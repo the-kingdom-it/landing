@@ -74,6 +74,16 @@ export type BugReward = {
   href: string;
 };
 
+/** Акция на тарифах. pricing.promo: null – акции нет. Включается и выключается вручную. */
+export type PricePromo = {
+  /** Текст плашки над названием тарифа. Процент скидки рядом со старой ценой считается из цен сам. */
+  label: string;
+  /** Строка о сроке под ценой. null – без срока. */
+  note: string | null;
+  /** Подпись для скринридеров перед зачёркнутой ценой. */
+  oldPriceLabel: string;
+};
+
 /** Тариф в секции «Оплата». Новый тариф – ещё одна запись в pricing.plans. */
 export type PricePlan = {
   id: string;
@@ -82,6 +92,8 @@ export type PricePlan = {
   audience: string;
   /** Предоплата крупно. Пробелы внутри цены – неразрывные (\u00a0), чтобы цена не переносилась. */
   price: string;
+  /** Зачёркнутая цена, видна только во время акции (pricing.promo) и только если она выше price. null – без старой цены. */
+  oldPrice: string | null;
   /** Основная оплата после оффера, например "99% от оффера". */
   share: string;
   /** Пункты с галочками. */
@@ -186,6 +198,7 @@ export type SiteContent = {
       /** Начало фразы перед позицией: «Оффер на позицию». */
       offerPrefix: string;
     };
+    promo: PricePromo | null;
     plans: PricePlan[];
   };
   team: {
@@ -519,12 +532,19 @@ export const content: SiteContent = {
       result: "Результат",
       offerPrefix: "Оффер на позицию",
     },
+    // Акция: promo: null выключает плашку, зачёркнутые цены и срок разом.
+    promo: {
+      label: "Скидка до конца года",
+      note: null,
+      oldPriceLabel: "Старая цена",
+    },
     plans: [
       {
         id: "manual",
         title: "Ручное тестирование с\u00a0нуля",
         audience: "Старт в IT для новичков. Выйдешь на уровень Middle QA Manual.",
         price: "2\u00a0000\u00a0₽",
+        oldPrice: "4\u00a0000\u00a0₽",
         share: "99% от оффера",
         features: [
           "Личный план обучения",
@@ -543,6 +563,7 @@ export const content: SiteContent = {
         title: "Авто\u00adтестирование",
         audience: "Для тех, кто уже тестирует руками и хочет перейти в автоматизацию.",
         price: "2\u00a0500\u00a0₽",
+        oldPrice: "5\u00a0000\u00a0₽",
         share: "99% от оффера",
         features: [
           "Личный план обучения",
