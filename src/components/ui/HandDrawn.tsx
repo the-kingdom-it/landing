@@ -5,18 +5,21 @@ import { splitTitle } from "@/lib/title";
 
 const CIRCLE = "M150 12 C 95 2, 20 10, 8 45 C -2 78, 70 96, 120 92 C 175 88, 198 62, 190 36 C 182 14, 140 6, 92 9";
 const UNDERLINE = "M3 13 C 40 4, 70 18, 105 10 S 165 5, 197 11";
+/* Зачёркивание: чуть косая линия снизу вверх с лёгкой волной — как перечеркнули ручкой. */
+const STRIKE = "M4 31 C 45 27, 80 24, 112 19 S 170 9, 196 7";
 
-export type HandMark = "circle" | "underline";
+const MARKS = {
+  circle: { d: CIRCLE, viewBox: "0 0 200 100" },
+  underline: { d: UNDERLINE, viewBox: "0 0 200 20" },
+  strike: { d: STRIKE, viewBox: "0 0 200 40" },
+} as const;
+
+export type HandMark = keyof typeof MARKS;
 
 export function HandSvg({ mark, className }: { mark: HandMark; className: string }) {
   return (
-    <svg
-      className={className}
-      viewBox={mark === "circle" ? "0 0 200 100" : "0 0 200 20"}
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path pathLength="1" d={mark === "circle" ? CIRCLE : UNDERLINE} />
+    <svg className={className} viewBox={MARKS[mark].viewBox} preserveAspectRatio="none" aria-hidden="true">
+      <path pathLength="1" d={MARKS[mark].d} />
     </svg>
   );
 }

@@ -2,6 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { features } from "@/config";
 import { content } from "@/content";
+import { discountPercent } from "@/lib/price";
 import Home from "./page";
 
 describe("landing page", () => {
@@ -226,6 +227,37 @@ describe("landing page", () => {
       expect(button).toHaveAttribute("target", "_blank");
     });
     expect(screen.getByRole("heading", { name: content.referral.title })).toBeInTheDocument();
+  });
+
+  it("discounted plans show the badge, the hand-struck old price and the discount percent", () => {
+    const promo = content.pricing.promo!;
+    render(<Home />);
+    const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
+    for (const plan of content.pricing.plans.filter((p) => p.oldPrice)) {
+      const card = within(pricing).getByRole("article", { name: plan.title });
+      expect(within(card).getByText(promo.label)).toBeInTheDocument();
+      const oldPrice = card.querySelector("s")!;
+      expect(oldPrice.textContent).toBe(`${promo.oldPriceLabel} ${plan.oldPrice}`);
+      expect(oldPrice.querySelector(".sr-only")?.textContent?.trim()).toBe(promo.oldPriceLabel);
+      expect(oldPrice.querySelector("svg.price-strike path[pathLength='1']")).not.toBeNull();
+      expect(within(card).getByText(`−${discountPercent(plan.price, plan.oldPrice!)}%`)).toBeInTheDocument();
+      // textContent, а не getByText: getByText заменяет неразрывный пробел обычным.
+      if (promo.note) expect(card.textContent).toContain(promo.note);
+    }
+  });
+
+  it("with the promo switched off the cards show no badge, old price or discount", () => {
+    const promo = content.pricing.promo!;
+    content.pricing.promo = null;
+    try {
+      const { container } = render(<Home />);
+      const pricing = container.querySelector<HTMLElement>(`#${content.pricing.id}`)!;
+      expect(pricing.querySelector("s")).toBeNull();
+      expect(pricing.textContent).not.toContain(promo.label);
+      expect(pricing.textContent).not.toMatch(/−\d+%/);
+    } finally {
+      content.pricing.promo = promo;
+    }
   });
 
   it("reveals the plans strip as a whole: a card clipped by the swipe strip would never appear", () => {

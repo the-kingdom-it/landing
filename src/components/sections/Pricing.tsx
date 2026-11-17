@@ -1,7 +1,9 @@
 import { content, type PricePlan } from "@/content";
+import { discountPercent } from "@/lib/price";
 import { revealProps } from "@/lib/reveal";
 import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
+import { HandSvg } from "../ui/HandDrawn";
 import { Icon } from "../ui/Icon";
 import { Panel } from "../ui/Panel";
 import { SectionHeading } from "../ui/SectionHeading";
@@ -41,21 +43,46 @@ export function Pricing() {
 function PlanCard({ plan }: { plan: PricePlan }) {
   const { labels } = content.pricing;
   const titleId = `plan-${plan.id}`;
+  // Акция видна, только если она включена и у тарифа есть старая цена.
+  const promo = content.pricing.promo && plan.oldPrice ? { ...content.pricing.promo, oldPrice: plan.oldPrice } : null;
 
   return (
     <article
       aria-labelledby={titleId}
       className="flex h-full flex-col rounded-2xl bg-paper p-4 text-paper-ink ring-1 ring-paper-ink/10 min-[360px]:p-5 sm:p-6 lg:p-8 [&_:focus-visible]:outline-accent"
     >
+      {promo ? (
+        <p className="mb-4 self-start rounded-full bg-accent px-3 py-1 font-mono text-xs font-semibold tracking-wider text-on-accent">
+          {promo.label}
+        </p>
+      ) : null}
       <h3 id={titleId} className="font-display text-[18px] leading-tight min-[360px]:text-[20px] sm:text-[22px] lg:text-[26px]">
         {plan.title}
       </h3>
       <p className="mt-3 leading-relaxed text-paper-muted">{plan.audience}</p>
 
-      <p className="mt-6 font-display text-[32px] leading-none text-accent min-[360px]:text-[38px] sm:text-[40px] lg:text-[48px]">{plan.price}</p>
+      <div className="mt-6">
+        {promo ? (
+          <p className="mb-2 flex items-center gap-3 leading-none">
+            {/* relative: и рисованная линия, и скрытая подпись держатся внутри цены, а не вылезают за ленту карточек */}
+            <s className="relative inline-block font-display text-lg text-paper-muted no-underline">
+              <span className="sr-only">{promo.oldPriceLabel} </span>
+              {promo.oldPrice}
+              <HandSvg mark="strike" className="price-strike" />
+            </s>
+            <span className="rounded-full bg-sale px-2.5 py-1 text-sm font-bold text-on-sale">
+              −{discountPercent(plan.price, promo.oldPrice)}%
+            </span>
+          </p>
+        ) : null}
+        <p className="font-display text-[32px] leading-none text-accent min-[360px]:text-[38px] sm:text-[40px] lg:text-[48px]">
+          {plan.price}
+        </p>
+      </div>
       <p className="mt-2 text-paper-muted">
         {labels.prepayment} + {plan.share}
       </p>
+      {promo?.note ? <p className="mt-1 text-sm font-semibold text-accent">{promo.note}</p> : null}
 
       <ul className="mt-6 grid gap-3 xl:grid-cols-2 xl:gap-x-6">
         {plan.features.map((feature) => (

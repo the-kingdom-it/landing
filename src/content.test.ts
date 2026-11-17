@@ -79,6 +79,22 @@ describe("content", () => {
     for (const plan of content.pricing.plans) expect(plan.share).toBe("99% от оффера");
   });
 
+  it("discount: plans show crossed-out 4 000 and 5 000", () => {
+    expect(content.pricing.plans.map((plan) => [plan.id, plan.oldPrice])).toEqual([
+      ["manual", "4\u00a0000\u00a0₽"],
+      ["auto", "5\u00a0000\u00a0₽"],
+    ]);
+  });
+
+  it("promo badge says the discount lasts until the end of the year, without Black Friday", () => {
+    expect(content.pricing.promo?.label).toBe("Скидка до конца года");
+    expect(JSON.stringify(content)).not.toMatch(/black friday/i);
+  });
+
+  it("promo deadline, if set, never splits the day from the month at a line break", () => {
+    expect(content.pricing.promo?.note ?? "").not.toMatch(/\d [а-яё]/i);
+  });
+
   it("automation plan has everything from manual plus live coding", () => {
     const [manual, auto] = content.pricing.plans;
     for (const feature of manual.features) expect(auto.features).toContain(feature);
