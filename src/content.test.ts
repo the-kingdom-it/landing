@@ -63,9 +63,40 @@ describe("content", () => {
     expect(content.cta.handle).toBe(`@${nick}`);
   });
 
-  it("postpayment card links to the same Telegram as the CTA button", () => {
-    expect(content.pricing.postpayment.link?.href).toBe(content.cta.button.href);
-    expect(content.pricing.postpayment.link?.label).toBe(content.cta.handle);
+  it("every plan's button leads to the same Telegram as the CTA", () => {
+    expect(content.pricing.plans.length).toBeGreaterThan(0);
+    for (const plan of content.pricing.plans) {
+      expect(plan.cta.href).toBe(content.cta.button.href);
+      expect(plan.cta.label.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("plans are manual and automation with the agreed prices", () => {
+    expect(content.pricing.plans.map((plan) => [plan.id, plan.price])).toEqual([
+      ["manual", "2\u00a0000\u00a0₽"],
+      ["auto", "2\u00a0500\u00a0₽"],
+    ]);
+    for (const plan of content.pricing.plans) expect(plan.share).toBe("99% от оффера");
+  });
+
+  it("automation plan has everything from manual plus live coding", () => {
+    const [manual, auto] = content.pricing.plans;
+    for (const feature of manual.features) expect(auto.features).toContain(feature);
+    expect(auto.features).toContain("Лайвкодинг");
+  });
+
+  it("plan titles never leave a one-letter word hanging at a line end", () => {
+    for (const plan of content.pricing.plans) expect(plan.title).not.toMatch(/(^|\s)[а-яё] /i);
+  });
+
+  it("plan ids are unique", () => {
+    const ids = content.pricing.plans.map((plan) => plan.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("FAQ: no offer means no postpayment", () => {
+    const item = content.faq.items.find((faq) => faq.question === "Что будет, если я не получу оффер?");
+    expect(item?.answer).toBe("Тогда постоплату не платишь.");
   });
 
   it("every roadmap track has two AI chapters: tools and applying them", () => {

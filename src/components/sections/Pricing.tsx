@@ -1,42 +1,83 @@
-import { content } from "@/content";
+import { content, type PricePlan } from "@/content";
 import { revealProps } from "@/lib/reveal";
+import { ButtonLink } from "../ui/ButtonLink";
 import { Container } from "../ui/Container";
+import { Icon } from "../ui/Icon";
 import { Panel } from "../ui/Panel";
 import { SectionHeading } from "../ui/SectionHeading";
 
+/*
+ * Тарифы. На телефоне карточки листаются свайпом (scroll-snap), край следующей виден;
+ * от md – сетка из двух колонок без прокрутки.
+ * Ряд выходит под боковые отступы панели (-mx), чтобы карточка листалась до края панели.
+ * Скроллбар прячется только на сенсорных экранах: мышью без него ряд не догадаться пролистать.
+ * Появление при прокрутке висит на всём ряду: карточка, обрезанная рядом, сама бы не проявилась.
+ */
 export function Pricing() {
   const { pricing } = content;
-  const card = pricing.postpayment;
 
   return (
     <section id={pricing.id} className="py-6 md:py-10">
       <Container>
-        <Panel strong className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <Panel strong>
           <SectionHeading title={pricing.title} lead={pricing.lead} />
-          <div {...revealProps(1)} className="rounded-2xl bg-paper p-6 text-paper-ink md:p-10 [&_:focus-visible]:outline-accent">
-            <p className="font-mono text-sm text-paper-muted">{card.label}</p>
-            <p className="mt-4 break-words font-display text-[32px] leading-tight text-accent md:text-[44px]">
-              {card.amount}
-            </p>
-            <p className="mt-4 leading-relaxed text-paper-muted">
-              {card.text}
-              {card.link ? (
-                <>
-                  {" "}
-                  <a
-                    href={card.link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-accent underline decoration-accent/40 underline-offset-4 transition-colors hover:decoration-accent"
-                  >
-                    {card.link.label}
-                  </a>
-                </>
-              ) : null}
-            </p>
-          </div>
+          <ul
+            data-plans=""
+            {...revealProps(1)}
+            className="-mx-5 mt-8 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-1 pointer-coarse:scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:px-8 md:mx-0 md:mt-10 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:px-0 md:pb-0"
+          >
+            {pricing.plans.map((plan) => (
+              <li key={plan.id} className="w-[calc(100%-1.75rem)] max-w-[420px] shrink-0 snap-start md:w-auto md:max-w-none">
+                <PlanCard plan={plan} />
+              </li>
+            ))}
+          </ul>
         </Panel>
       </Container>
     </section>
+  );
+}
+
+function PlanCard({ plan }: { plan: PricePlan }) {
+  const { labels } = content.pricing;
+  const titleId = `plan-${plan.id}`;
+
+  return (
+    <article
+      aria-labelledby={titleId}
+      className="flex h-full flex-col rounded-2xl bg-paper p-4 text-paper-ink ring-1 ring-paper-ink/10 min-[360px]:p-5 sm:p-6 lg:p-8 [&_:focus-visible]:outline-accent"
+    >
+      <h3 id={titleId} className="font-display text-[18px] leading-tight min-[360px]:text-[20px] sm:text-[22px] lg:text-[26px]">
+        {plan.title}
+      </h3>
+      <p className="mt-3 leading-relaxed text-paper-muted">{plan.audience}</p>
+
+      <p className="mt-6 font-display text-[32px] leading-none text-accent min-[360px]:text-[38px] sm:text-[40px] lg:text-[48px]">{plan.price}</p>
+      <p className="mt-2 text-paper-muted">
+        {labels.prepayment} + {plan.share}
+      </p>
+
+      <ul className="mt-6 grid gap-3 xl:grid-cols-2 xl:gap-x-6">
+        {plan.features.map((feature) => (
+          <li key={feature} className="flex items-start gap-3">
+            <Icon name="check" className="mt-0.5 size-5 shrink-0 text-accent" strokeWidth={2.2} />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-auto pt-8">
+        <div className="rounded-xl border border-accent/40 p-4">
+          <p className="font-mono text-xs uppercase tracking-wider text-paper-muted">{labels.result}</p>
+          <p className="mt-2 leading-snug">
+            {labels.offerPrefix} <span className="block font-semibold">{plan.result.position}</span>
+          </p>
+          <p className="mt-2 font-display text-lg text-accent">{plan.result.salary}</p>
+        </div>
+        <ButtonLink href={plan.cta.href} className="mt-4 w-full">
+          {plan.cta.label}
+        </ButtonLink>
+      </div>
+    </article>
   );
 }
