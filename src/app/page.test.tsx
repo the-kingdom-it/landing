@@ -206,15 +206,32 @@ describe("landing page", () => {
     expect(cta.getByText(content.cta.handle)).toBeInTheDocument();
   });
 
-  it("renders the postpayment card and the referral offer", () => {
+  it("renders a card per plan with price, result and a Telegram button", () => {
     render(<Home />);
     const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
-    expect(within(pricing).getByText(content.pricing.postpayment.label)).toBeInTheDocument();
-    expect(within(pricing).getByText(content.pricing.postpayment.amount)).toBeInTheDocument();
-    const telegram = within(pricing).getByRole("link", { name: content.pricing.postpayment.link!.label });
-    expect(telegram).toHaveAttribute("href", content.pricing.postpayment.link!.href);
-    expect(telegram).toHaveAttribute("target", "_blank");
+    const cards = within(pricing).getAllByRole("article");
+    expect(cards).toHaveLength(content.pricing.plans.length);
+
+    content.pricing.plans.forEach((plan, index) => {
+      const card = within(cards[index]);
+      expect(card.getByRole("heading", { name: plan.title })).toBeInTheDocument();
+      expect(cards[index].textContent).toContain(plan.price);
+      expect(cards[index].textContent).toContain(`${content.pricing.labels.prepayment} + ${plan.share}`);
+      for (const feature of plan.features) expect(card.getByText(feature)).toBeInTheDocument();
+      expect(cards[index].textContent).toContain(`${content.pricing.labels.offerPrefix} ${plan.result.position}`);
+      expect(cards[index].textContent).toContain(plan.result.salary);
+      const button = card.getByRole("link", { name: plan.cta.label });
+      expect(button).toHaveAttribute("href", plan.cta.href);
+      expect(button).toHaveAttribute("target", "_blank");
+    });
     expect(screen.getByRole("heading", { name: content.referral.title })).toBeInTheDocument();
+  });
+
+  it("reveals the plans strip as a whole: a card clipped by the swipe strip would never appear", () => {
+    const { container } = render(<Home />);
+    const strip = container.querySelector(`#${content.pricing.id} [data-plans]`)!;
+    expect(strip).toHaveAttribute("data-reveal");
+    expect(strip.querySelectorAll("article[data-reveal], article [data-reveal]")).toHaveLength(0);
   });
 
   it("renders the footer with the copyright year and the full name only", () => {

@@ -74,12 +74,20 @@ export type BugReward = {
   href: string;
 };
 
-export type PriceCard = {
-  label: string;
-  amount: string;
-  text: string;
-  /** Ссылка после текста, например на Telegram. null — без ссылки. */
-  link: LinkItem | null;
+/** Тариф в секции «Оплата». Новый тариф – ещё одна запись в pricing.plans. */
+export type PricePlan = {
+  id: string;
+  title: string;
+  /** Для кого тариф – строка под названием. */
+  audience: string;
+  /** Предоплата крупно. Пробелы внутри цены – неразрывные ( ), чтобы цена не переносилась. */
+  price: string;
+  /** Основная оплата после оффера, например "99% от оффера". */
+  share: string;
+  /** Пункты с галочками. */
+  features: string[];
+  result: { position: string; salary: string };
+  cta: LinkItem;
 };
 
 export type SiteContent = {
@@ -170,7 +178,15 @@ export type SiteContent = {
     id: string;
     title: string;
     lead: string;
-    postpayment: PriceCard;
+    labels: {
+      /** Подпись под ценой: «предоплата + 99% от оффера». */
+      prepayment: string;
+      /** Заголовок блока с итогом. */
+      result: string;
+      /** Начало фразы перед позицией: «Оффер на позицию». */
+      offerPrefix: string;
+    };
+    plans: PricePlan[];
   };
   team: {
     id: string;
@@ -498,12 +514,49 @@ export const content: SiteContent = {
     id: "pricing",
     title: "Платишь, когда есть результат",
     lead: "Основная оплата – после оффера. Нам так же важно, чтобы ты дошёл до результата, как и тебе.",
-    postpayment: {
-      label: "Постоплата",
-      amount: "После оффера",
-      text: "За актуальными условиями – в Telegram:",
-      link: { label: telegram.handle, href: telegram.url },
+    labels: {
+      prepayment: "предоплата",
+      result: "Результат",
+      offerPrefix: "Оффер на позицию",
     },
+    plans: [
+      {
+        id: "manual",
+        title: "Ручное тестирование с нуля",
+        audience: "Старт в IT для новичков. Выйдешь на уровень Middle QA Manual.",
+        price: "2 000 ₽",
+        share: "99% от оффера",
+        features: [
+          "Личный план обучения",
+          "Учебные материалы",
+          "Личные созвоны",
+          "Подготовка резюме",
+          "Мок-собеседования",
+          "Сопровождение до оффера",
+        ],
+        result: { position: "Middle QA Manual Engineer", salary: "120 000 – 200 000 ₽" },
+        cta: { label: "Начать обучение", href: telegram.url },
+      },
+      {
+        id: "auto",
+        // ­ – мягкий перенос: на узкой карточке слово делится как «Авто-/тестирование».
+        title: "Авто­тестирование",
+        audience: "Для тех, кто уже тестирует руками и хочет перейти в автоматизацию.",
+        price: "2 500 ₽",
+        share: "99% от оффера",
+        features: [
+          "Личный план обучения",
+          "Учебные материалы",
+          "Личные созвоны",
+          "Подготовка резюме",
+          "Мок-собеседования",
+          "Сопровождение до оффера",
+          "Лайвкодинг",
+        ],
+        result: { position: "Automation QA Engineer / SDET", salary: "170 000 – 300 000 ₽" },
+        cta: { label: "Начать обучение", href: telegram.url },
+      },
+    ],
   },
 
   team: {
@@ -550,12 +603,11 @@ export const content: SiteContent = {
       {
         question: "Что значит оплата после трудоустройства (постоплата)?",
         answer:
-          "Я предоставляю тебе все материалы, довожу до оффера и помогаю в процессе трудоустройства. И только после того, как получишь первую зарплату, ты оплачиваешь обучение.",
+          "Я предоставляю тебе все материалы, довожу до оффера и помогаю в процессе трудоустройства. И только после того, как получишь первую зарплату, вносишь основную оплату.",
       },
       {
         question: "Что будет, если я не получу оффер?",
-        answer:
-          "Платишь только после оффера: нет оффера – нет оплаты.",
+        answer: "Тогда постоплату не платишь.",
       },
       {
         question: "Что если меня уволили с испытательного срока?",
