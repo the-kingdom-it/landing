@@ -43,8 +43,12 @@ export function Pricing() {
 function PlanCard({ plan }: { plan: PricePlan }) {
   const { labels } = content.pricing;
   const titleId = `plan-${plan.id}`;
-  // Акция видна, только если она включена и у тарифа есть старая цена.
-  const promo = content.pricing.promo && plan.oldPrice ? { ...content.pricing.promo, oldPrice: plan.oldPrice } : null;
+  // Акция видна, только если она включена, у тарифа есть старая цена и она правда выше текущей.
+  const percent = plan.oldPrice ? discountPercent(plan.price, plan.oldPrice) : null;
+  const promo =
+    content.pricing.promo && plan.oldPrice && percent !== null
+      ? { ...content.pricing.promo, oldPrice: plan.oldPrice, percent }
+      : null;
 
   return (
     <article
@@ -64,14 +68,15 @@ function PlanCard({ plan }: { plan: PricePlan }) {
       <div className="mt-6">
         {promo ? (
           <p className="mb-2 flex items-center gap-3 leading-none">
-            {/* relative: и рисованная линия, и скрытая подпись держатся внутри цены, а не вылезают за ленту карточек */}
-            <s className="relative inline-block font-display text-lg text-paper-muted no-underline">
+            {/* relative: линия и скрытая подпись держатся внутри цены, а не вылезают за ленту карточек;
+                leading-none: высота строки = кеглю, иначе линия, заданная в em от верха, проходит над «₽» */}
+            <s className="relative inline-block font-display text-lg leading-none text-paper-muted no-underline">
               <span className="sr-only">{promo.oldPriceLabel} </span>
               {promo.oldPrice}
               <HandSvg mark="strike" className="price-strike" />
             </s>
             <span className="rounded-full bg-sale px-2.5 py-1 text-sm font-bold text-on-sale">
-              −{discountPercent(plan.price, promo.oldPrice)}%
+              −{promo.percent}%
             </span>
           </p>
         ) : null}

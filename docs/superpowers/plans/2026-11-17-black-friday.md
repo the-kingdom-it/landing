@@ -1,5 +1,7 @@
 # Black Friday Promo Implementation Plan
 
+> **Superseded in part:** the owner dropped Black Friday. Final copy and look (label «Скидка до конца года», no note, hand-drawn strike, computed −N% badge) are in the spec `docs/superpowers/specs/2026-11-17-black-friday-design.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** A switchable promo on the plan cards: badge, crossed-out old price, deadline line.

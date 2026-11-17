@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { content } from "./content";
 import { ART_NAMES } from "./lib/art";
+import { discountPercent } from "./lib/price";
 import { SEASONS } from "./lib/season";
 
 /*
@@ -86,9 +87,15 @@ describe("content", () => {
     ]);
   });
 
-  it("promo badge says the discount lasts until the end of the year, without Black Friday", () => {
-    expect(content.pricing.promo?.label).toBe("Скидка до конца года");
+  it("promo badge, while the promo is on, says the discount lasts until the end of the year, without Black Friday", () => {
+    if (content.pricing.promo) expect(content.pricing.promo.label).toBe("Скидка до конца года");
     expect(JSON.stringify(content)).not.toMatch(/black friday/i);
+  });
+
+  it("every old price is higher than the current price, so the strike-through is a real discount", () => {
+    for (const plan of content.pricing.plans) {
+      if (plan.oldPrice) expect(discountPercent(plan.price, plan.oldPrice)).toBeGreaterThan(0);
+    }
   });
 
   it("promo deadline, if set, never splits the day from the month at a line break", () => {

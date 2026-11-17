@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { features } from "@/config";
-import { content } from "@/content";
+import { content, type PricePromo } from "@/content";
 import { discountPercent } from "@/lib/price";
 import Home from "./page";
 
@@ -229,34 +229,75 @@ describe("landing page", () => {
     expect(screen.getByRole("heading", { name: content.referral.title })).toBeInTheDocument();
   });
 
-  it("discounted plans show the badge, the hand-struck old price and the discount percent", () => {
-    const promo = content.pricing.promo!;
-    render(<Home />);
-    const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
-    for (const plan of content.pricing.plans.filter((p) => p.oldPrice)) {
-      const card = within(pricing).getByRole("article", { name: plan.title });
-      expect(within(card).getByText(promo.label)).toBeInTheDocument();
-      const oldPrice = card.querySelector("s")!;
-      expect(oldPrice.textContent).toBe(`${promo.oldPriceLabel} ${plan.oldPrice}`);
-      expect(oldPrice.querySelector(".sr-only")?.textContent?.trim()).toBe(promo.oldPriceLabel);
-      expect(oldPrice.querySelector("svg.price-strike path[pathLength='1']")).not.toBeNull();
-      expect(within(card).getByText(`−${discountPercent(plan.price, plan.oldPrice!)}%`)).toBeInTheDocument();
-      // textContent, а не getByText: getByText заменяет неразрывный пробел обычным.
-      if (promo.note) expect(card.textContent).toContain(promo.note);
+  /*
+   * Акцию владелец включает и выключает руками (content.pricing.promo), поэтому тесты подставляют свою
+   * и не зависят от того, что сейчас в content.ts: promo: null не должен ронять тесты и деплой.
+   */
+  const TEST_PROMO: PricePromo = { label: "Тестовая акция", note: "Только до пятницы", oldPriceLabel: "Старая цена" };
+
+  function withPromo(promo: PricePromo | null, run: () => void) {
+    const saved = content.pricing.promo;
+    content.pricing.promo = promo;
+    try {
+      run();
+    } finally {
+      content.pricing.promo = saved;
     }
+  }
+
+  it("discounted plans show the badge, the hand-struck old price, the percent and the note", () => {
+    withPromo(TEST_PROMO, () => {
+      render(<Home />);
+      const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
+      for (const plan of content.pricing.plans.filter((p) => p.oldPrice)) {
+        const card = within(pricing).getByRole("article", { name: plan.title });
+        expect(within(card).getByText(TEST_PROMO.label)).toBeInTheDocument();
+        const oldPrice = card.querySelector("s")!;
+        expect(oldPrice.textContent).toBe(`${TEST_PROMO.oldPriceLabel} ${plan.oldPrice}`);
+        expect(oldPrice.querySelector(".sr-only")?.textContent?.trim()).toBe(TEST_PROMO.oldPriceLabel);
+        expect(oldPrice.querySelector("svg.price-strike path[pathLength='1']")).not.toBeNull();
+        expect(within(card).getByText(`−${discountPercent(plan.price, plan.oldPrice!)}%`)).toBeInTheDocument();
+        expect(within(card).getByText(TEST_PROMO.note!)).toBeInTheDocument();
+      }
+    });
+  });
+
+  it("the agreed prices show a 50% discount on both plans", () => {
+    withPromo(TEST_PROMO, () => {
+      render(<Home />);
+      const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
+      expect(within(pricing).getAllByText("−50%")).toHaveLength(2);
+    });
   });
 
   it("with the promo switched off the cards show no badge, old price or discount", () => {
-    const promo = content.pricing.promo!;
-    content.pricing.promo = null;
-    try {
+    const liveLabel = content.pricing.promo?.label;
+    withPromo(null, () => {
       const { container } = render(<Home />);
       const pricing = container.querySelector<HTMLElement>(`#${content.pricing.id}`)!;
-      expect(pricing.querySelector("s")).toBeNull();
-      expect(pricing.textContent).not.toContain(promo.label);
+      expect(pricing.querySelector("s, .price-strike")).toBeNull();
       expect(pricing.textContent).not.toMatch(/−\d+%/);
+      if (liveLabel) expect(pricing.textContent).not.toContain(liveLabel);
+    });
+  });
+
+  it("a plan without an old price shows no discount even while the promo is on", () => {
+    const [first, second] = content.pricing.plans;
+    const savedOld = second.oldPrice;
+    second.oldPrice = null;
+    try {
+      withPromo(TEST_PROMO, () => {
+        render(<Home />);
+        const pricing = screen.getByRole("heading", { name: content.pricing.title }).closest("section")!;
+        const withDiscount = within(pricing).getByRole("article", { name: first.title });
+        const without = within(pricing).getByRole("article", { name: second.title });
+        expect(withDiscount.querySelector("s")).not.toBeNull();
+        expect(without.querySelector("s")).toBeNull();
+        expect(without.textContent).not.toContain(TEST_PROMO.label);
+        expect(without.textContent).not.toMatch(/−\d+%/);
+      });
     } finally {
-      content.pricing.promo = promo;
+      second.oldPrice = savedOld;
     }
   });
 

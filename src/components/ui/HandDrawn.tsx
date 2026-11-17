@@ -15,6 +15,8 @@ const MARKS = {
 } as const;
 
 export type HandMark = keyof typeof MARKS;
+/** Выделения для заголовков: зачёркивание только для цен, стилей заголовка у него нет. */
+export type TitleMark = Exclude<HandMark, "strike">;
 
 export function HandSvg({ mark, className }: { mark: HandMark; className: string }) {
   return (
@@ -28,7 +30,7 @@ export function HandSvg({ mark, className }: { mark: HandMark; className: string
  * Текст, в котором слова из highlights обведены или подчёркнуты «от руки».
  * Линия прорисовывается, когда блок появляется на экране (см. «РИСОВАННЫЕ ВЫДЕЛЕНИЯ» в globals.css).
  */
-export function MarkedText({ text, highlights, mark }: { text: string; highlights: readonly string[]; mark: HandMark }) {
+export function MarkedText({ text, highlights, mark }: { text: string; highlights: readonly string[]; mark: TitleMark }) {
   return (
     <>
       {splitTitle(text, highlights).map((part, index) =>
